@@ -1,5 +1,5 @@
 (define-package "interaction"
-  (0 0)
+  (0 2)
   ()
   (write-to-load-script
    `((config)
