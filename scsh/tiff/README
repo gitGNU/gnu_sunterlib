@@ -1,0 +1,325 @@
+* Tiff -- A port of Oleg Kiselyov's tiff code
+
+Both the code and this documentation is derived from Oleg's files, cf.
+http://okmij.org/ftp/Scheme/binary-io.html#tiff
+
+This distribution comes with two family-friendly tiff files in sunterlib/
+scsh/tiff/.
+
+** Reading TIFF files
+
+[ Oleg's announcement.  Main changes to the announced library: modularisation
+  and fake srfi-4 uniform vectors.  (The source files list the changes.)    ]
+
+From posting-system@google.com Wed Oct  8 01:24:13 2003
+Date: Tue, 7 Oct 2003 18:24:12 -0700
+From: oleg@pobox.com (oleg@pobox.com)
+Newsgroups: comp.lang.scheme
+Subject: [ANN] Reading TIFF files
+Message-ID: <7eb8ac3e.0310071724.59bffe62@posting.google.com>
+Status: OR
+
+This is to announce a Scheme library to read and analyze TIFF image
+files. We can use the library to obtain the dimensions of a TIFF
+image; the image name and description; the resolution and other
+meta-data. We can then load a pixel matrix or a colormap table. An
+accompanying tiff-prober program prints out the TIFF dictionary in a
+raw and polished formats.
+
+     http://pobox.com/~oleg/ftp/Scheme/lib/tiff.scm
+	dependencies: util.scm, char-encoding.scm, myenv.scm
+     http://pobox.com/~oleg/ftp/Scheme/tests/vtiff.scm
+        see also: gnu-head-sm.tif in the same directory
+     http://pobox.com/~oleg/ftp/Scheme/tiff-prober.scm
+
+Features:
+   - The library handles TIFF files written in both endian formats
+   - A TIFF directory is treated somewhat as a SRFI-44 immutable
+     dictionary collection. Only the most basic SRFI-44 methods are
+     implemented, including the left fold iterator and the get method.
+   - An extensible tag dictionary translates between symbolic tag
+     names and numeric ones. Ditto for tag values.
+   - A tag dictionary for all TIFF 6 standard tags and values comes
+     with the library. A user can add the definitions of
+     his private tags.
+   - The library handles TIFF directory values of types:
+    (signed/unsigned) byte, short, long, rational; ASCII strings.
+   - A particular care is taken to properly handle values whose
+     total size is no more than 4 bytes.
+   - Array values (including the image matrix) are returned as
+     uniform vectors (SRFI-4)
+   - Values are read lazily. If you are only interested in the
+     dimensions of an image, the image matrix itself will not be loaded.
+
+
+Here's the result of running tiff-prober on the image of the GNU head
+(converted from JPEG to TIFF by xv). I hope I won't have any copyright
+problems with using and distributing that image.
+
+Analyzing TIFF file tests/gnu-head-sm.tif...
+There are 15 entries in the TIFF directory
+they are
+TIFFTAG:IMAGEWIDTH, count 1, type short, value-offset 129 (0x81)
+TIFFTAG:IMAGELENGTH, count 1, type short, value-offset 122 (0x7A)
+TIFFTAG:BITSPERSAMPLE, count 1, type short, value-offset 8 (0x8)
+TIFFTAG:COMPRESSION, count 1, type short, value-offset 1 (0x1)
+TIFFTAG:PHOTOMETRIC, count 1, type short, value-offset 1 (0x1)
+TIFFTAG:IMAGEDESCRIPTION, count 29, type ascii str, value-offset 15932 (0x3E3C)
+TIFFTAG:STRIPOFFSETS, count 1, type long, value-offset 8 (0x8)
+TIFFTAG:ORIENTATION, count 1, type short, value-offset 1 (0x1)
+TIFFTAG:SAMPLESPERPIXEL, count 1, type short, value-offset 1 (0x1)
+TIFFTAG:ROWSPERSTRIP, count 1, type short, value-offset 122 (0x7A)
+TIFFTAG:STRIPBYTECOUNTS, count 1, type long, value-offset 15738 (0x3D7A)
+TIFFTAG:XRESOLUTION, count 1, type rational, value-offset 15962 (0x3E5A)
+TIFFTAG:YRESOLUTION, count 1, type rational, value-offset 15970 (0x3E62)
+TIFFTAG:PLANARCONFIG, count 1, type short, value-offset 1 (0x1)
+TIFFTAG:RESOLUTIONUNIT, count 1, type short, value-offset 2 (0x2)
+
+image width:    129
+image height:   122
+image depth:    8
+document name:  *NOT SPECIFIED*
+image description:
+  JPEG:gnu-head-sm.jpg 129x122
+time stamp:     *NOT SPECIFIED*
+compression:    NONE
+
+In particular, the dump of the tiff directory is produced by the
+following line of code
+	  (print-tiff-directory tiff-dict (current-output-port))
+To determine the width of the image, we do
+	(tiff-directory-get tiff-dict 'TIFFTAG:IMAGEWIDTH not-spec)
+To determine the compression (as a symbol) we evaluate
+	(tiff-directory-get-as-symbol tiff-dict 'TIFFTAG:COMPRESSION not-spec)
+
+If an image directory contains private tags, they will be printed like
+the following:
+
+private tag 33009, count 1, type signed long, value-offset 16500000 (0xFBC520)
+private tag 33010, count 1, type signed long, value-offset 4294467296
+                                                                 (0xFFF85EE0)
+
+A user may supply a dictionary of his private tags and enjoy
+the automatic translation from symbolic to numerical tag names.
+
+The validation code vtiff.scm includes a function
+test-reading-pixel-matrix that demonstrates loading a pixel matrix of
+an image in an u8vector. The code can handle a single or multiple
+strips.
+
+Portability: the library itself, tiff.scm, relies on the following
+extensions to R5RS: uniform vectors (SRFI-4); ascii->char function
+(which is on many systems just integer->char); trivial define-macro
+(which can be easily re-written into syntax-rules); let*-values
+(SRFI-11); records (SRFI-9). Actually, the code uses Gambit's native
+define-structures, which can be easily re-written into SRFI-9
+records. The Scheme system should be able to represent the full range
+of 32-bit integers and should support rationals.
+
+The most problematic extension is an endian port. The TIFF library
+assumes the existence of a data structure with the following
+operations
+   endian-port-set-bigendian!::   EPORT -> UNSPECIFIED
+   endian-port-set-littlendian!:: EPORT -> UNSPECIFIED
+   endian-port-read-int1:: EPORT -> UINTEGER (byte)
+   endian-port-read-int2:: EPORT -> UINTEGER
+   endian-port-read-int4:: EPORT -> UINTEGER
+   endian-port-setpos:: EPORT INTEGER -> UNSPECIFIED
+
+The library uses solely these methods to access the input port. The
+endian port can be implemented in a R5RS Scheme system if we assume
+that the composition of char->integer and read-char yields a byte and
+if we read the whole file into a string or a u8vector
+(SRFI-4). Obviously, there are times when such a solution is not
+satisfactory. Therefore, tiff-prober and the validation code
+vtiff.scm rely on a Gambit-specific code. All major Scheme systems can
+implement endian ports in a similar vein -- alas, each in its own
+particular way.
+
+
+
+** Endian ports
+from structure endian.
+
+We rely on an ENDIAN-PORT
+A port with the following operations
+  endian-port-set-bigendian!::   EPORT -> UNSPECIFIED
+  endian-port-set-littlendian!:: EPORT -> UNSPECIFIED
+  endian-port-read-int1:: EPORT -> UINTEGER (byte)
+  endian-port-read-int2:: EPORT -> UINTEGER
+  endian-port-read-int4:: EPORT -> UINTEGER
+  endian-port-setpos EPORT INTEGER -> UNSPECIFIED
+
+  close-endian-port:: EPORT -> UNSPECIFIED
+  make-endian-port:: INPORT BOOLEAN -> EPORT
+    The boolean argument sets the endianness of the resulting endian-port,
+  boolean(most sigificant bit first).  After having wrapped the INPORT
+  in the EPORT, you should no longer manipulate the INPORT directly.
+
+
+
+** Tiff
+in structures TIFF and TIFFLET.  TIFFLET exports a survival package of
+bindings:
+  read-tiff-file, print-tiff-directory, tiff-directory-get(-as-symbol).
+Refined needs will require TIFF.
+
+*** TIFF tags: codes and values
+
+A tag dictionary, tagdict, record helps translate between
+tag-symbols and their numerical values.
+
+tagdict-get-by-name TAGDICT TAG-NAME => INT
+  where TAG-NAME is a symbol.
+Translate a symbolic representation of a TIFF tag into a numeric
+representation.
+An error is raised if the lookup fails.
+
+tagdict-get-by-num TAGDICT INT => TAG-NAME or #f
+  Translate from a numeric tag value to a symbolic representation,
+if it exists. Return #f otherwise.
+
+tagdict-tagval-get-by-name TAGDICT TAG-NAME VAL-NAME => INT
+  where VAL-NAME is a symbol.
+Translate from the symbolic representation of a value associated
+with TAG-NAME in the TIFF directory, into the numeric representation.
+An error is raised if the lookup fails.
+
+tagdict-tagval-get-by-num TAGDICT TAG-NAME INT => VAL-NAME or #f
+  Translate from a numeric value associated with TAG-NAME in the TIFF
+directory to a symbolic representation, if it exists. Return #f
+otherwise.
+
+make-tagdict ((TAG-NAME INT (VAL-NAME . INT) ...) ...)
+  Build a tag dictionary
+
+tagdict? TAGDICT -> BOOL
+
+tagdict-add-all DEST-DICT SRC-DICT -> DEST-DICT
+  Join two dictionaries
+
+tiff-standard-tagdict : TAGDICT
+  The variable tiff-standard-tagdict is initialized to the dictionary
+of standard TIFF tags (which you may look up in the first section above
+or in the source, tiff.scm).
+
+Usage scenario:
+   (tagdict-get-by-name  tiff-standard-tagdict 'TIFFTAG:IMAGEWIDTH) => 256
+   (tagdict-get-by-num   tiff-standard-tagdict 256) => 'TIFFTAG:IMAGEWIDTH
+   (tagdict-tagval-get-by-name tiff-standard-tagdict
+      'TIFFTAG:COMPRESSION 'LZW) => 5
+   (tagdict-tagval-get-by-num  tiff-standard-tagdict
+      'TIFFTAG:COMPRESSION 5) => 'LZW
+
+   (define extended-tagdict
+      (tagdict-add-all tiff-standard-tagdict
+         (make-tagdict
+	   '((WAupper_left_lat 33004)
+	     (WAhemisphere 33003 (North . 1) (South . 2))))))
+
+
+*** TIFF directory entry
+
+a descriptor of a TIFF "item", which can be image data, document description,
+time stamp, etc, depending on the tag. Thus an entry has the following
+structure:
+ unsigned short tag;
+ unsigned short type;          // data type: byte, short word, etc.
+ unsigned long  count;         // number of items; length in spec
+ unsigned long  val_offset;    // byte offset to field data
+
+The values associated with each entry are disjoint and may appear anywhere
+in the file (so long as they are placed on a word boundary).
+
+Note, If the value takes 4 bytes or less, then it is placed in the offset
+field to save space.  If the value takes less than 4 bytes, it is
+*left*-justified in the offset field.
+Note, that it's always *left* justified (stored in the lower bytes)
+no matter what the byte order (big- or little- endian) is!
+Here's the precise quote from the TIFF 6.0 specification:
+"To save time and space the Value Offset contains the Value instead of
+pointing to the Value if and only if the Value fits into 4 bytes. If
+the Value is shorter than 4 bytes, it is left-justified within the
+4-byte Value Offset, i.e., stored in the lower- numbered
+bytes. Whether the Value fits within 4 bytes is determined by the Type
+and Count of the field."
+
+tiff-dir-entry? TIFF-DIR-ENTRY => BOOLEAN
+tiff-dir-entry-tag TIFF-DIR-ENTRY => INTEGER
+tiff-dir-entry-type TIFF-DIR-ENTRY => INTEGER
+tiff-dir-entry-count TIFF-DIR-ENTRY => INTEGER
+tiff-dir-entry-val-offset TIFF-DIR-ENTRY => INTEGER
+tiff-dir-entry-value TIFF-DIR-ENTRY => VALUE
+
+print-tiff-dir-entry TIFF-DIR-ENTRY TAGDICT OPORT -> UNSPECIFIED
+  Print the contents of TIFF-DIR-ENTRY onto the output port OPORT
+using TAGDICT to convert tag identifiers to symbolic names
+
+
+*** TIFF Image File Directory
+
+TIFF directory is a collection of TIFF directory entries. The entries
+are sorted in an ascending order by tag.
+Note, a TIFF file can contain more than one directory (chained together).
+We handle only the first one.
+
+We treat a TIFF image directory somewhat as an ordered, immutable,
+dictionary collection, see SRFI-44.
+
+tiff-directory? VALUE => BOOLEAN
+tiff-directory-size TIFF-DIRECTORY => INTEGER
+tiff-directory-empty? TIFF-DIRECTORY => BOOLEAN
+
+tiff-directory-get TIFF-DIRECTORY KEY [ABSENCE-THUNK] => VALUE
+  KEY can be either a symbol or an integer.
+If the lookup fails, ABSENCE-THUNK, if given, is evaluated and its value
+is returned. If ABSENCE-THUNK is omitted, the return value on failure
+is #f.
+
+tiff-directory-get-as-symbol TIFF-DIRECTORY KEY [ABSENCE-THUNK] => VALUE
+  KEY must be a symbol.
+If it is possible, the VALUE is returned as a symbol, as translated
+by the tagdict.
+
+tiff-directory-fold-left TIFF-DIRECTORY FOLD-FUNCTION SEED-VALUE
+            ... => seed-value ...
+  The fold function receives a tiff-directory-entry as a value
+
+read-tiff-file:: EPORT [PRIVATE-TAGDICT] -> TIFF-DIRECTORY
+print-tiff-directory:: TIFF-DIRECTORY OPORT -> UNSPECIFIED
+
+
+
+** Usage example: tiff prober
+
+The scripts probe-tiff and equivalently tiff-prober.scm read a TIFF file
+and print out its directory (as well as values of a few "important" tags).
+The scripts (or script headers) assume that the executable scsh resides
+in /usr/local/bin, and that the environment variable SCSH_LIB_DIRS lists
+the sunterlib directory with the config file sunterlib.scm; cf. the reference
+manual about "Running Scsh\Scsh command-line switches\Switches".
+
+Usage
+        probe-tiff tiff-file1 ...
+or
+        tiff-prober.scm tiff-file1 ...
+
+Structure tiff-prober exports the entry point for the scripts:
+
+tiff-prober ARGV => UNSPECIFIED
+Call, for instance, (tiff-prober '("foo" "bsp.tiff")).
+
+
+** Validating the library
+
+The valdidating code is in sunterlib/scsh/tiff/vtiff.scm and assumes that
+the tiffed GNU logo sunterlib/tiff/gnu-head-sm.tif resides in the working
+directory.  In that situation you may go
+                                          ,in tiff-testbed  ; and
+                                          ,load vtiff.scm
+Alternatively make sure that the env variable SCSH_LIB_DIRS lists the
+directory with sunterlib.scm (just as for the tiff prober, see above)
+and run vtiff.scm as script.
+
+                                   oOo
+

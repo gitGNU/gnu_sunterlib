@@ -1,0 +1,3 @@
+#! /usr/local/bin/scsh \
+-e tiff-prober -ll sunterlib.scm -o tiff-prober -s
+!#
