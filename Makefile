@@ -93,7 +93,7 @@ uninstall :
 .PHONY : dist
 dist :
 	mkdir sunterlib-$(version)
-	cp COPYING Makefile NEWS README sunterlib-$(version)/
+	cp COPYING INSTALL Makefile NEWS README README.admin README.contrib sunterlib-$(version)/
 	cp -r build sunterlib-$(version)/build
 	cp -r s48 sunterlib-$(version)/s48
 	cp -r scsh sunterlib-$(version)/scsh
