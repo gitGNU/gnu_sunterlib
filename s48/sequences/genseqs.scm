@@ -19,23 +19,28 @@
 ;;; sequence-any sequences-any
 ;;; sequence-every sequences-every
 
-(define (sequence->list s)
-  (let loop ((i (sequence-length s)) (xs '()))
-    (if (= 0 i) xs
-        (loop (- i 1) (cons (sequence-ref s (- i 1)) xs)))))
+(define (id x) x)
+
+(define (sequence->list s . opts)
+  (let-optionals opts ((start 0) (end (sequence-length s)))
+    (assert (<= 0 start end))
+    (let loop ((i end) (xs '()))
+      (if (= i start) xs
+          (loop (- i 1) (cons (sequence-ref s (- i 1)) xs))))))
 
 ;; unspecified return value as usual
-(define (sequence-fill! s x)
-  (let ((len (sequence-length s)))
+(define (sequence-fill! s x . opts)
+  (let-optionals opts ((start 0) (end (sequence-length s)))
+    (assert (<= 0 start end))
     (let loop ((i 0))
-      (if (< i len)
+      (if (< i end)
           (begin 
             (sequence-set! s i x)
             (loop (+ i 1)))))))
         
 
 (define (subsequence s start end)
-  (assert (<= start end))
+  (assert (<= 0 start end))
   (let* ((len (- end start))
          (ss (make-another-sequence s len)))
     (do ((i 0 (+ i 1)))
@@ -43,14 +48,16 @@
       (sequence-set! ss i (sequence-ref s (+ start i))))))
 
 
-(define (sequence-copy s)
-  (subsequence s 0 (sequence-length s)))
+(define (sequence-copy s . opts)
+  (let-optionals opts ((start 0) (end (sequence-length s)))
+    (assert (<= 0 start end))
+    (subsequence s start end)))
 
 
 (define (sequence-fold kons nil s . opts)
   (let-optionals opts ((start 0)
                        (end (sequence-length s)))
-    (assert (<= start end))
+    (assert (<= 0 start end))
     (let loop ((subtotal nil) (i start))
       (if (= i end) subtotal
           (loop (kons (sequence-ref s i) subtotal) (+ i 1))))))
@@ -74,7 +81,7 @@
 (define (sequence-fold-right kons nil s . opts)
   (let-optionals opts ((start 0)
                  (end (sequence-length s)))
-    (assert (<= start end))
+    (assert (<= 0 start end))
     (let loop ((subtotal nil) (i end))
       (if (= i start) subtotal
           (loop (kons (sequence-ref s (- i 1)) subtotal) (- i 1))))))
@@ -110,7 +117,7 @@
 
 (define (sequence-for-each proc seq . opts)
   (let-optionals opts ((start 0) (end (sequence-length seq)))
-    (assert (<= start end))
+    (assert (<= 0 start end))
     (do ((i start (+ i 1)))
         ((= i end) (unspecific))
       (proc (sequence-ref seq i)))))
@@ -142,42 +149,42 @@
       (sequence-set! res i (apply proc (map (lambda (s) (sequence-ref s i))
                                             ss))))))
 
-(define (sequence-any pred seq . opts)
+(define (sequence-any foo? seq . opts)
   (let-optionals opts ((start 0) (end (sequence-length seq)))
-    (assert (<= start end))
+    (assert (<= 0 start end))
     (let loop ((i start))
       (cond ((= i end) #f)
-            ((pred (sequence-ref seq i)) #t)
+            ((foo? (sequence-ref seq i)) => id)
             (else (loop (+ i 1)))))))
 
 
-(define (sequences-any pred . seqs) 
+(define (sequences-any foo? . seqs) 
   (if (null? seqs) #f
       (let ((end (apply min (map sequence-length seqs))))
         (let loop ((i 0))
           (cond ((= i end) #f)
-                ((apply pred (map (lambda (seq) (sequence-ref seq i))
+                ((apply foo? (map (lambda (seq) (sequence-ref seq i))
                                   seqs))
-                 #t)
+                 => id)
                 (else (loop (+ i 1))))))))
 
 
-(define (sequence-every pred seq . opts)
+(define (sequence-every foo? seq . opts)
   (let-optionals opts ((start 0) (end (sequence-length seq)))
-    (assert (<= start end))
-    (let loop ((i start))
-      (cond ((= i end) #t)
-            ((pred (sequence-ref seq i))
-             (loop (+ i 1)))
+    (assert (<= 0 start end))
+    (let loop ((i start) (res #t))
+      (cond ((= i end) res)
+            ((foo? (sequence-ref seq i))
+             => (lambda (r) (loop (+ i 1) r)))
             (else #f)))))
 
 
-(define (sequences-every pred . seqs) 
+(define (sequences-every foo? . seqs) 
   (if (null? seqs) #t
       (let ((end (apply min (map sequence-length seqs))))
         (let loop ((i 0))
           (cond ((= i end) #t)
-                ((apply pred (map (lambda (seq) (sequence-ref seq i))
+                ((apply foo? (map (lambda (seq) (sequence-ref seq i))
                                   seqs))
                  (loop (+ i 1)))
                 (else #f))))))

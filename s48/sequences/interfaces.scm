@@ -33,6 +33,7 @@
 ;; the sequence ADT etc.
 (define-interface behaved-sequences-face
   (export make-sequence-type
+          sequence-type?
           make-behaved-sequence-record
           behaved-sequence:type
           make-behaved-sequence/type
