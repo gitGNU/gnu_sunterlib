@@ -6,7 +6,7 @@ by using a counter for the free slots of the resource.
 
 (make-semaphore init) -> semaphore
 
-Constuctor for semaphores. INIT specifies the initial value of the
+Constructor for semaphores. INIT specifies the initial value of the
 semaphore's counter.
 
 
@@ -27,7 +27,7 @@ Increments the counter of the semaphore SEM.
 Calls SEMAPHORE-WAIT on SEM before calling THUNK. When THUNK returns,
 calls SEMAPHORE-POST on SEM and returns the return value of THUNK. If
 the evaluation of THUNK causes a non-local exit, SEMAPHORE-POST is
-also applied to SEM, likwise, if the control reenters the dynamic
+also applied to SEM, likewise, if the control reenters the dynamic
 extend of the evaluation of THUNK, SEMAPHORE-WAIT is called on SEM.
 
 

@@ -39,16 +39,16 @@ Loads config file containing structure definition. This is the same as
 in the REPL.
 
 
-(reify-structure structure-name) --> #{Rt-stucture surflet} 
+(reify-structure structure-name) --> rt-structure
 
 Creates a rt-structure object representing the structure which name
-STRUCUTURE-NAME (a symbol).
+STRUCTURE-NAME (a symbol).
 
 
 
 (load-structure rt-structure) --> unspecific
 
-Ensures that the definition of the unterlying structure has been
+Ensures that the definition of the underlying structure has been
 loaded. This is the same as
 
 ,load-package structure

@@ -1,4 +1,4 @@
-The stucture pps implements a portable version of the ps command. It
+The structure pps implements a portable version of the ps command. It
 currently supports FreeBSD (4.6), Mac OS X/Darwin (10.2/6.3), Linux
 (2.4.19), AIX (4.3.2), Solaris (SunOS 5.8) (tested version). As the ps
 command is not part of any standard this package is likely to fail if
