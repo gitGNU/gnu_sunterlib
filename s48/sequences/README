@@ -1,0 +1,348 @@
+sunterlib/s48/sequences -- Finite Sequences
+
+A sequence library in various structures dealing with
+* abstract sequences defined by their behaviour
+* general sequences or a union type of built-in and abstract sequences
+* vectors in particular
+  [ for list and string libraries ,open srfi-1 resp. srfi-13 ]
+
+The library comes in three structures:
+* BEHAVED-SEQUENCES -- basic procedures for abstract sequences
+* SEQUENCE-LIB      -- B.S. + procedures for general sequences
+* VECTOR-LIB        -- procedures for vectors
+
+The VECTOR-LIB exports some SCHEME bindings such as VECTOR-REF, but
+consists mainly of generic sequence code compiled with the basic
+sequence operation names bound to the corresponding vector procedures.
+The library is neither complete nor tweaked.  (The idea to recycle parts
+of the srfi-13 code came too late.)  It contains the folllowing procedures
+(in the categories of srfi-13):
+
+VECTOR-LIB            SEQUENCE-LIB             BEHAVED-SEQUENCES, also SL
+* Predicates or so
+vector?               sequence?                behaved-sequence?
+                                               sequence-type?
+[ versions with 1 sequence and optional start & end parameters ]
+vector-every          sequence-every
+vector-any            sequence-any
+[ versions with >1 sequence but no optional start & end parameters ]
+vectors-every         sequences-every
+vectors-any           sequences-any
+
+* Constructors
+make-vector           make-another-sequence    make-behaved-sequence/type
+vector                                         behaved-sequence/type
+                                               make-sequence-type
+                                               make-behaved-sequence-record
+
+* List & Sequence Conversion
+list->vector                                   list->behaved-sequence/type
+vector->list          sequence->list
+
+* Selection
+vector-length         sequence-length          behaved-sequence-length
+vector-ref            sequence-ref             behaved-sequence-ref
+                                               behaved-sequence:type
+vector-copy           sequence-copy
+subvector             subsequence
+
+* Modification
+vector-set!           sequence-set!            behaved-sequence-set!
+sequence-fill!        vector-fill!             behaved-sequence-fill!
+
+* Reverse & Append
+vector-append         sequence-append
+
+* Fold, Unfold & Map
+[ versions with 1 sequence and optional start & end parameters ]
+vector-map            sequence-map
+vector-for-each       sequence-for-each
+vector-fold           sequence-fold
+vector-fold-right     sequence-fold-right
+[ versions with >1 sequence but no start & end parameters ]
+vectors-map           sequences-map
+vectors-for-each      sequences-for-each
+vectors-fold          sequences-fold
+vectors-fold-right    sequences-fold-right
+
+NOTE -- Some procedures take several sequence arguments and create a 
+new sequence with the concrete type of the first one: SEQUENCE-APPEND
+and the SEQUENCES-procedures in the Map etc. category.  Problem:  the 
+target sequence may accept only elemens of a particular type (think
+of strings and characters).  Solution:  Provide a vector, say, as first 
+arg sequence:
+             (sequence-append "aber" '(1) '#(3 3)) breaks, but
+             (sequence-append '#() "aber" '(1) '#(3 3)) succeeds.
+
+I concede, that's not totally satisfying.  A shallow aftertaste of cat 
+pee remains in my mouth.  
+
+                                  *
+
+Prelude
+
+For our purposes, (each valid state of) a sequence with length n maps a 
+bounded segment of integers [0:n) into a set of Scheme values, typically
+Anything or Character.  Any kind Se of sequences with elements in T 
+supports the following basic operations: 
+
+  maker :     make n [x] ==> s
+    n in [0:oo),  optional x : T,  s : Se
+    The fresh sequence s represents a sequence of length n (mapping to x)
+  predicate : x ==> b 
+    x : Anything, b : Boolean
+    the type predicate `x in Se'
+  getter :    ref s k ==> s[k]
+    s in Se,  k in [0:n) with n = length s,  s[k] in T
+  setter :    set! s k x ==> unspec
+    s in Se,  x in T,  k in [0:n) with n = length s
+    effect: s[k] = x, s[other] as before
+  meter :     length s ==> n
+    s in ST, n in [0:oo) length of sequence
+
+
+This sequence facility supports the following kinds of sequences:
+
+  Vector
+  Behaved-Sequence := a record type (record packages data + behaviour)
+  Sequence := Vector | Byte-Vector | String | Proper-List | Behaved-Sequence
+
+Behaved-Sequences carry a SEQUENCE-TYPE record that contains MAKER, 
+PREDICATE, etc. procedures with the properties sketched above. 
+They are the official backdoor where user-defined sequence types enter 
+the general sequence lib.  There are Examples.
+
+[ Wouldn't ABSEQUENCE have been much more beautiful than BEHAVED-SEQUENCE? ]
+
+                                    *
+
+The Procedures
+
+Optional [START END] (abbreviating [START [END]]) arguments default to 0 
+resp. the sequence length.
+
+* Predicates
+
+(vector? x) ==> b
+(sequence? x) ==> b
+(behaved-sequence? x) ==> b
+(sequence-type? x) ==> b
+
+Synopsis:  The obvious type predicates.  Note that behaved-sequences
+are sequences and carry a sequence-type with them.  Sequence-types
+are not sequences but package the behaviour of concrete sequence types.
+
+                                    *
+
+(vector-every foo? s [start end]) ==> x
+(sequence-every foo? s [start end]) ==> x
+
+Synopsis:  Return the value x of (and (foo? s[start]) ... (foo? s[end-1])).
+
+                                    *
+
+(vector-any foo? s [start end]) ==> x
+(sequence-any foo? s [start end]) ==> x
+
+Synopsis:  Return the value x of (or (foo? s[start]) ... (foo? s[end-1])).
+
+                                   *
+
+(vectors-every foo? s0 ...) ==> b
+(sequences-every foo? s [start end]) ==> b
+
+Synopsis:  Return the value x of (and[0<=i<n] (foo? s0[i] ...)) with
+n := min.k sequence-length sk.
+
+                                   *
+
+(vectors-any foo? s0 ...) ==> b
+(sequences-any foo? s [start end]) ==> b
+
+Synopsis:  Return the value x of (or[0<=i<n] (foo? s0[i] ...)) with
+n := min.k sequence-length sk.
+
+                                  *
+
+Constructors
+
+(make-vector len [fill]) ==> v
+(make-behaved-sequence/type st len [fill]) ==> bs
+
+Synopsis:  Make a fresh vector V (behaved-sequence BS with sequence-type 
+ST) of length LEN (and all elements = FILL).
+
+                                  *
+
+(vector x0 ...) ==> v
+(behaved-sequence/type st x0 ...) ==> bs
+
+Synopsis:  Make a fresh vector V (behaved-sequence BS with sequence-type
+ST) of minimal length with the elements V[0] = X0, ... (BS[0] = X0, ...).
+
+                                  *
+
+(make-sequence-type maker predicate getter setter meter) ==> st
+
+Synopsis: Package the concrete sequence behaviour (basic procedures
+described in the prelude) in the sequence-type record ST.
+
+(make-behaved-sequence-record st data) ==> bs
+Synopsis:  Package the sequence-type ST and the concrete sequence DATA
+in the behaved-sequence record BS.
+
+                                  *
+
+List & Sequence Conversion
+
+(list->vector xs [start end]) ==> v
+(list->behaved-sequence/type st xs [start end]) ==> bs
+
+Synopsis:  Make a new vector V (behaved-sequence BS with sequence-type ST)
+representing the sequence xs[start],..,xs[end-1].
+
+                                 *
+
+(vector->list v [start end]) ==> xs
+(sequence->list s [start end]) ==> xs
+
+Synopsis:  Return xs = (list v[start] ... v[end-1]) etc.
+
+                                 *
+
+(vector-length v) ==> n
+(sequence-length s) ==> n
+(behaved-sequence-length bs) ==> n
+
+Synopsis:  Return length N of sequence represented by V : Vector, S :
+Sequence, BS : Behaved-Sequence.  You knew that, didn't you?
+                  
+                                 *
+
+(vector-ref v k) ==> v[k]
+(sequence-ref s k) ==> s[k]
+(behaved-sequence-ref bs k) ==> bs[k]
+
+                                 *
+
+(behaved-sequence:type bs) ==> st
+
+Synopsis:  Return sequence-type ST for concrete sequence packaged in 
+behaved-sequence BS.
+
+                                 *
+
+(vector-copy v0 [start end]) ==> v1
+(sequence-copy s0 [start end]) ==> s1
+
+Synopsis:  Copy v0[start],..,v0[end-1] into a new vector v1 of minimal 
+length.  Resp. represent s0[start],...,s0[end-1] as a new sequence S1 of
+the same type.
+
+                                 *
+
+(subvector v0 start end) ==> v1
+(subsequence s0 start end) ==> s1
+
+Synopsis:  Like xxx-copy with obligatory source index bounds.
+
+                                *
+
+Modification
+
+(vector-set! v i x) ==> unspec
+(sequence-set! s i x) ==> unspec
+(behaved-sequence-set! bs i x) ==> unspec
+
+Synopsis:  Set v[i] := x etc.
+
+                                *
+
+(vector-fill! v x [start end]) ==> unspec
+(sequence-fill! s x [start end]]) ==> unspec
+(behaved-sequence-fill! bs x [start end]) ==> unspec
+
+Synopsis:  Set v[i] := x for all i in [start:end) etc.
+
+                                *                              
+
+Reverse & Append
+
+(vector-append v0 ...) ==> v
+(sequence-append s0 s1 ...) ==> s
+
+Synoposis:  Make a new vector V (sequence S of type(S0)) representing
+you know what.  See the NOTE above.  
+
+                                *
+
+Fold, Unfold & Map
+
+(vector-map f v [start end]) ==> fv
+(vectors-map f v0 ...) ==> fv*
+(sequence-map f s [start end]) ==> fs
+(sequences-map f s0 s1 ...) ==> fs*
+
+Synopsis:  Make new vector FV (FV*, sequence FS of type(S), FS* of type(S0))
+representing the sequence f(v[start]),...,f(v[end-1]), resp. the 
+sequence (f(v0[i],...) : 0<=i<n) with n = min.k sequence-length sk, etc.
+See the NOTE above.
+
+                                *
+
+(vector-for-each proc v [start end]) ==> unspec
+(vectors-for-each f v0 ...) ==> unspec
+(sequence-for-each proc s [start end]) ==> unspec
+(sequences-for-each proc v0 ...) ==> unspec
+
+Synopsis:  Call (proc v[i]) for all i in [start:end) in some order, resp.
+call (proc v0[i] ...) for all i in [0:n) in some order with 
+n = min.k sequence-length vk, etc.  
+
+                                *
+
+(vector-fold kons nil v [start end]) ==> w
+(vectors-fold kons nil v0 ...) ==> w
+(sequence-fold kons nil s0 [start end]) ==> s
+(sequences-fold kons nil s0 ...) ==> s
+
+Synopsis:  Let  y o x := (kons x y)  resp.
+                y o (x0 ...) := (kons x0 ... y),
+ 
+and let o be left-associative (so that we can spare us the brackets).  
+Compute
+        w = nil o v[start] o ... o v[end-1],  resp.
+        w = nil o (v0[0] ...) o ... o (v0[n-1] ...)
+with
+        n := min.k sequence-length vk;
+
+etc., and see the NOTE above.
+
+                               *
+
+(vector-fold-right kons nil v [start end]) ==> w
+(vectors-fold-right kons nil v0 ...) ==> w
+(sequence-fold-right kons nil s0 [start end]) ==> s
+(sequences-fold-right kons nil s0 ...) ==> s
+
+Synopsis:  Let  x o y := (kons x y)       resp.
+         (x0 ...) o y := (kons x0 ... y),
+ 
+and let o be right-associative (so that we can spare us the brackets).  
+Compute
+        w = v[start] o ... o v[end-1] o nil,        resp.
+        w = (v0[0] ...) o ... o (v0[n-1] ...) o nil
+with
+        n := min.k sequence-length vk;
+
+etc., and see the NOTE above.
+
+                                 *
+
+Examples: forthcoming
+
+                                 *
+
+Sela (for now).
+
+                                oOo
