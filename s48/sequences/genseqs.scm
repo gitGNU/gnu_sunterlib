@@ -2,11 +2,11 @@
 ; See the file COPYING distributed with the Scheme Untergrund Library
 
 ;;; generic sequence procedures -- no explicit dispatch on sequence type
-;;; 
-;;; The code should work with the names of the elementary sequence 
+;;;
+;;; The code should work with the names of the elementary sequence
 ;;; operations bound to the umbrella procedures that dispatch on the
 ;;; sequence type, or to the specific procedures of a particular type,
-;;; 
+;;;
 ;;; sequence->list
 ;;; sequence-fill!
 ;;; subsequence
@@ -18,6 +18,7 @@
 ;;; sequence-fold-right sequence-fold-right
 ;;; sequence-any sequences-any
 ;;; sequence-every sequences-every
+;;; sequence= sequences=
 
 (define (id x) x)
 
@@ -41,10 +42,10 @@
     (assert (<= 0 start end))
     (let loop ((i start))
       (if (< i end)
-          (begin 
+          (begin
             (sequence-set! s i x)
             (loop (+ i 1)))))))
-        
+
 
 (define (sequence-copy/maker maker s . opts)
   (let-optionals opts ((start 0)
@@ -61,7 +62,7 @@
   (apply sequence-copy/maker
          (lambda (n) (make-another-sequence s n))
          s opts))
-  
+
 
 ;; ...
 (define (subsequence s start end)
@@ -90,8 +91,8 @@
                                               ss)
                                          (list subtotal)))
                     (+ i 1)))))))
-                                         
-                           
+
+
 (define (sequence-fold-right kons nil s . opts)
   (let-optionals opts ((start 0)
                  (end (sequence-length s)))
@@ -186,7 +187,7 @@
             (else (loop (+ i 1)))))))
 
 
-(define (sequences-any foo? . seqs) 
+(define (sequences-any foo? . seqs)
   (if (null? seqs) #f
       (let ((end (sequences-length seqs)))
         (let loop ((i 0))
@@ -207,7 +208,7 @@
             (else #f)))))
 
 
-(define (sequences-every foo? . seqs) 
+(define (sequences-every foo? . seqs)
   (if (null? seqs) #t
       (let ((end (sequences-length seqs)))
         (let loop ((i 0))
@@ -218,10 +219,25 @@
                 (else #f))))))
 
 
+(define (sequence= elt= s0 s1 . opts)
+  (assert (procedure? elt=))
+  (let-optionals opts ((start0 0) (end0 (sequence-length s0))
+                       (start1 0) (end1 (sequence-length s1)))
+    (and (= (- end0 start0)
+            (- end1 start1))
+         (let loop ((i0 start0) (i1 start1))
+           (cond ((= i0 end0) #t)
+                 ((elt= (sequence-ref s0 i0)
+                        (sequence-ref s1 i1))
+                  (loop (+ i0 1) (+ i1 1)))
+                 (else #f))))))
 
 
-
-
-
-
-
+(define (sequences= elt= . seqs)
+  (assert (procedure? elt=))
+  (if (null? seqs) #t
+      (let loop ((s (first seqs)) (ss (rest seqs)))
+        (cond ((null? ss) #t)
+              ((sequence= elt= s (first ss))
+               (loop (first ss) (rest ss)))
+              (else #f)))))

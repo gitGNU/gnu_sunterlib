@@ -18,7 +18,7 @@ the basic sequence operation names bound to the corresponding vector
 procedures.  The library is neither complete nor tweaked nor tested
 sytematically.  (The idea to recycle parts of the srfi-13 code came
 too late.)  It contains the folllowing procedures, arranged in
-columns=structures and `* categories' from SRFI-13.
+columns=structures and `* categories' from SRFI-13 and -1.
 
 
 VECTOR-LIB            SEQUENCE-LIB             ABSEQUENCES, also SL
@@ -31,6 +31,10 @@ vector-any            sequence-any
 [ versions with >1 sequence but no optional start & end parameters ]
 vectors-every         sequences-every
 vectors-any           sequences-any
+[ 2 seq. args and opt. start & end parms for both seqs ]
+vector=               sequence=
+[ >=0 sequence args, no start & end parameters ]
+vectors=              sequences=
 
 * Constructors
 make-vector           make-another-sequence    make-absequence/behavior
@@ -133,6 +137,7 @@ library grows, but please report deviations anyway.
   the respective srfi, the result complies with the srfi spec.
   E.g. ``sequences-fold = fold'' on lists,
        ``sequence-fold = string-fold'' on strings.
+  Exception:  SEQUENCE= vs. STRING= -- parameter lists don't match (ELT=)
 
 
 * Predicates
@@ -174,6 +179,24 @@ n := min.k sequence-length sk.
 
 Synopsis:  Return the value x of (or[0<=i<n] (foo? s0[i] s1[i] ...)) with
 n := min.k sequence-length sk.
+
+                                  *
+
+(vector= elt= s0 s1 [start0 end0 start1 end1]) --> b
+(sequence= elt= s0 s1 [start0 end0 start1 end1]) --> b
+
+Synopsis:  Return boolean(S0 and S1 represent the same sequence), i.e.
+B = (and (elt= s0[start0] s1[start1]) ...)
+[ deviates from STRING= in SRFI-13 due to ELT= parameter ]
+
+                                  *
+
+(vectors= elt= s0 ...) --> b
+(sequences= elt= s0 ...) --> b
+
+Synopsis:  Return B = boolean(S0, ... represent the same sequence), i.e.
+B = #t given <2 sequence args, and
+  = (and[k=0,...) (sequence= elt= s(k) s(k+1))) otherwise.
 
                                   *
 

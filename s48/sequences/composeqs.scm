@@ -24,7 +24,7 @@
          (apply list-fill! s x opts))
         (else
          (apply contiguous-sequence-fill! s x opts))))
-   
+
 
 (define (subsequence s start end)
   (cond ((vector? s)
@@ -135,6 +135,9 @@
 (define sequences-fold-right contiguous-sequences-fold-right)
 (define sequences-any contiguous-sequences-any)
 (define sequences-every contiguous-sequences-every)
+(define sequence= contiguous-sequence=)
+(define sequences= contiguous-sequences=)
 ;; the MAKER parameter works only with general sequences
 (define sequence-copy/maker contiguous-sequence-copy/maker)
 (define sequence-map/maker contiguous-sequence-map/maker)
+

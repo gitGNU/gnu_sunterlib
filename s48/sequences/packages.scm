@@ -17,7 +17,7 @@
         srfi-13                         ; string procs
         scheme)
   (files specseqs))
-        
+
 ;; basic sequence accessors etc.
 (define-structure sequence-basics sequence-basics-face
   (open krims                           ; gen-dispatch
@@ -35,7 +35,7 @@
   (open sequence-basics
         krims                           ; assert
         util                            ; unspecific
-        srfi-1                          ; append!
+        srfi-1+                         ; append! rest
         srfi-23                         ; error
         let-opt                         ; let-optionals [ from scsh ]
         scheme)
@@ -69,14 +69,16 @@
     (define vector-for-each sequence-for-each)
     (define vector-fold sequence-fold)
     (define vector-fold-right sequence-fold-right)
-    (define vector-any sequence-any) 
-    (define vector-every sequence-every) 
+    (define vector-any sequence-any)
+    (define vector-every sequence-every)
+    (define vector= sequence=)
     (define vectors-map sequences-map)
     (define vectors-for-each sequences-for-each)
     (define vectors-fold sequences-fold)
     (define vectors-fold-right sequences-fold-right)
-    (define vectors-any sequences-any) 
-    (define vectors-every sequences-every) 
+    (define vectors-any sequences-any)
+    (define vectors-every sequences-every)
+    (define vectors= sequences=)
     (define (list->vector xs . opts)
       (let-optionals opts ((start 0) (end (length xs)))
         (assert (<= 0 start end))
@@ -84,7 +86,7 @@
           (do ((i start (+ i 1))
                (ys xs (rest ys)))
               ((= i end) v)
-            (vector-set! v (- i start) (first ys))))))             
+            (vector-set! v (- i start) (first ys))))))
     ))
 
 

@@ -23,7 +23,9 @@
           sequence-fold sequences-fold
           sequence-fold-right sequences-fold-right
           sequence-any sequences-any
-          sequence-every sequences-every))
+          sequence-every sequences-every
+          sequence= sequences=
+          ))
 
 ;; specialised sequence operations (for lists, actually)
 (define-interface sequence-specifics-face
@@ -47,8 +49,8 @@
           absequence-length))
 
 ;; the basic + extra sequence procedures
-;; [ extends the union of SEQUENCE-BASICS- and -EXTRAS-INTERFACE with 
-;;   `VECTOR' replacing `SEQUENCE' ] 
+;; [ extends the union of SEQUENCE-BASICS- and -EXTRAS-INTERFACE with
+;;   `VECTOR' replacing `SEQUENCE' ]
 (define-interface vector-lib-face
   (export ;; std constructors
           vector
@@ -65,17 +67,19 @@
           subvector
           vector-copy
           vector-append
-          vector-map   ; forget the optional MAKER arg 
+          vector-map   ; forget the optional MAKER arg
           vector-for-each
           vector-fold
           vector-fold-right
           vector-any
           vector-every
+          vector=
           vectors-map  ; but not vectors-map/maker
           vectors-for-each
           vectors-fold
           vectors-fold-right
           vectors-any
           vectors-every
+          vectors=
           ))
 
