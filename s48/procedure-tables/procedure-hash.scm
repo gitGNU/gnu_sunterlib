@@ -5,7 +5,4 @@
 ;;; the distribution.
 
 (define (procedure-hash proc)
-  (debug-data-uid
-   (template-debug-data
-    (closure-template
-     (loophole :closure proc)))))
+  (template-id (closure-template (loophole :closure proc))))

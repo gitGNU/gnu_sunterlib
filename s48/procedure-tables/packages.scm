@@ -3,8 +3,7 @@
         more-types
         loopholes
         closures
-        disclosers
-        debug-data)
+        disclosers)
   (files procedure-hash))
 
 (define-structure procedure-tables procedure-tables-interface
