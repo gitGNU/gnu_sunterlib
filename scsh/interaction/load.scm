@@ -1,3 +1,15 @@
+(define-interface repls-interface
+  (export script-repl
+	  remote-repl))
+
+(define-interface inspect-exception-interface
+  (export with-inspecting-handler
+          with-fatal-and-capturing-error-handler
+          display-continuation))
+
+(define-interface socket2stdports-interface
+  (export socket<->stdports))
+
 (define-structure repls repls-interface
   (open scheme-with-scsh
 	command-levels
@@ -8,7 +20,7 @@
   (files repl))
 
 (define-structure inspect-exception inspect-exception-interface
-					    
+
   (open scheme-with-scsh
         rt-modules
         exceptions
