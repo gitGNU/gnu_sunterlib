@@ -4,6 +4,7 @@
 	  dir-stream-map
 	  dir-stream-filter
 	  dir-stream-filter-map
+	  dir-stream-fold-right
 	  fs-object-parent
 	  fs-object-name
 	  fs-object-info
