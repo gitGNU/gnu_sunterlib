@@ -93,9 +93,9 @@ explicitly, like so:
 Prelude
 
 For our purposes, (each valid state of) a sequence with length n maps a
-bounded segment of integers [0:n) into a set of Scheme values, typically
-Anything or Character.  Any kind Sq of sequences with elements in T
-supports the following basic operations, whatever the names, with the
+bounded segment of integers [0:n) into a set of Scheme values or objects,
+typically Anything or Character.  Any kind Sq of sequences with elements
+in T supports the following basic operations, whatever the names, with the
 obvious jobs:
                  maker :     (make-sq n [e]) --> s
                  predicate : (sq? x) --> b
