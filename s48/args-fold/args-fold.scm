@@ -185,22 +185,13 @@
                                         #f
                                         #f
                                         unrecognized-option-proc))))
-                      (if (and (option-required-arg? option)
-                               (pair? args))
-                          (let-values
-                              ((seeds (apply (option-processor option)
-                                             option
-                                             name
-                                             (car args)
-                                             seeds)))
-                            (scan-args (cdr args) seeds))
-                          (let-values
-                              ((seeds (apply (option-processor option)
-                                             option
-                                             name
-                                             #f
-                                             seeds)))
-                            (scan-args args seeds)))))
+                      (let-values
+                          ((seeds (apply (option-processor option)
+                                         option
+                                         name
+                                         #f
+                                         seeds)))
+                        (scan-args args seeds))))
                    (;; (rx bos "-" (submatch (+ any)))
                     (and (> (string-length arg) 1)
                          (char=? #\- (string-ref arg 0)))
