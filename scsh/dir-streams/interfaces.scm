@@ -1,14 +1,21 @@
 (define-interface dir-streams-interface
   (export dir-stream-from-dir-name
-	  dir-stream-for-each
-	  dir-stream-map
-	  dir-stream-filter
-	  dir-stream-filter-map
-	  dir-stream-fold-right
+	  dir-stream?
+	  dir-stream-info
+
+	  fs-object?
 	  fs-object-parent
 	  fs-object-name
 	  fs-object-info
-	  fs-object-file-name))
+	  fs-object-file-name
+	  
+	  dir-stream-files-stream
+	  dir-stream-subdir-stream
+	  dir-stream-filter
+	  dir-stream-fold-right
+	  dir-stream-map
+	  dir-stream-filter-map
+	  dir-stream-for-each))
 
 (define-interface dir-stream-predicates-interfaces
   (export fs-object-size-less-than?
