@@ -50,13 +50,15 @@
 	       s))
 
 (define (afs-permissions->string afs-perms)
-  (fold (lambda (perm s)
-	  (if (enum-set-member? afs-perms perm)
-	      (string-append s (string (afs-permission->char perm)))
-	      s))
-	""
-	(vector->list the-afs-permissions)))
-
+  (if (null? (enum-set->list afs-perms))
+      "none"
+      (fold (lambda (perm s)
+	      (if (enum-set-member? afs-perms perm)
+		  (string-append s (string (afs-permission->char perm)))
+		  s))
+	    ""
+	    (vector->list the-afs-permissions))))
+  
 (define all-afs-permissions
   (make-afs-permissions (map char->afs-permission (string->list "rlidwka"))))
 
