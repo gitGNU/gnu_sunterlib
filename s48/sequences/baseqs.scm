@@ -50,15 +50,8 @@
         ((vector? s) (apply make-vector len maybe-fill))
         ((list? s) (apply make-list len maybe-fill))
         ((behaved-sequence? s)
-         (apply make-behaved-sequence
+         (apply make-behaved-sequence/type
                 (behaved-sequence:type s) len maybe-fill))
-        (else (error "make-another : unsupported sequence(?) type" s))))  
-
-
-
-
-
-
-
-
+        (else (error "make-another-sequence : first arg not a sequence?"
+                     s))))  
 

@@ -9,19 +9,21 @@
         scheme)
   (files uniseqs))
 
-;; some sequence operations tuned for lists
+;; specialists for lists, vectors, strings
 (define-structure sequence-specifics sequence-specifics-face
-  (open srfi-1         ; drop first take make-list pair-for-each
+  (open srfi-1                          ; list procs
+        srfi-13                         ; string procs
         scheme)
   (files specseqs))
         
 ;; basic sequence accessors etc.
 (define-structure sequence-basics sequence-basics-face
   (open krims                           ; gen-dispatch
-        let-opt                         ; :optional
+        let-opt                         ; :optional [ from scsh ]
         sequence-specifics              ; list-set! make-list
         behaved-sequences
         byte-vectors
+        srfi-1                          ; make-list
         srfi-23                         ; error
         scheme)
   (files baseqs))
@@ -33,8 +35,47 @@
         util                            ; unspecific
         srfi-1                          ; append!
         srfi-23                         ; error
+        let-opt                         ; let-optionals [ from scsh ]
         scheme)
   (files genseqs))
+
+
+
+;; sequence procedures specialised to vectors
+(define-structure vector-lib vector-lib-face
+  (open krims                           ; assert
+        util                            ; unspecific
+        let-opt                         ; let-optionals [ from scsh ]
+        srfi-1                          ; append!
+        scheme)
+  ;; bind the basic operations to vector specialists
+  (begin
+    (define sequence? vector?)
+    (define sequence-length vector-length)
+    (define sequence-ref vector-ref)
+    (define sequence-set! vector-set!)
+    (define (make-another-sequence v k . maybe-fill)
+      (apply make-vector k maybe-fill)))
+  (files genseqs)
+  ;; rename extras not supplied by scheme
+  (begin
+    (define subvector subsequence)
+    (define vector-copy sequence-copy)
+    (define vector-append sequence-append)
+    (define vector-map sequence-map)
+    (define vector-for-each sequence-for-each)
+    (define vector-fold sequence-fold)
+    (define vector-fold-right sequence-fold-right)
+    (define vector-any sequence-any) 
+    (define vector-every sequence-every) 
+    (define vectors-map sequences-map)
+    (define vectors-for-each sequences-for-each)
+    (define vectors-fold sequences-fold)
+    (define vectors-fold-right sequences-fold-right)
+    (define vectors-any sequences-any) 
+    (define vectors-every sequences-every) 
+    ))
+
 
 ;; elementary and other general sequence operations, typically dispatching
 ;; early on the sequence type in order to make use of built-ins or special
@@ -47,7 +88,10 @@
         sequence-basics
         behaved-sequences
         sequence-specifics
-        srfi-1                          ; list-copy
         byte-vectors
+        vector-lib
+        srfi-1                          ; list procs
+        srfi-13                         ; string procs
+        let-opt                         ; let-optionals [ from scsh ]
         scheme)
   (files composeqs))

@@ -12,11 +12,12 @@
 ;;; subsequence
 ;;; sequence-copy
 ;;; sequence-append
-;;; sequence-map
-;;; sequence-for-each
-;;; sequence-fold
-;;; sequence-every
-;;; sequence-every/bounds
+;;; sequence-map sequences-map
+;;; sequence-for-each sequences-for-each
+;;; sequence-fold sequences-fold
+;;; sequence-fold-right sequence-fold-right
+;;; sequence-any sequences-any
+;;; sequence-every sequences-every
 
 (define (sequence->list s)
   (let loop ((i (sequence-length s)) (xs '()))
@@ -34,6 +35,7 @@
         
 
 (define (subsequence s start end)
+  (assert (<= start end))
   (let* ((len (- end start))
          (ss (make-another-sequence s len)))
     (do ((i 0 (+ i 1)))
@@ -45,18 +47,20 @@
   (subsequence s 0 (sequence-length s)))
 
 
-(define (sequence-fold/3 kons nil s)
-  (let ((end (sequence-length s)))
-    (let loop ((subtotal nil) (i 0))
+(define (sequence-fold kons nil s . opts)
+  (let-optionals opts ((start 0)
+                       (end (sequence-length s)))
+    (assert (<= start end))
+    (let loop ((subtotal nil) (i start))
       (if (= i end) subtotal
           (loop (kons (sequence-ref s i) subtotal) (+ i 1))))))
 
 
-(define (sequence-fold kons nil seq . seqs)
+(define (sequences-fold kons nil seq . seqs)
   (if (null? seqs)
-      (sequence-fold/3 kons nil seq)
+      (sequence-fold kons nil seq)
       (let* ((ss (cons seq seqs))
-             ;; are we morally obliged to use a fold/3 here?
+             ;; are we morally obliged to use FOLD here?
              (end (apply min (map sequence-length ss))))
         (let loop ((subtotal nil) (i 0))
           (if (= i end) subtotal
@@ -67,6 +71,30 @@
                     (+ i 1)))))))
                                          
                            
+(define (sequence-fold-right kons nil s . opts)
+  (let-optionals opts ((start 0)
+                 (end (sequence-length s)))
+    (assert (<= start end))
+    (let loop ((subtotal nil) (i end))
+      (if (= i start) subtotal
+          (loop (kons (sequence-ref s (- i 1)) subtotal) (- i 1))))))
+
+
+(define (sequences-fold-right kons nil seq . seqs)
+  (if (null? seqs)
+      (sequence-fold-right kons nil seq)
+      (let* ((ss (cons seq seqs))
+             ;; are we morally obliged to use FOLD here?
+             (end (apply min (map sequence-length ss))))
+        (let loop ((subtotal nil) (i (- end 1)))
+          (if (= i -1) subtotal
+              (loop (apply kons (append! (map (lambda (s)
+                                                (sequence-ref s i))
+                                              ss)
+                                         (list subtotal)))
+                    (- i 1)))))))
+
+
 (define (sequence-append . seqs)
   (if (null? seqs) (vector)
       (let* ((len (apply + (map sequence-length seqs)))
@@ -80,7 +108,15 @@
                                  (sequence-ref s i)))))))))
 
 
-(define (sequence-for-each proc seq . seqs)
+(define (sequence-for-each proc seq . opts)
+  (let-optionals opts ((start 0) (end (sequence-length seq)))
+    (assert (<= start end))
+    (do ((i start (+ i 1)))
+        ((= i end) (unspecific))
+      (proc (sequence-ref seq i)))))
+
+
+(define (sequences-for-each proc seq . seqs)
   (let* ((ss (cons seq seqs))
          (end (apply min (map sequence-length ss))))
     (do ((i 0 (+ i 1)))
@@ -88,7 +124,16 @@
       (apply proc (map (lambda (s) (sequence-ref s i)) ss)))))
 
 
-(define (sequence-map proc seq . seqs)
+(define (sequence-map proc seq . opts)
+  (let-optionals opts ((start 0) (end (sequence-length seq)))
+    (assert (<= start end))
+    (let ((res (make-another-sequence seq end)))
+      (do ((i start (+ i 1)))
+          ((= i end) res)
+        (sequence-set! res i (proc (sequence-ref seq i)))))))
+
+
+(define (sequences-map proc seq . seqs)
   (let* ((ss (cons seq seqs))
          (end (apply min (map sequence-length ss)))
          (res (make-another-sequence seq end)))
@@ -97,24 +142,41 @@
       (sequence-set! res i (apply proc (map (lambda (s) (sequence-ref s i))
                                             ss))))))
 
+(define (sequence-any pred seq . opts)
+  (let-optionals opts ((start 0) (end (sequence-length seq)))
+    (assert (<= start end))
+    (let loop ((i start))
+      (cond ((= i end) #f)
+            ((pred (sequence-ref seq i)) #t)
+            (else (loop (+ i 1)))))))
 
-(define (sequence-every pred . seqs) 
+
+(define (sequences-any pred . seqs) 
+  (if (null? seqs) #f
+      (let ((end (apply min (map sequence-length seqs))))
+        (let loop ((i 0))
+          (cond ((= i end) #f)
+                ((apply pred (map (lambda (seq) (sequence-ref seq i))
+                                  seqs))
+                 #t)
+                (else (loop (+ i 1))))))))
+
+
+(define (sequence-every pred seq . opts)
+  (let-optionals opts ((start 0) (end (sequence-length seq)))
+    (assert (<= start end))
+    (let loop ((i start))
+      (cond ((= i end) #t)
+            ((pred (sequence-ref seq i))
+             (loop (+ i 1)))
+            (else #f)))))
+
+
+(define (sequences-every pred . seqs) 
   (if (null? seqs) #t
       (let ((end (apply min (map sequence-length seqs))))
         (let loop ((i 0))
           (cond ((= i end) #t)
-                ((apply pred (map (lambda (seq) (sequence-ref seq i))
-                                  seqs))
-                 (loop (+ i 1)))
-                (else #f))))))
-
-
-(define (sequence-every/bounds start end pred . seqs) 
-  (assert (<= 0 start end))
-  (if (null? seqs) #t
-      (let ((eff-end (apply min end (map sequence-length seqs))))
-        (let loop ((i start))
-          (cond ((= i eff-end) #t)
                 ((apply pred (map (lambda (seq) (sequence-ref seq i))
                                   seqs))
                  (loop (+ i 1)))

@@ -39,8 +39,21 @@
   ((sequence-type:meter (behaved-sequence:type s))
    (behaved-sequence:instance s)))
 
-;; note the necessary TYPE arg contrasting with MAKE-VECTOR etc.
-(define (make-behaved-sequence type k . maybe-fill)
-  (make-behaved-sequence-record type
-                                (apply (sequence-type:maker type)
+(define (make-behaved-sequence/type st k . maybe-fill)
+  (make-behaved-sequence-record st
+                                (apply (sequence-type:maker st)
                                        k maybe-fill)))
+
+(define (list->behaved-sequence/type st xs)
+  (let* ((len (length xs))
+         (s (make-behaved-sequence/type st len)))
+    (do ((i 0 (+ i 1))
+         (xs xs (cdr xs)))
+        ((null? xs) s)
+      (behaved-sequence-set! s i (car xs))))) 
+
+(define (behaved-sequence/type st . args)
+  (list->behaved-sequence/type st args))
+
+
+

@@ -11,7 +11,16 @@
         scheme)
   (files krims))
 
+;; srfi-1 + REST
+(define-structure srfi-1+
+  (compound-interface srfi-1-face
+                      (export rest))
+  (open srfi-1 scheme)
+  (begin (define rest cdr)))
+
 ;; srfi-9 + define-record-discloser
+;; [ extended version of the srfi-9 structure def 
+;;   from scsh-0.6.3/scheme/more-packages.scm ]
 (define-structure srfi-9+
   (export (define-record-type :syntax)
           define-record-discloser)
@@ -23,3 +32,6 @@
 	((define-record-type type-name . stuff)
 	 (sys:define-record-type type-name type-name . stuff))))
     (define define-record-discloser sys:define-record-discloser)))
+
+
+
