@@ -3,7 +3,9 @@
    profile-init!
    display-profile
    (define-prof :syntax)
-   (account-for :syntax)))(define-structure mini-profiler mini-profiler-interface
+   (account-for :syntax)))
+
+(define-structure mini-profiler mini-profiler-interface
   (open scheme
 	table
 	formats
