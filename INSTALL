@@ -6,20 +6,22 @@ The Scheme Untergrund Library requires that scsh is installed on your
 system. If you don't have it, please obtain and install it before
 building sunterlib. See the webpage <http://scsh.net/>.
 
-CONFIGURING SUNTERLIB
+BUILD
 
-Sunterlib does not require configuration at this time. You may want to
-adjust the Makefile's "prefix" variable to set the installation
-directory.
-
-BUILDING SUNTERLIB
-
-Type 'make' to build the package.
+If you obtained the source from cvs, type 'make' to build the
+package. This is not necessary if you have a tar distribution.
 
 INSTALLATION
 
-Type 'make install' to install the package.
+As of version 0.6, sunterlib follows Michel Schinz's scsh package
+proposal for installation and use. Please see:
+  scsh/scsh-packages/doc/latex/proposal.tex
+
+The top-level installation script is install-pkg. It will install all
+of the libraries.
+
+TODO: install-pkg scripts for individual library subdirectories.
 
 UNINSTALLATION
 
-Type 'make uninstall' to uninstall the package.
+See the packaging proposal for details.

@@ -1,11 +1,9 @@
-Copyright (c) 2003 Anthony Carrico, Martin Gasbichler
-Copyright (c) 2003 Eric Knauel, Matthias Neubauer
-Copyright (c) 2003 RT Happe
-Copyright (c) 2003 Taylor Campbell
-Copyright (c) 2003 Michel Schinz
-Copyright (c) 2003 Oleg Kiselyov
-Copyright (c) 2003 Mike Sperber
+;;; This file is part of the Scheme Untergrund Library. For copyright
+;;; information, see the file COPYING which comes with the
+;;; distribution.
 
+(define license
+  "
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,3 +27,23 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+")
+
+(define port->string
+  (lambda (port)
+    (let loop ((result ""))
+      (let ((chunk (read-string 1024 port)))
+        (if chunk
+            (loop (string-append result chunk))
+            result)))))
+
+(define get-copyrights
+  (lambda ()
+    (call-with-input-file
+        "AUTHORS"
+      (lambda (port)
+        (port->string port)))))
+
+(define COPYING
+  (lambda ()
+    (string-append (get-copyrights) license)))

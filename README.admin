@@ -1,6 +1,7 @@
 How to make a release:
 
-1. Make sure NEWS is up-to-date (at least add the distribution date).
+1. Make sure the NEWS files are up-to-date (at least add the
+  distribution date).
 2. Check out a clean source tree from cvs.
 3. Make the distribution:
   make dist
@@ -10,4 +11,4 @@ How to make a release:
 6. Post the release:
   scp sunterlib-0.1.tar.gz subversions.gnu.org:/upload/sunterlib/release.pkg/0.1/
 7. Increment the version number in Makefile.
-8. Start a new version entry in NEWS.
+8. Start a new version entry in the top level NEWS file.

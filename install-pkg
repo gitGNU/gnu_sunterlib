@@ -1,0 +1,3 @@
+#!/bin/sh
+exec scsh -lm scsh/scsh-packages/scheme/install-lib/configure.scm -lm scsh/scsh-packages/scheme/install-lib/install-lib-module.scm -o pp -o configure -o install -e install-main -s "$0" "$@"
+!#

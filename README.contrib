@@ -3,26 +3,38 @@ GUIDLINES FOR CONTRIBUTORS
 ADDING A NEW LIBRARY
 
 0. This library only accepts code with the modified bsd license in the
-file COPYING. Add your name to the file COPYING.
+(generated) file COPYING.
 
 1. Create a new subdirectory of s48 or scsh for your library. Only
 touch files in your library's tree.
 
 2. Your library's tree should have at least these files:
-  AUTHORS -- a list of your library's authors.
+  AUTHORS -- (CHANGED in Sunterlib 0.6) a list of your library's
+    copyright(s), keep the year up to date if you make changes to your
+    library.
   BLURB -- a one or two line description of your library. It should
-  start with the name of your library's directory followed by a colon.
-  README -- a text file documenting your library.
-  interfaces.scm -- the interfaces defined by your library.
-  packages.scm -- the packages defined by your library.
+    start with the name of your library's directory followed by a
+    colon.
+  NEWS -- (NEW in Sunterlib 0.6) each contributed library has
+    its own version number. Start with whatever version
+    number is appropriate for your library. To avoid releasing
+    different versions under the same number, if the Sunterlib version
+    has changed, then bump the local version number before changing
+    your library. Remember to keep the local NEWS file up to date with
+    your library. Remember to keep the version number up to date with
+    your package definition.
+  pkg-def.scm -- (NEW in Sunterlib 0.6) the package definition for
+    your library. Use the COPYING procedure to generate the COPYING
+    file. For an example, see s48/args-fold/pkg-def.scm
+  load.scm -- (WAS interfaces.scm, packages.scm before Sunterlib 0.6)
+    the interfaces and packages defined by your library.
 
-Our administration and the build systems depends on these files.
+Our administration and the build systems depends on those files.
 
-3. Currently, the install script only installs ".scm" source files and
-README documentation files.
+  README -- a text file documenting your library. Recomended
 
-4. Add an entry for your library to the NEWS file in the top-level
-   directory of Sunterlib.
+3. Add an entry for your library to the NEWS file in the top-level
+directory of Sunterlib.
 
 CONVENTIONS
 

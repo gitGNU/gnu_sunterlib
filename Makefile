@@ -1,32 +1,13 @@
 SHELL = /bin/sh
 
-prefix = /usr/local
-libdir = $(prefix)/lib
-docdir = $(prefix)/share/doc
-pkglibdir = $(libdir)/sunterlib
-pkgdocdir = $(docdir)/sunterlib
-
-INSTALL = /usr/bin/install
-INSTALL_DATA = $(INSTALL) -m 644
-
 .SUFFIXES:
 
-version := 0.6
+major-version = 0
+minor-version = 6
+version := $(major-version).$(minor-version)
 
-s48-interfaces := $(shell find s48 \
-                    -maxdepth 2 -mindepth 2 \
-                    -name interfaces.scm)
-s48-packages := $(shell find s48 \
-                  -maxdepth 2 -mindepth 2 \
-                  -name packages.scm)
-s48-srcs := $(shell find s48 \
-              -mindepth 2 \
-              ! -name interfaces.scm \
-              ! -name packages.scm \
-              -name "*.scm")
-s48-docs := $(shell find s48 \
-              -mindepth 2 \
-              -name README)
+prefix = /tmp/sunterlib
+
 s48-authors := $(shell find s48 \
                   -maxdepth 2 -mindepth 2 \
                   -name AUTHORS)
@@ -34,20 +15,6 @@ s48-blurbs := $(shell find s48 \
                 -maxdepth 2 -mindepth 2 \
                 -name BLURB)
 
-scsh-interfaces := $(shell find scsh \
-                     -maxdepth 2 -mindepth 2 \
-                     -name interfaces.scm)
-scsh-packages := $(shell find scsh \
-                     -maxdepth 2 -mindepth 2 \
-                     -name packages.scm)
-scsh-srcs := $(shell find scsh \
-               -mindepth 2 \
-               ! -name interfaces.scm \
-               ! -name packages.scm \
-               -name "*.scm")
-scsh-docs := $(shell find scsh \
-              -mindepth 2 \
-              -name README)
 scsh-authors := $(shell find scsh \
                   -maxdepth 2 -mindepth 2 \
                   -name AUTHORS)
@@ -55,83 +22,32 @@ scsh-blurbs := $(shell find scsh \
                  -maxdepth 2 -mindepth 2 \
                  -name BLURB)
 
-s48-targets := s48-interfaces.scm s48-packages.scm sunterlib-s48.scm
-scsh-targets := interfaces.scm packages.scm sunterlib.scm
-targets := $(s48-targets) $(scsh-targets) DETAILS
+targets := DETAILS COPYING pkg-def.scm
 
-.PHONY: all s48 scsh
-all : s48 scsh DETAILS
-s48 : $(s48-targets)
-scsh : $(scsh-targets)
+.PHONY: all
+all : $(targets)
 
-s48-interfaces.scm : $(s48-interfaces) build/header.scm
-	cat build/header.scm > s48-interfaces.scm
-	for interface in $(s48-interfaces) ; \
-	  do \
-	    cat $${interface} >> s48-interfaces.scm ; \
-          done
-
-s48-packages.scm : $(s48-packages) build/header.scm
-	build/xpackages.scm s48-packages.scm build/header.scm $(s48-packages)
-
-interfaces.scm : $(s48-interfaces) $(scsh-interfaces) build/header.scm
-	cat build/header.scm > interfaces.scm
-	for interface in $(s48-interfaces) $(scsh-interfaces) ; \
-	  do \
-	    cat $${interface} >> interfaces.scm ; \
-	  done
-
-packages.scm : $(s48-packages) $(scsh-packages) build/header.scm
-	build/xpackages.scm packages.scm build/header.scm $(s48-packages) $(scsh-packages)
-
-sunterlib-s48.scm : s48-interfaces.scm s48-packages.scm
-	cat s48-interfaces.scm s48-packages.scm > sunterlib-s48.scm
-
-sunterlib.scm : interfaces.scm packages.scm
-	cat interfaces.scm packages.scm > sunterlib.scm
-
-DETAILS : $(s48-authors) $(s48-blurbs) $(scsh-authors) $(scsh-blurbs)
+DETAILS : $(s48-authors) $(s48-blurbs) $(scsh-authors) $(scsh-blurbs) \
+          build/details.scm build/dirs.scm build/header.scm
 	build/details.scm
 
+COPYING : $(s48-authors) $(scsh-authors) \
+          build/copying.scm build/common.scm build/header.scm build/dirs.scm
+	build/copying.scm
+
+pkg-def.scm : $(s48-authors) $(scsh-authors) \
+	      build/make-pkg-def.scm build/common.scm build/header.scm \
+              build/dirs.scm
+	build/make-pkg-def.scm $(major-version) $(minor-version)
+
 .PHONY : install uninstall
-install : s48 scsh DETAILS
-	$(INSTALL) -d $(pkglibdir)
-	$(INSTALL_DATA) s48-interfaces.scm s48-packages.scm sunterlib-s48.scm $(pkglibdir)
-	$(INSTALL_DATA) interfaces.scm packages.scm sunterlib.scm $(pkglibdir)
-	$(INSTALL) -d $(pkgdocdir)
-	$(INSTALL_DATA) README $(pkgdocdir)
-	$(INSTALL_DATA) COPYING $(pkgdocdir)
-	$(INSTALL_DATA) DETAILS $(pkgdocdir)
-	for s48src in $(s48-srcs); \
-	  do \
-            $(INSTALL) -d $(pkglibdir)/`dirname $${s48src}`; \
-            $(INSTALL_DATA) $${s48src} $(pkglibdir)/$${s48src}; \
-          done
-	for s48doc in $(s48-docs); \
-	  do \
-            $(INSTALL) -d $(pkgdocdir)/`dirname $${s48doc}`; \
-            $(INSTALL_DATA) $${s48doc} $(pkgdocdir)/$${s48doc}; \
-          done
-	for scshsrc in $(scsh-srcs); \
-	  do \
-            $(INSTALL) -d $(pkglibdir)/`dirname $${scshsrc}`; \
-            $(INSTALL_DATA) $${scshsrc} $(pkglibdir)/$${scshsrc}; \
-          done
-	for scshdoc in $(scsh-docs); \
-	  do \
-            $(INSTALL) -d $(pkgdocdir)/`dirname $${scshdoc}`; \
-            $(INSTALL_DATA) $${scshdoc} $(pkgdocdir)/$${scshdoc}; \
-          done
-
-uninstall :
-	-rm -rf $(pkglibdir) $(pkgdocdir)
-
+install : $(targets)
+	./install-pkg --prefix $(prefix)
 
 .PHONY : dist
-dist :
+dist : targets
 	mkdir sunterlib-$(version)
-	cp COPYING INSTALL Makefile NEWS README README.admin README.contrib sunterlib-$(version)/
-	cp -r build sunterlib-$(version)/build
+	cp pkg-def.scm COPYING INSTALL NEWS README README.admin README.contrib sunterlib-$(version)/
 	cp -r s48 sunterlib-$(version)/s48
 	cp -r scsh sunterlib-$(version)/scsh
 	find sunterlib-$(version)/ -name CVS | xargs rm -rf

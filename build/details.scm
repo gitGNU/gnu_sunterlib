@@ -2,28 +2,11 @@
 exec scsh -o filenames -s "$0" "$@"
 !#
 
-;;; details.scm
-;;;
-;;; This file is part of the Scheme Untergrund Library.
+;;; This file is part of the Scheme Untergrund Library. For copyright
+;;; information, see the file COPYING which comes with the
+;;; distribution.
 
-;;; Copyright (c) 2003 by Anthony Carrico
-;;; For copyright information, see the file COPYING which comes with
-;;; the distribution.
-
-(define s48-dirs
-  (run/strings (find s48
-                     -maxdepth 1
-                     -mindepth 1
-                     -type d
-                     ! -name CVS
-                     ! -name rt-modules)))
-
-(define scsh-dirs
-  (run/strings (find scsh
-                     -maxdepth 1
-                     -mindepth 1
-                     -type d
-                     ! -name CVS)))
+(load "build/dirs.scm")
 
 (define entry
   (lambda (dir)
@@ -36,7 +19,6 @@ exec scsh -o filenames -s "$0" "$@"
              (begin
                (write-char ch)
                (loop))))))
-    (display "Authors: ")
     (with-current-input-port
      (open-input-file (string-append dir "/AUTHORS"))
      (let loop ()
@@ -51,6 +33,7 @@ exec scsh -o filenames -s "$0" "$@"
 ;; Create the details file from the AUTHORS and BLURB files.
 (with-current-output-port
  (open-output-file "DETAILS")
+ (display (call-with-input-file "build/header.scm" port->string))
  (display "S48 LIBRARIES\n\n")
  (for-each entry s48-dirs)
  (display "SCSH LIBRARIES\n\n")
