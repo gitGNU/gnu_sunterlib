@@ -1,6 +1,3 @@
-(program 
- (requires srfi-9 srfi-23 srfi-27)
-(code
 ;;; This file and the accompanying README were derived from
 ;;; Oleg's code for Gambit available from
 ;;;
@@ -356,4 +353,3 @@
   ((for-each-inorder treap node:right-kid node:left-kid) proc))
 
 (define treap-debugprint debugprint)
-))
