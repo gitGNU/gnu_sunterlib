@@ -27,6 +27,12 @@ s48-srcs := $(shell find s48 \
 s48-docs := $(shell find s48 \
               -mindepth 2 \
               -name README)
+s48-authors := $(shell find s48 \
+                  -maxdepth 2 -mindepth 2 \
+                  -name AUTHORS)
+s48-blurbs := $(shell find s48 \
+                -maxdepth 2 -mindepth 2 \
+                -name BLURB)
 
 scsh-interfaces := $(shell find scsh \
                      -maxdepth 2 -mindepth 2 \
@@ -42,10 +48,16 @@ scsh-srcs := $(shell find scsh \
 scsh-docs := $(shell find scsh \
               -mindepth 2 \
               -name README)
+scsh-authors := $(shell find scsh \
+                  -maxdepth 2 -mindepth 2 \
+                  -name AUTHORS)
+scsh-blurbs := $(shell find scsh \
+                 -maxdepth 2 -mindepth 2 \
+                 -name BLURB)
 
 s48-targets := s48-interfaces.scm s48-packages.scm
 scsh-targets := interfaces.scm packages.scm
-targets := $(s48-targets) $(scsh-targets)
+targets := $(s48-targets) $(scsh-targets) DETAILS
 
 .PHONY: all s48 scsh
 all : s48 scsh
@@ -63,6 +75,9 @@ interfaces.scm : $(s48-interfaces) $(scsh-interfaces) build/header.scm
 
 packages.scm : $(s48-packages) $(scsh-packages) build/header.scm
 	build/xpackages.scm packages.scm build/header.scm $(s48-packages) $(scsh-packages)
+
+DETAILS : $(s48-authors) $(s48-blurbs) $(scsh-authors) $(scsh-blurbs)
+	build/details.scm
 
 .PHONY : install uninstall
 install : s48 scsh
