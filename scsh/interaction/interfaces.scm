@@ -6,4 +6,4 @@
   (export with-inspecting-handler))
 
 (define-interface socket2stdports-interface
-  (export socket<->std-ports))
+  (export socket<->stdports))

@@ -4,7 +4,7 @@
 ;;; For copyright information, see the file COPYING which comes with
 ;;; the distribution.
 
-(define (socket<->std-ports host port)
+(define (socket<->stdports host port)
   (let ((s (socket-connect protocol-family/internet socket-type/stream host port)))
     (set-port-buffering (socket:outport s) bufpol/none)
     (set-port-buffering (socket:inport s) bufpol/none)
@@ -20,7 +20,7 @@
      (lambda ()
        (dup-port (current-input-port) (socket:outport s)))
      (lambda ()
-       (close s)))))
+       (close-socket s)))))
 
 
 (define (dup-port from to)
