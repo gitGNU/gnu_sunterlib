@@ -80,16 +80,28 @@
          s opts))
 
 
+;; for internal use
+(define (%sequence-copy! s1 start1 s0 start0 end0)
+  (if (<= start1 start0)
+      (do ((i0 start0 (+ i0 1))
+           (i1 start1 (+ i1 1)))
+          ((= i0 end0) (unspecific))
+        (sequence-set! s1 i1 (sequence-ref s0 i0)))
+      (let ((end1 (+ start1 (- end0 start0))))
+        (do ((i0 (- end0 1) (- i0 1))
+             (i1 (- end1 1) (- i1 1)))
+            ((= i0 (- start0 1)) (unspecific))
+          (sequence-set! s1 i1 (sequence-ref s0 i0))))))
+
+
 (define (sequence-copy! s1 start1 s0 . opts)
   (let-optionals opts ((start0 0) (end0 (sequence-length s0)))
     (assert (<= 0 start0 end0 (sequence-length s0))
             sequence-copy!)
     (assert (<= 0 start1 (+ start1 (- end0 start0)) (sequence-length s1))
             sequence-copy!)
-    (do ((i0 start0 (+ i0 1))
-         (i1 start1 (+ i1 1)))
-        ((= i0 end0) (unspecific))
-      (sequence-set! s1 i1 (sequence-ref s0 i0)))))
+    (%sequence-copy! s1 start1 s0 start0 end0)
+))
 
 ;; ...
 (define (subsequence s start end)
@@ -209,20 +221,31 @@
          proc seq seqs))
 
 
+;; for internal use
+(define (%sequence-map-into! s1 proc s0 start1 end1 start0)
+  (if (<= start1 start0)
+      (do ((i0 start0 (+ i0 1))
+           (i1 start1 (+ i1 1)))
+          ((= i1 end1) s1)
+        (sequence-set! s1 i1 (proc (sequence-ref s0 i0))))
+      (let ((end0 (+ start0 (- end1 start1))))
+        (do ((i0 (- end0 1) (- i0 1))
+             (i1 (- end1 1) (- i1 1)))
+            ((= i0 (- start0 1)) s1)
+          (sequence-set! s1 i1 (proc (sequence-ref s0 i0)))))))
+
+
 (define (sequence-map-into! s1 proc s0 . opts)
   (let-optionals opts ((start1 0)
                        (end1 (sequence-length s1))
                        (start0 0))
     (assert (<= 0 start0 (sequence-length s0))
             sequence-map-into!)
-    (assert (<= 0 start1 (sequence-length s1))
+    (assert (<= 0 start1 end1 (sequence-length s1))
             sequence-map-into!)
     (assert (<= (- end1 start1) (- (sequence-length s0) start0))
             sequence-map-into!)
-    (do ((i0 start0 (+ i0 1))
-         (i1 start1 (+ i1 1)))
-        ((= i1 end1) s1)
-      (sequence-set! s1 i1 (proc (sequence-ref s0 i0))))))
+    (%sequence-map-into! s1 proc s0 start1 end1 start0)))
 
 
 (define (sequences-map-into! seq proc . seqs)

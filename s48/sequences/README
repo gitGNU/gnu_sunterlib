@@ -101,7 +101,8 @@ The following kinds of sequences are supported by this facility:
 Absequences carry a SEQUENCE-BEHAVIOR record that contains MAKER,
 PREDICATE, etc. procedures.  They are the official backdoor where
 user-defined sequence types enter the general sequence lib.  There are
-Examples.
+Examples.  [ The Examples demonstrate how one might introduce hidden
+aliasing, i.e. shared subsequences, and break some banged procedures ... ]
 
                                     *
 
@@ -299,6 +300,8 @@ S1 = < s0[start+i] : i in [0:end-start) >.
 (sequence-copy! s1 start1 s0 [start0 end0]) --> unspec
 
 Synopsis:  Set s1[start1 + i] := s0[start0 + i] for 0 <= i < end0 - start0.
+Assignment is parallel -- if there's no hidden aliasing (s1[j] and s0[k]
+referring to the same location although j ~= k).
 
                                  *
 
@@ -373,6 +376,7 @@ arg. ]
 
 Synopsis:  Set s1[start1 + i] := (proc s0[start0 + i])
 for 0 <= i < end1 - start1, return s1.
+Assignment is parallel -- if there's no hidden aliasing.
 
 Attention:  differing from CL's MAP-INTO, these procs expect
 end1 - start1 <= s0.length - start0, i.e. the destination S1 drives the
@@ -390,6 +394,7 @@ Synopsis:  Set s1[i] := (proc s00[i] ...) for i in [0:s1.length), return s1.
 
 Attention: differing from CL's MAP-INTO, these procs expect the sequences
 S00, ... to be no less long than the destination S1, like MAP! in SRFI-1.
+Doesn't cope with absequent aliasing problems.
 
                                 *
 
