@@ -21,6 +21,12 @@ Encode the contents of the INPUT-PORT and put the result on the
 OUTPUT-PORT. If no OUTPUT-PORT is given, encoding is done in a string,
 which is returned.
 
+(base64-encode-string string [output-port]) -> port/string
+
+Encode the contents of the STRING and put the result on the
+OUTPUT-PORT. If no OUTPUT-PORT is given, encoding is done in a string,
+which is returned.
+
 2.2. Decoding
 
 (base64-decode-string string [output-port]) -> port/string

@@ -64,6 +64,11 @@
 (define (base64-encode-port in-port . rest)
   (apply base64-encode-internal (lambda () (read-byte in-port)) rest))
 
+;; (base64-encode-string string [out-port])
+;;  --> string or port
+(define (base64-encode-string string . rest)
+  (apply base64-encode-port (make-string-input-port string) rest))
+
 (define (base64-encode-internal fetch-byte . rest)
   (let-optionals rest ((out-port (make-string-output-port)))
     (let ((output-char (char-writer out-port 76)))
@@ -133,10 +138,3 @@
                           (loop full-bits full-bits-count))))))))
       ;; Return port/output string.
       (if (null? rest) (string-output-port-output out-port) out-port)))
-
-;;; Tests
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; (define (test)
-;   (let ((empty (byte-vector)))
-
