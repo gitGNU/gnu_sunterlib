@@ -89,3 +89,42 @@ TODO argument order
 
 (dir-stream-for-each dir-stream file-f dir-f)
 
+The structure dir-stream-predicates defines some predicates the user
+might find useful when programming with dir-streams. 
+
+(fs-object-size-less-than? fs-object size) -> {#t, #f}
+(fs-object-size-greater-than? fs-object size) -> {#t, #f}
+
+Check whether the lenght of the file represented by fs-object is
+less/more than size bytes.
+
+(days->seconds days) -> integer
+(hours->seconds hours) -> integer
+(minutes->seconds minutes) -> integer
+
+Auxiliary functions for converting an integer representing a count of
+days/hours/minutes to an integer representing that amount of time in
+seconds.
+
+(fs-object-last-modified-in? fs-object pair) -> {#t, #f}
+(fs-object-last-accessed-in? fs-object pair) -> {#t, #f}
+(fs-object-created-in? fs-object pair) -> {#t, #f}
+
+pair is a pair representing an interval of time. This function checks
+whether the date when then file represented by fs-object was last
+modified/last-accessed/created lies in this interval (includes left
+and right boundary of the interval).
+
+(fs-object-name-matches? fs-object regexp) -> {#t, #f}
+
+Returns true if regexp-search? for regexp matches the filename of the
+file represented by fs-object.
+
+(ds-object-file-name-matches? fs-object regexp) -> {#t, #f}
+
+Returns true if regexp-search? for regexp matches the filename
+(including the absolute path) of the file represented by fs-object.
+
+
+
+
