@@ -62,4 +62,4 @@ clean :
 	-rm -f $(targets)
 
 distclean : clean
-	-rm -rf sunterlib-$(version) sunterlib-$(version).tar.gz
+	-rm -rf sunterlib-$(version) sunterlib-$(version).tar.gz sunterlib-$(version).tar.gz.sig
