@@ -1,0 +1,81 @@
+The structure REPLS offers procedures to start up the
+read-eval-print-loop (REPL) from a script.
+
+(script-repl greeting focus-value iport oport eport)
+
+This procedure starts up a new REPL which greets the user with
+GREETING, has FOCUS-VALUE as initial focus-value (accessible through
+##) and uses the ports IPORT for input, OPORT for output and eport for
+error messages.
+
+
+
+(remote-repl greeting focus-value port)
+
+Same as above but communication is done via a socket on port PORT.
+
+
+
+The structure SOCKET2STDPORTS offers a very simple facility to map the
+current input and output ports to the ports of a socket.
+
+(socket<->std-ports host port)
+
+This procedure first establishes a TCP socket to port PORT on host
+HOST. Afterwards is reads all data from (current-input-port) and
+forwards it into the socket's input port. Likewise it reads all data
+from the socket's output port and prints it to
+(current-output-port).
+
+
+(with-inspecting-handler port thunk)
+
+This procedure installs a exception handler which captures all
+conditions which satisfy the predicate ERROR?. It will then fire up a
+remote REPL on port PORT with the continuation of the condition as
+focus value. Currently, the continuation of the REPL is the
+continuation of the call to WITH-INSPECTING-HANDLER.
+
+
+As an example for the usage of the remote inspecting utility, consider
+a program using WITH-INSPECTING-HANDLER with an obviously bogus body:
+
+(with-inspecting-handler 8080 (lambda () (/ 1 0)))
+
+
+Now start a second scsh:
+
+[0 gasbichl@ventoux interaction] scsh -lm interfaces.scm -lm packages.scm -o 'socket2stdports'
+Welcome to scsh 0.6.3
+Type ,? for help.
+> (socket<->std-ports "ventoux" 8080)
+Welcome to the command processor of the remote scsh
+#{Exception-continuation (pc 69) (integer/ in ratnums)}
+> ,debug
+'#{Exception-continuation (pc 69) (integer/ in ratnums)}
+
+ [0] 1
+ [1] 0
+inspect: d  
+'#{Exception-continuation (pc 15) (/ in scheme-level-0)}
+
+inspect: d
+'#{Continuation (pc 13) (unnamed in unnamed in unnamed ---)}
+
+ [0] '#{Procedure 1319 (unnamed in continuation->procedure in wind)}
+ [1: k] '#{Procedure 1319 (unnamed in continuation->procedure in wind)}
+ [2: accept] '#{Procedure 1319 (unnamed in continuation->procedure in wind)}
+ [3: handler] '#{Procedure 14367 (unnamed in with-inspecting-handler in inspect-exception)}
+ [4: thunk] '#{Procedure 14379}
+inspect: ,go 34
+Terminating command processor with value 34 
+
+
+Unfortunately, SOCKET<->STD-PORTS is currently not able to exit
+gracefully if the connection dies:
+
+Error: exception
+       os-error
+       (channel-maybe-write 32 '#{Byte-vector 10} 0 1 '#{Output-channel 4} ---)
+
+WARNING: Returning does not work from a scsh with a running REPL!!!
