@@ -21,6 +21,9 @@ Our administration and the build systems depends on these files.
 3. Currently, the install script only installs ".scm" source files and
 README documentation files.
 
+4. Add an entry for your library to the NEWS file in the top-level
+   directory of Sunterlib.
+
 CONVENTIONS
 
 Sunterlib welcomes contributions from many authors. Please help keep
