@@ -1,7 +1,7 @@
 (define-interface pps-interface
   (export  pps
 	   
-	   process-recrod?
+	   process-info?
 	   process-info-pid
 	   process-info-ppid
 	   process-info-logname

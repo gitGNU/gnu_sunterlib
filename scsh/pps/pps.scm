@@ -9,7 +9,7 @@
 			    real-uid effective-uid saved-set-uid 
 			    real-gid effective-gid saved-set-gid
 			    time tty executable command-line)
-  process-recrod?
+  process-info?
   (pid process-info-pid)
   (ppid process-info-ppid)
   (logname process-info-logname)
