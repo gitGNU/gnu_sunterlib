@@ -134,7 +134,7 @@
      (dir-f (dir-stream-info ds))
      (stream-f file-f (dir-stream-files-stream ds))
      (stream-f (lambda (sub-ds)
-		   (f sub-ds file-f dir-f))
+		   ((apply-to-dir-stream stream-f) sub-ds file-f dir-f))
 	       (dir-stream-subdir-stream ds)))))
 
 (define dir-stream-map (apply-to-dir-stream stream-map))
