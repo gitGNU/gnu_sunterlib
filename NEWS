@@ -1,7 +1,7 @@
 version 0.6
 *
 
-version 0.5
+version 0.5 2003-11-19
 * New s48 libraries: procedure-tables.
 * New scsh libraries: tiff.
 
