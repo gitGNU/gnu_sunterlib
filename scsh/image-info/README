@@ -1,8 +1,8 @@
 sunterlib/scsh/image-info -- Extracting Vital Stats from Images
 
 Loose port of small parts from Marco Schmidt's public domain ImageInfo 1.3
-Java program.  The port supports gif, jpeg, png images and extracts 
-* the width and height in pixels, 
+Java program.  The port supports gif, jpeg, png images and extracts
+* the width and height in pixels,
 * maybe the physical width and height in dpi,
 * the (unreliable) colour depth (#bits / pixel),
 * a symbolic format id: GIF87A, GIF89A, JPEG, PNG.
@@ -13,7 +13,7 @@ local palettes may reset, typically increase, that value.)
 The original code, which does much more, is at
 http://www.geocities.com/marcoschmidt.geo/image-info.html
 
-Typical use:  in web-authoring, generate the width and height tags of 
+Typical use:  in web-authoring, generate the width and height tags of
 inline images programmatically, like so:
 
 ;; ,open image-info
@@ -42,7 +42,7 @@ the byte source (input port, file descriptor, byte-vector, b.s.(*))
 IMG -- or signal an error.
 
                                   *
-                                
+
 (get-image-info bs) --> info | #f
 
 Synopsis:  Extract information on the image represented by b.s.(*) BS
@@ -58,11 +58,11 @@ Get the symbolic format id from image-info record INFO.
 Get the colour DEPTH (#bits/pixel) from image-info record INFO.
 
 (image:info-width/pixel info) --> w | #f
-(image:info-height/pixel info) --> h | #f 
+(image:info-height/pixel info) --> h | #f
 Get the pixel width W resp. height H from image-info record INFO.
 
 (image:info-width/dpi info) --> width | #f
-(image:info-height/dpi info) --> height | #f 
+(image:info-height/dpi info) --> height | #f
 Get the physical width W resp. height H in dots per inch from INFO.
 
                                  *
@@ -72,12 +72,24 @@ Get the physical width W resp. height H in dots per inch from INFO.
 Byte-streams, or b.s.s for short, are random-access lazy byte sources.
 The image-info project doesn't commit to the current implementation,
 i.e. create and access b.s.s by the procedures below or blame yourself.
+[ Why do we need random-access sources? -- Actually, we don't really.
+  Random-access buys us a minor architectural edge.  We could --just
+  as Marco Schmidt's original Java program-- read the first two bytes
+  or so from a port, identify the graphics format and dispatch to the
+  specialist who deals with the rest of the file.  That is, we could
+  scatter the expertise on graphics formats, with the dispatcher knowing
+  magic numbers, and others knowing the rest.  We could -- but we
+  choose to encapsulate the expert knowledge on gif, jpeg, png formats
+  in respective parsing procedures.  If one expert cannot parse
+  a file we ask the next.  And while this may not be very wise, it is
+  conveniently done with b.s.s.
+]
 
 (inport->byte-stream in) --> bs
 
 Synopsis:  Convert the input port (or file descriptor) IN to a
 b.s. BS.  (The BS will read from IN as needed.  It doesn't duplicate
-or close IN.) 
+or close IN.)
 
                                  *
 
