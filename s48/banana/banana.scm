@@ -97,6 +97,10 @@
 ;; NONNEGINT->BYTE-VECTOR or something) to byte vectors as
 ;; specified by the Banana protocol.
 ;;
+;; *FIXME* - Shouldn't this be able to be implemented better than
+;; by consing up a list...and then reversing that list...and then
+;; converting that list into a byte vector?
+;;
 ;; Tail-recursive, iterative version.
 (define (posint->byte-vector int)
   (do ((int int (arithmetic-shift int -7))
@@ -119,8 +123,8 @@
 ;          (cons (bitwise-and int #x7f)
 ;                (loop (arithmetic-shift int -7)))))))
 
-;; BYTE-VECTOR->POSINT is just like above but the other way
-;; around.
+;; BYTE-VECTOR->POSINT is just like POSINT->BYTE-VECTOR but the
+;; other way around.
 (define (byte-vector->posint bv)
   (let ((len (byte-vector-length bv)))
     (do ((i 0 (+ i 1))
