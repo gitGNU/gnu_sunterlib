@@ -1,0 +1,3 @@
+#!/bin/sh
+exec scsh -lm configure.scm -lm install-lib-module.scm -o pp -o configure -o install -e install-main -s "$0" "$@"
+!#
