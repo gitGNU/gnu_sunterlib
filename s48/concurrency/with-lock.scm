@@ -7,7 +7,7 @@
 (define (with-lock lock thunk)
   (dynamic-wind 
    (lambda ()
-     (release-lock lock))
+     (obtain-lock lock))
    thunk
    (lambda ()
      (release-lock lock))))
