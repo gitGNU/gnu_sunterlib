@@ -55,8 +55,8 @@ scsh-blurbs := $(shell find scsh \
                  -maxdepth 2 -mindepth 2 \
                  -name BLURB)
 
-s48-targets := s48-interfaces.scm s48-packages.scm
-scsh-targets := interfaces.scm packages.scm
+s48-targets := s48-interfaces.scm s48-packages.scm sunterlib-s48.scm
+scsh-targets := interfaces.scm packages.scm sunterlib.scm
 targets := $(s48-targets) $(scsh-targets) DETAILS
 
 .PHONY: all s48 scsh
@@ -84,14 +84,20 @@ interfaces.scm : $(s48-interfaces) $(scsh-interfaces) build/header.scm
 packages.scm : $(s48-packages) $(scsh-packages) build/header.scm
 	build/xpackages.scm packages.scm build/header.scm $(s48-packages) $(scsh-packages)
 
+sunterlib-s48.scm : s48-interfaces.scm s48-packages.scm
+	cat s48-interfaces.scm s48-packages.scm > sunterlib-s48.scm
+
+sunterlib.scm : interfaces.scm packages.scm
+	cat interfaces.scm packages.scm > sunterlib.scm
+
 DETAILS : $(s48-authors) $(s48-blurbs) $(scsh-authors) $(scsh-blurbs)
 	build/details.scm
 
 .PHONY : install uninstall
 install : s48 scsh DETAILS
 	$(INSTALL) -d $(pkglibdir)
-	$(INSTALL_DATA) s48-interfaces.scm s48-packages.scm $(pkglibdir)
-	$(INSTALL_DATA) interfaces.scm packages.scm $(pkglibdir)
+	$(INSTALL_DATA) s48-interfaces.scm s48-packages.scm sunterlib-s48.scm $(pkglibdir)
+	$(INSTALL_DATA) interfaces.scm packages.scm sunterlib.scm $(pkglibdir)
 	$(INSTALL) -d $(pkgdocdir)
 	$(INSTALL_DATA) README $(pkgdocdir)
 	$(INSTALL_DATA) DETAILS $(pkgdocdir)

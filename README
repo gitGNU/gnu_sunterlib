@@ -20,16 +20,18 @@ and the documentation is available in
 (or the corresponding subdirectories of the prefix used for
 installation).
 
-The files "interfaces.scm" and "packages.scm", are the full sunterlib
-for use with scsh.
+The file "sunterlib.scm" is the full sunterlib interface for use with
+scsh ("sunterlib.scm" is composed of the deprecated "interfaces.scm"
+and "packages.scm").
 
-The files "s48-interfaces.scm" and "s48-packages.scm", are a sunterlib
-subset for use with scheme48.
+The file "sunterlib-s48.scm" is the sunterlib subset interface for use
+with scheme48 ("sunterlib-s48.scm" is composed of the deprecated
+"s48-interfaces.scm" and "s48-packages.scm").
 
 A typical scsh script might start like this:
 
 #!/usr/local/bin/scsh \
--lm /usr/local/lib/sunterlib/interfaces.scm -lm /usr/local/lib/sunterlib/packages.scm -o foo -s
+-lm /usr/local/lib/sunterlib/sunterlib.scm -o foo -s
 !#
 
 where "foo" is a sunterlib package needed by your script.
@@ -38,4 +40,3 @@ BUGS
 
 Please use the bug tracking system to report bugs:
   http://savannah.nongnu.org/bugs/?group=sunterlib
-
