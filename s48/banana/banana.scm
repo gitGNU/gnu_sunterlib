@@ -43,7 +43,7 @@
                         (f (string-ref s i))))))
 
 ;; Used in NONE-ENCODER/LIST.
-(define (byte-vector-concatentate bvectors)
+(define (byte-vector-concatenate bvectors)
   (let* ((len (fold (lambda (bv counter)
                       (+ (byte-vector-length bv) counter))
                     0 bvectors))
@@ -61,12 +61,12 @@
                      new to (byte-vector-ref bv from))
                     (loop2 (+ to 1) (+ from 1))))))))))
 
-;; Variant of BYTE-VECTOR-CONCATENTATE.
+;; Variant of BYTE-VECTOR-CONCATENATE.
 (define (byte-vector-append . vecs)
   (if (null? vecs)
-      ;; No need to even bother calling BYTE-VECTOR-CONCATENTATE.
+      ;; No need to even bother calling BYTE-VECTOR-CONCATENATE.
       (make-byte-vector 0 0)
-      (byte-vector-concatentate vecs)))
+      (byte-vector-concatenate vecs)))
 
 ;; Maybe these and the two above should be done using the
 ;; SEQUENCES structures that also come with Sunterlib.
@@ -225,7 +225,7 @@
   (lambda (lst)
     (if (null? lst)
         (byte-vector 0 none-etb/list)
-        (byte-vector-concatentate
+        (byte-vector-concatenate
          (append (list (posint->byte-vector (length lst)))
                  (list none-etb-v/list)
                  (map (lambda (x) (encode x profile/none))
