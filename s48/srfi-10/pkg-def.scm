@@ -1,0 +1,10 @@
+(define-package "srfi-10"
+  (0 0)
+  ()
+  (install-file "load.scm" 'base)
+  (install-file "README" 'doc)
+  (install-file "NEWS" 'doc)
+  (install-string (COPYING) "COPYING" 'doc)
+  (install-file "srfi-10.scm" 'scheme)
+  (install-file "test/test.scm" 'scheme)
+  (install-file "test/pi.scm" 'scheme))

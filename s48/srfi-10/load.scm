@@ -2,6 +2,9 @@
 
 ;; This code, written by Taylor Campbell, is in the public domain.
 
+(define-interface srfi-10-interface
+  (export define-reader-constructor))
+
 (define-structure srfi-10 srfi-10-interface
   (open scheme
         reading
