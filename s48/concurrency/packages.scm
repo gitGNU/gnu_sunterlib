@@ -1,4 +1,4 @@
-(define-structure semaphores 
+(define-structure semaphores semaphores-interface
   (open scheme
 	locks
 	with-lock
