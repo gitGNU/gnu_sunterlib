@@ -1,7 +1,7 @@
 version 0.2
 * Added INSTALL, README.admin, README.contrib.
 
-version 0.1 - 2003-03-24
+version 0.1 - 2003-02-24
 
 * Initial release.
 * New s48 libraries: args-fold concurrency continuation-data-type
