@@ -22,6 +22,8 @@
 
 ;;; Functions on bounds.
 
+(define (b? thing) (or (number? thing) (b-max? thing)))
+
 (define (b-max? bound) (eq? bound 'max))
 
 (define (b< b1 b2)
@@ -58,6 +60,13 @@
 (define i-make cons)
 (define i-beg car)
 (define i-end cdr)
+
+(define (i? thing)
+  (and (pair? thing)
+       (let ((b1 (car thing)) (b2 (cdr thing)))
+         (and (b? b1)
+              (b? b2)
+              (b<= b1 b2)))))
 
 ;; Beware: the following syntax leads to multiple evaluations of each
 ;; interval expression!
@@ -108,14 +117,12 @@
 ;;; Functions on sets (lists of individual intervals).
 
 (define (intset? thing)
-  ;; TODO check that intervals are disjoint and increasing
-  (and (list? thing)
-       (every (lambda (pair)
-                (and (pair? pair)
-                     (number? (car pair))
-                     (or (number? (cdr pair)) (b-max? (cdr pair)))
-                     (b< (car pair) (cdr pair))))
-              thing)))
+  (and (proper-list? thing)
+       (pairwise (lambda (i1 i2)
+                   (and (i? i1) (i? i2)
+                        (not (i-contiguous? i1 i2))
+                        (i< i1 i2)))
+                 thing)))
 
 (define (intset-union s1 s2)
   (cond ((null? s1) s2)
