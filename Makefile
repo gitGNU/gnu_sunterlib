@@ -45,9 +45,10 @@ install : $(targets)
 	./install-pkg --prefix $(prefix)
 
 .PHONY : dist
-dist : targets
+dist : $(targets)
 	mkdir sunterlib-$(version)
-	cp pkg-def.scm COPYING INSTALL NEWS README README.admin README.contrib sunterlib-$(version)/
+	cp pkg-def.scm COPYING INSTALL NEWS README README.contrib install-pkg \
+           pkg-def.scm sunterlib-$(version)/
 	cp -r s48 sunterlib-$(version)/s48
 	cp -r scsh sunterlib-$(version)/scsh
 	find sunterlib-$(version)/ -name CVS | xargs rm -rf
