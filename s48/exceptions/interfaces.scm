@@ -22,3 +22,7 @@
    &serious serious-condition?
    &error error?))
 
+(define-interface srfi-34-restart-interface
+  (export
+   (raise-restartable :syntax)
+   (restart :syntax)))
