@@ -1,5 +1,5 @@
 (define-package "tiff"
-  (1 0)
+  (1 1)
   ()
   (write-to-load-script
    `((config)
