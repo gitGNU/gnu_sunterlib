@@ -1,5 +1,5 @@
 (define-package "concurrency"
-  (0 0)
+  (0 2)
   ()
   (write-to-load-script
    `((config)
