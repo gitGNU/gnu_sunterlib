@@ -1,0 +1,261 @@
+[This file and the accompanying source code were derived from
+ Oleg's code for Gambit available from
+
+        http://okmij.org/ftp/Scheme/lib/treap.scm
+
+]
+
+
+An implementation of an ordered dictionary data structure, based
+on randomized search trees (treaps) by Seidel and Aragon:
+
+	R. Seidel and C. R. Aragon. Randomized Search Trees.
+	Algorithmica, 16(4/5):464-497, 1996.
+
+
+This code defines a treap object that implements an ordered dictionary
+mapping of keys to values. The object responds to a variety of query and
+update messages, including efficient methods for finding the minimum and
+maximum keys and their associated values as well as traversing of a
+treap in an ascending or descending order of keys. Looking up an arbitrary
+or the min/max keys, and deleting the min/max keys require no more
+key comparisons than the depth of the treap, which is O(log n) where
+n is the total number of keys in the treap. Arbitrary key deletion and
+insertions run in O(log n) _amortized_ time.
+
+This code is inspired by a Stefan Nilsson's article "Treaps in Java"
+(Dr.Dobb's Journal,  July 1997, p.40-44) and by the Java implementation
+of treaps described in the article. Yet this Scheme code has been
+developed completely from scratch, using the description of the algorithm
+given in the article, and insight gained from examining the Java source
+code. As a matter of fact, treap insertion and deletion algorithms
+implemented in this code differ from the ones described in the article
+and implemented in the Java code; this Scheme implementation uses fewer
+assignments and comparisons (see below for details). Some insight as
+to a generic tree interface gleaned from wttree.scm, "Weight balanced
+trees" by Stephen Adams (a part of The Scheme Library, slib2b1).
+
+A treap is a regular binary search tree, with one extension. The extension
+is that every node in a tree, beside a key, a value, and references to
+its left and right children, has an additional constant field, a priority.
+The value of this field is set (to a random integer number) when the node
+is constructed, and is not changed afterwards. At any given moment,
+the priority of every non-leaf node never exceeds the priorities of its
+children. When a new node is inserted, we check that this invariant holds;
+otherwise, we perform a right or left rotation that swaps a parent and
+its kid, keeping the ordering of keys intact; the changes may need to be
+propagated recursively up. The priority property, and the fact they are
+chosen at random, makes a treap look like a binary search tree built by
+a random sequence of insertions. As the article shows, this makes a treap
+a balanced tree: the expected length of an average search path is roughly
+1.4log2(n)-1, and the expected length of the longest search path is about
+4.3log2(n). See the Stefan Nilsson's article for more details.
+
+
+(make-treap key-compare) -> treap
+
+Creates a treap object. Here KEY-COMPARE-PROC is a user-supplied
+function
+
+     KEY-COMPARE-PROC key1 key2
+
+that takes two keys and returns a negative, positive, or zero number
+depending on how the first key compares to the second. The treap uses
+SRFI-27's DEFAULT-RANDOM-SOURCE so you may want to initialize this
+once with (random-source-randomize! default-random-source).
+
+
+(treap? thing) -> boolean
+
+Type predicate for treaps.
+
+
+(treap-get treap key [default-clause]) -> key-value pair or value of default-clause
+
+Searches the treap for an association with a given KEY, and returns a
+(key . value) pair of the found association.  If an association with
+the KEY cannot be located in the treap, the PROC returns the result of
+evaluating the DEFAULT-CLAUSE.  If the default clause is omitted, an
+error is signalled.  The KEY must be comparable to the keys in the
+treap by a key-compare predicate (which has been specified when the
+treap was created)
+
+
+(treap-get-min treap) -> key-value pair
+(treap-get-max treap) -> key-value pair
+
+return a (key . value) pair for an association in the treap with the
+smallest/largest key. If the treap is empty, an error is signalled.
+
+
+(treap-delete-min! treap) -> key-value pair
+(treap-delete-max! treap) -> key-value pair
+
+remove the min/max key and the corresponding association from the
+treap. Return a (key . value) pair of the removed association.  If
+the treap is empty, an error is signalled.
+
+
+(treap-empty? treap) -> boolean
+
+returns #t if the treap is empty.
+
+
+(treap-size treap) -> integer
+
+returns the size (the number of associations) in the treap.
+
+
+(treap-depth treap) -> integer
+
+returns the depth of the tree. It requires the complete traversal of
+the tree, so use sparingly.
+
+
+(treap-clear! treap) -> unspecific
+
+removes all associations from the treap (thus making it empty).
+
+
+(treap-put! treap key value) -> key-value pair or #f
+
+adds the corresponding association to the treap. If an association
+with the same KEY already exists, its value is replaced with the VALUE
+(and the old (key . value) association is returned). Otherwise, the
+return value is #f.
+
+
+(treap-delete! treap key [default-clause]) -> key-value pair
+
+searches the treap for an association with a given KEY, deletes it,
+and returns a (key . value) pair of the found and deleted association.
+If an association with the KEY cannot be located in the treap, the
+PROC returns the result of evaluating the DEFAULT-CLAUSE.  If the
+default clause is omitted, an error is signalled.
+
+
+(treap-for-each-ascending treap proc) -> unspecific
+
+applies the given procedure PROC to each (key . value) association of
+the treap, from the one with the smallest key all the way to the one
+with the max key, in an ascending order of keys.  The treap must not
+be empty.
+
+
+(treap-for-each-descending treap proc) -> unspecific
+
+applies the given procedure PROC to each (key . value) association of
+the treap, in the descending order of keys.  The treap must not be
+empty.
+
+
+(treap-debugprint treap) -> unspecific
+
+prints out all the nodes in the treap, for debug purposes.
+
+
+
+Notes on the algorithm
+As the DDJ paper shows, insertion of a node into a treap is a simple
+recursive algorithm, Example 1 of the paper. This algorithm is implemented
+in the accompanying source [Java] code as
+<BLOCKQUOTE>
+  private Tree insert(Tree node, Tree tree) {
+     if (tree == null) return node;
+     int comp = node.key.compareTo(tree.key);
+     if (comp < 0) {
+        tree.left = insert(node, tree.left);
+        if (tree.prio > tree.left.prio)
+           tree = tree.rotateRight();
+     } else if (comp > 0) {
+        tree.right = insert(node, tree.right);
+        if (tree.prio > tree.right.prio)
+           tree = tree.rotateLeft();
+     } else {
+        keyFound = true;
+        prevValue = tree.value;
+        tree.value = node.value;
+     }
+     return tree;
+  }
+</BLOCKQUOTE>
+
+This algorithm, however, is not as efficient as it could be. Suppose we
+try to insert a node which turns out to already exist in the tree,
+at a depth D. The algorithm above would descend into this node in the
+winding phase of the algorithm, replace the node's value, and, in the
+unwinding phase of the recursion, would perform D assignments of the kind
+      tree.left = insert(node, tree.left);
+and D comparisons of nodes' priorities. None of these priority checks and
+assignments are actually necessary: as we haven't added any new node,
+the tree structure hasn't changed.
+
+Therefore, the present Scheme code implements a different insertion
+algorithm, which avoids doing unnecessary operations. The idea is simple:
+if we insert a new node into some particular branch of the treap and verify
+that this branch conforms to the treap priority invariant, we are certain
+the invariant holds throughout the entire treap, and no further checks 
+(up the tree to the root) are necessary. In more detail:
+      - Starting from the root, we recursively descend until we find
+        a node with a given key, or a place a new node can be inserted.
+      - We insert the node and check to see if its priority is less than
+        that of its parent. If this is the case, we left- or right-rotate
+        the tree to make the old parent a child of the new node, and the
+        new node a new root of this particular branch. We return this new
+        parent as an indication that further checks up the tree are
+        necessary. If the new node conforms to the parent's priority, we
+        insert it and return #f
+      - On the way up, we check the priorities again and rotate the tree
+        to restore the priority invariant at the current level if needed.
+      - If no changes are made at the current level, we return a flag #f
+        meaning that no further changes or checks are necessary at the
+        higher levels.
+Thus, if a new node was originally inserted at a level D in the tree (level
+0 being the root) but then migrated up by L levels (because of its priority),
+the original insertion algorithm would perform (D-1) assignments,
+(D-1) priority checks, plus L rotations (at a cost of 2 assignments in the
+treap each). Our algorithm does only (L+1) node priority checks and
+max(2(L-1)+2,1) assignments.
+Note if priorities are really (uniformly) random, L is uniformly distributed
+over [0,D], so the average cost of our algorithm is 
+	D/2 +1 checks and D assignments
+compared to
+      D-1 checks and 2D-1 assignments
+for the original algorithm described in the DDJ paper.
+
+The similar gripe applies to the Java implementation of a node deletion
+algorithm:
+<BLOCKQUOTE>
+  private Tree delete(Ordered key, Tree t) {
+     if (t == null) return null;
+     int comp = key.compareTo(t.key);
+     if (comp < 0)
+        t.left = delete(key, t.left);
+     else if (comp > 0)
+        t.right = delete(key, t.right);
+     else {
+        keyFound = true;
+        prevValue = t.value;
+        t = t.deleteRoot();
+     }
+     return t;
+  }
+</BLOCKQUOTE>
+
+The algorithm as implemented looks fully-recursive. Furthermore, deletion
+of a node at a level D in the treap involves at least D assignments, most
+of them being unnecessary. Indeed, if a node being deleted is a leaf, only
+one change to the tree is needed to detach the node. Deleting a node
+obviously requires a left- or a right-kid field of the node's parent be
+modified (cleared). This change, however does NOT need to be propagated up:
+deleting of a node does not violate neither ordering nor priority invariants
+of the treap; all changes are confined to a branch rooted at the
+parent of the deleted node.
+This Scheme code implements node deletion algorithm in the optimal way,
+performing only those assignments which are absolutely necessary, and 
+replacing full recursions with tail recursions (which are simply iterations).
+Our implementation is also simpler and clearer, making use of a helper
+procedure join! to join two treap branches (while keeping both treap
+invariants intact). The deletion algorithm can then be expressed as
+replacing a node with a join of its two kids; compare this explanation
+to the one given in the DDJ paper!
