@@ -1,6 +1,15 @@
 The structure FILE-MODE implements a data type for file modes. The
 code is copied verbatim from Scheme 48 0.57.
 
+================================================================================
+
+After installation, use the switch
+
+-lel file-mode/load.scm
+
+to load this library.
+
+================================================================================
 
 A file mode is a boxed integer representing a file protection mask.
 

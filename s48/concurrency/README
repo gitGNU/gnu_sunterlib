@@ -1,4 +1,21 @@
-The package semaphores defines semaphores to be used this
+This library provides two structures to ease concurrent programming:
+
+* SEMAPHORES
+
+* WITH-LOCk
+
+================================================================================
+
+After installation, use the switch
+
+-lel concurrency/load.scm
+
+to load this library.
+
+================================================================================
+
+
+The structure SEMAPHORES defines semaphores to be used this
 threads. Semaphores are usually used to control access to a resource
 by using a counter for the free slots of the resource.
 

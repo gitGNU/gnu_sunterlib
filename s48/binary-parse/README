@@ -5,6 +5,19 @@
 
 ]
 
+The structure BINARY-PARSE provides a procedure to read bits from a
+byte-stream.
+
+================================================================================
+
+After installation, use the switch
+
+-lel binary-parse/load.scm
+
+to load this library.
+
+================================================================================
+
 (make-bit-reader byte-reader) -> bit-reader
 
 Given a BYTE-READER (a thunk), construct and return a function

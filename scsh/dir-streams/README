@@ -10,6 +10,15 @@ processing but we intend to replace this library with SRFI-40
 soon. This is also the reason for the lack of documentation for the
 STREAM package.
 
+================================================================================
+
+After installation, use the switch
+
+-lel dir-streams/load.scm
+
+to load this library.
+
+================================================================================
 
 (dir-stream-from-dir-name dir-name [chase?] [parent]) -> dir-stream
 

@@ -1,6 +1,16 @@
 The structure afs-fs calls the fs command to obtain and manipulate
 access control lists in AFS.
 
+================================================================================
+
+After installation, use the switch
+
+-lel afs/load.scm
+
+to load this library.
+
+================================================================================
+
 The access control list of a directory is represented as an alist of
 username and the enumerated set afs-permissions.
 

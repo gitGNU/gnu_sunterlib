@@ -1,5 +1,16 @@
-The structure continuation-data-type encapsulates continuations into a
+The structure CONTINUATION-DATA-TYPE encapsulates continuations into a
 data type as proposed by Marc Feeley on the Scheme Workshop 2001.
+
+================================================================================
+
+After installation, use the switch
+
+-lel continuation-data-type/load.scm
+
+to load this library.
+
+================================================================================
+
 
 (continuation-capture receiver) -> continuation
 

@@ -9,6 +9,16 @@ a programmatic interface to Scheme 48's debugging facilities:
 
 * GC provides a small run-time interface to the garbage collector.
 
+================================================================================
+
+After installation, use the switches
+
+-lel module-system/load.scm -lel interaction/load.scm 
+
+to load this library.
+
+================================================================================
+
 The structure REPLS offers procedures to start up the
 read-eval-print-loop (REPL) from a script.
 

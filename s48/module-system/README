@@ -1,3 +1,19 @@
+This library provides two structures that slightly extend Scheme 48's module system:
+
+* OVERLAPPING-IMPORTS adds checking for duplicate imports.
+
+* RT-MODULES provides run-time access to the module system.
+
+================================================================================
+
+After installation, use the switch
+
+-lel module-system/load.scm
+
+to load this library.
+
+================================================================================
+
 The structure OVERLAPPING-IMPORTS extends the module system with a
 facility to check for duplicates entries within the imported names of
 a module. After loading the package you can add the form

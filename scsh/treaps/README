@@ -51,6 +51,17 @@ a balanced tree: the expected length of an average search path is roughly
 1.4log2(n)-1, and the expected length of the longest search path is about
 4.3log2(n). See the Stefan Nilsson's article for more details.
 
+================================================================================
+
+After installation, use the switch
+
+-lel treaps/load.scm
+
+to load this library.
+
+================================================================================
+
+The structure TREAPS provides the following procedures:
 
 (make-treap key-compare) -> treap
 

@@ -2,6 +2,17 @@ The package REINITIALIZERS allows the user to specify code that is
 executed on every start of scsh, provided a heap image containing the
 reinitializer is used.
 
+================================================================================
+
+After installation, use the switch
+
+-lel heap-images/load.scm
+
+to load this library.
+
+================================================================================
+
+
 Procedures:
 
 (make-reinitializer thunk) -> reinitializer

@@ -6,6 +6,17 @@ the version of your system differs from the one I tested. Please
 report incompatible versions and, if possible, provide an adapted
 version.
 
+================================================================================
+
+After installation, use the switch
+
+-lel pps/load.scm
+
+to load this library.
+
+================================================================================
+
+
 (pps) -> process-info list
 
 Calls the ps command and parses the output into a list of process-info
