@@ -11,7 +11,7 @@ INSTALL_DATA = $(INSTALL) -m 644
 
 .SUFFIXES:
 
-version := 0.1
+version := 0.2
 
 s48-interfaces := $(shell find s48 \
                     -maxdepth 2 -mindepth 2 \
