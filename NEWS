@@ -1,5 +1,5 @@
 version 0.5
-* New s48 libraries: procedure-tables
+* New s48 libraries: procedure-tables, tiff
 
 version 0.4 2003-05-19
 * New file "sunterlib.scm" contains the old "interfaces.scm" and

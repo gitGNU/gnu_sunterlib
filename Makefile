@@ -100,6 +100,7 @@ install : s48 scsh DETAILS
 	$(INSTALL_DATA) interfaces.scm packages.scm sunterlib.scm $(pkglibdir)
 	$(INSTALL) -d $(pkgdocdir)
 	$(INSTALL_DATA) README $(pkgdocdir)
+	$(INSTALL_DATA) COPYING $(pkgdocdir)
 	$(INSTALL_DATA) DETAILS $(pkgdocdir)
 	for s48src in $(s48-srcs); \
 	  do \
