@@ -1,5 +1,5 @@
 (define-interface dir-streams-interface
-  (export dir-stream-from-dirname
+  (export dir-stream-from-dir-name
 	  dir-stream-for-each
 	  dir-stream-map
 	  dir-stream-filter

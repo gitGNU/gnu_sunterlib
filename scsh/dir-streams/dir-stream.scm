@@ -47,18 +47,18 @@
 		(fs-object-name fs-object)))
 
 
-(define (dir-stream-from-dirname dirname . args)
+(define (dir-stream-from-dir-name dir-name . args)
   ;; skip file in case of an error during file-info
-  (define (next-info ds parent dirname chase?)
+  (define (next-info ds parent dir-name chase?)
     (let ((file (read-directory-stream ds))) 
       (if file
 	  (call-with-current-continuation
 	   (lambda (k)
 	     (with-handler
 	      (lambda (cond more)
-		(k (next-info ds parent dirname chase?)))
+		(k (next-info ds parent dir-name chase?)))
 	      (lambda ()
-		(cons (make-fs-object (combine-path parent dirname)
+		(cons (make-fs-object (combine-path parent dir-name)
 				      file
 				      chase?)
 		      ds)))))
@@ -66,16 +66,16 @@
   (let-optionals args ((chase? #t) (parent ""))
     (let ((info-stream (stream-unfold
 			(lambda (ds)
-			  (next-info ds parent dirname chase?))
+			  (next-info ds parent dir-name chase?))
 			(call-with-current-continuation
 			 (lambda (k)
 			   (with-handler
 			    (lambda (cond more)
 			      (make-empty-stream))
 			    (lambda ()
-			      (open-directory-stream (combine-path parent dirname)))))))))
+			      (open-directory-stream (combine-path parent dir-name)))))))))
       (make-dir-stream
-       (make-fs-object parent dirname chase?)
+       (make-fs-object parent dir-name chase?)
        (stream-filter-map
 	(lambda (fso) (and (not (file-info-dir? (fs-object-info fso)))
 			   fso))
@@ -83,7 +83,7 @@
        (stream-filter-map
 	(lambda (fso)
 	  (and (file-info-dir? (fs-object-info fso))
-	       (dir-stream-from-dirname
+	       (dir-stream-from-dir-name
 		(fs-object-name fso) chase? (fs-object-parent fso))))
 	info-stream)))))
 

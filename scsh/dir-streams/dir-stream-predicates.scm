@@ -57,7 +57,7 @@
 ;;; test stuff
 
 ;(dir-stream-display 
-; (dir-stream-filter (dir-stream-from-dirname "/Users/eric/tmp")
+; (dir-stream-filter (dir-stream-from-dir-name "/Users/eric/tmp")
 ;		    (lambda (fs-object)
 ;		      (display (fs-object-mtime fs-object))
 ;		      (newline)
