@@ -4,8 +4,8 @@
 ;;; refers to structure KRIMS from sunterlib/s48/krims
 
 ;; sequences as data + behaviour
-(define-structure behaved-sequences behaved-sequences-face
-  (open srfi-9                          ; define-record-type
+(define-structure absequences absequences-face
+  (open srfi-9+                         ; define-record-type -discloser
         krims                           ; assert
         let-opt                         ; let-optionals [ from scsh ]
         scheme)
@@ -23,7 +23,7 @@
   (open krims                           ; gen-dispatch
         let-opt                         ; :optional [ from scsh ]
         sequence-specifics              ; list-set! make-list
-        behaved-sequences
+        absequences
         byte-vectors
         srfi-1                          ; make-list
         srfi-23                         ; error
@@ -93,16 +93,15 @@
 ;; code (notably for lists)
 (define-structure sequence-lib (compound-interface sequence-basics-face
                                                    sequence-extras-face
-                                                   behaved-sequences-face)
-  (open krims                           ; gen-dispatch
-        (with-prefix sequence-extras contiguous-)
+                                                   absequences-face)
+  (open (with-prefix sequence-extras contiguous-)
         sequence-basics
-        behaved-sequences
+        absequences
         sequence-specifics
-        byte-vectors
         vector-lib
         srfi-1                          ; list procs
         srfi-13                         ; string procs
+        byte-vectors
         let-opt                         ; let-optionals [ from scsh ]
         scheme)
   (files composeqs))

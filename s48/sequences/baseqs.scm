@@ -10,7 +10,7 @@
       (byte-vector? s)
       (vector? s)
       (list? s)
-      (behaved-sequence? s)))
+      (absequence? s)))
 
 (define (sequence-length s)
   (gen-dispatch
@@ -18,7 +18,7 @@
     (byte-vector? byte-vector-length)
     (vector? vector-length)
     (list? length)
-    (behaved-sequence? behaved-sequence-length))
+    (absequence? absequence-length))
    s))
 
 
@@ -28,7 +28,7 @@
     (byte-vector? byte-vector-ref)
     (vector? vector-ref)
     (list? list-ref)
-    (behaved-sequence? behaved-sequence-ref))
+    (absequence? absequence-ref))
    s k))
 
 
@@ -38,7 +38,7 @@
     (byte-vector? byte-vector-set!)
     (vector? vector-set!)
     (list? list-set!)
-    (behaved-sequence? behaved-sequence-set!))
+    (absequence? absequence-set!))
    s k x))
 
 
@@ -49,9 +49,9 @@
                                             (:optional maybe-fill 0)))
         ((vector? s) (apply make-vector len maybe-fill))
         ((list? s) (apply make-list len maybe-fill))
-        ((behaved-sequence? s)
-         (apply make-behaved-sequence/type
-                (behaved-sequence:type s) len maybe-fill))
+        ((absequence? s)
+         (apply make-absequence/behavior
+                (absequence:behavior s) len maybe-fill))
         (else (error "make-another-sequence : first arg not a sequence?"
                      s))))  
 

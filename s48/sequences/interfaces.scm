@@ -15,8 +15,10 @@
           sequence-fill!
           subsequence
           sequence-copy
+          sequence-copy/maker
           sequence-append
           sequence-map sequences-map
+          sequence-map/maker sequences-map/maker
           sequence-for-each sequences-for-each
           sequence-fold sequences-fold
           sequence-fold-right sequences-fold-right
@@ -31,18 +33,18 @@
           ))
 
 ;; the sequence ADT etc.
-(define-interface behaved-sequences-face
-  (export make-sequence-type
-          sequence-type?
-          make-behaved-sequence-record
-          behaved-sequence:type
-          make-behaved-sequence/type
-          behaved-sequence/type
-          list->behaved-sequence/type
-          behaved-sequence?
-          behaved-sequence-ref
-          behaved-sequence-set!
-          behaved-sequence-length))
+(define-interface absequences-face
+  (export make-sequence-behavior
+          sequence-behavior?
+          make-absequence-record
+          absequence:behavior
+          make-absequence/behavior
+          absequence/behavior
+          list->absequence/behavior
+          absequence?
+          absequence-ref
+          absequence-set!
+          absequence-length))
 
 ;; the basic + extra sequence procedures
 ;; [ extends the union of SEQUENCE-BASICS- and -EXTRAS-INTERFACE with 
@@ -63,13 +65,13 @@
           subvector
           vector-copy
           vector-append
-          vector-map
+          vector-map   ; forget the optional MAKER arg 
           vector-for-each
           vector-fold
           vector-fold-right
           vector-any
           vector-every
-          vectors-map
+          vectors-map  ; but not vectors-map/maker
           vectors-for-each
           vectors-fold
           vectors-fold-right

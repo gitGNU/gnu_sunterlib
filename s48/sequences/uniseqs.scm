@@ -10,51 +10,58 @@
 ;; getter : S integer --> any              -- like VECTOR-REF
 ;; setter : S integer any --> unspecified  -- like VECTOR-SET!
 ;; meter : S --> integer                   -- like VECTOR-LENGTH
-(define-record-type :sequence-type
-  (make-sequence-type maker predicate getter setter meter)
-  sequence-type?
-  (maker sequence-type:maker)
-  (predicate sequence-type:predicate)
-  (getter sequence-type:getter)
-  (setter sequence-type:setter)
-  (meter sequence-type:meter))
+(define-record-type :sequence-behavior
+  (make-sequence-behavior maker predicate getter setter meter)
+  sequence-behavior?
+  (maker sequence-behavior:maker)
+  (predicate sequence-behavior:predicate)
+  (getter sequence-behavior:getter)
+  (setter sequence-behavior:setter)
+  (meter sequence-behavior:meter))
 
-;; underlying sequence data + behavioural sequence type
-(define-record-type :behaved-sequence
-  ;; avoiding the make-behaved-sequence namning pattern for good reason
-  (make-behaved-sequence-record type instance)
-  behaved-sequence?
-  (type behaved-sequence:type)
-  (instance behaved-sequence:instance))
+;; underlying sequence data + behavioral sequence type
+(define-record-type :absequence
+  ;; avoiding the make-absequence namning pattern for good reason
+  (make-absequence-record behavior data)
+  absequence?
+  (behavior absequence:behavior)
+  (data absequence:data))
 
-(define (behaved-sequence-ref s k)
-  ((sequence-type:getter (behaved-sequence:type s))
-   (behaved-sequence:instance s) k))
+(define (absequence-ref s k)
+  ((sequence-behavior:getter (absequence:behavior s))
+   (absequence:data s) k))
 
-(define (behaved-sequence-set! s k x)
-  ((sequence-type:setter (behaved-sequence:type s))
-   (behaved-sequence:instance s) k x))
+(define (absequence-set! s k x)
+  ((sequence-behavior:setter (absequence:behavior s))
+   (absequence:data s) k x))
 
-(define (behaved-sequence-length s)
-  ((sequence-type:meter (behaved-sequence:type s))
-   (behaved-sequence:instance s)))
+(define (absequence-length s)
+  ((sequence-behavior:meter (absequence:behavior s))
+   (absequence:data s)))
 
-(define (make-behaved-sequence/type st k . maybe-fill)
-  (make-behaved-sequence-record st
-                                (apply (sequence-type:maker st)
+(define (make-absequence/behavior sb k . maybe-fill)
+  (make-absequence-record sb
+                                (apply (sequence-behavior:maker sb)
                                        k maybe-fill)))
 
-(define (list->behaved-sequence/type st xs . opts)
+(define (list->absequence/behavior sb xs . opts)
   (let-optionals opts ((start 0) (end (length xs)))
     (assert (<= 0 start end))
-    (let ((s (make-behaved-sequence/type st (- end start))))
+    (let ((s (make-absequence/behavior sb (- end start))))
       (do ((i 0 (+ i 1))
            (xs xs (cdr xs)))
           ((= i end) s)
-        (behaved-sequence-set! s (- i start) (car xs)))))) 
+        (absequence-set! s (- i start) (car xs)))))) 
 
-(define (behaved-sequence/type st . args)
-  (list->behaved-sequence/type st args))
+(define (absequence/behavior sb . args)
+  (list->absequence/behavior sb args))
 
 
-
+(define-record-discloser :absequence
+  (lambda (r)
+    (let ((sq (absequence:data r)))
+      (if (or (vector? sq)
+              (string? sq)
+              (pair? sq))
+          `(absequence:data ,sq)
+          `(absequence)))))

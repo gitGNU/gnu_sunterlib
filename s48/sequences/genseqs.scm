@@ -12,7 +12,7 @@
 ;;; subsequence
 ;;; sequence-copy
 ;;; sequence-append
-;;; sequence-map sequences-map
+;;; sequence-map sequences-map sequences-map/maker
 ;;; sequence-for-each sequences-for-each
 ;;; sequence-fold sequences-fold
 ;;; sequence-fold-right sequence-fold-right
@@ -20,6 +20,13 @@
 ;;; sequence-every sequences-every
 
 (define (id x) x)
+
+;; seqs : nonempty proper list of sequences
+;; compute min sequence-length
+(define (sequences-length seqs)
+  ;; we got the time, we got the space ...
+  (apply min (map sequence-length seqs)))
+
 
 (define (sequence->list s . opts)
   (let-optionals opts ((start 0) (end (sequence-length s)))
@@ -32,26 +39,33 @@
 (define (sequence-fill! s x . opts)
   (let-optionals opts ((start 0) (end (sequence-length s)))
     (assert (<= 0 start end))
-    (let loop ((i 0))
+    (let loop ((i start))
       (if (< i end)
           (begin 
             (sequence-set! s i x)
             (loop (+ i 1)))))))
         
 
-(define (subsequence s start end)
-  (assert (<= 0 start end))
-  (let* ((len (- end start))
-         (ss (make-another-sequence s len)))
-    (do ((i 0 (+ i 1)))
-        ((= i len) ss)
-      (sequence-set! ss i (sequence-ref s (+ start i))))))
+(define (sequence-copy/maker maker s . opts)
+  (let-optionals opts ((start 0)
+                       (end (sequence-length s)))
+    (assert (<= 0 start end))
+    (let* ((len (- end start))
+           (ss (maker len)))
+      (do ((i 0 (+ i 1)))
+          ((= i len) ss)
+        (sequence-set! ss i (sequence-ref s (+ start i)))))))
 
 
 (define (sequence-copy s . opts)
-  (let-optionals opts ((start 0) (end (sequence-length s)))
-    (assert (<= 0 start end))
-    (subsequence s start end)))
+  (apply sequence-copy/maker
+         (lambda (n) (make-another-sequence s n))
+         s opts))
+  
+
+;; ...
+(define (subsequence s start end)
+  (sequence-copy s start end))
 
 
 (define (sequence-fold kons nil s . opts)
@@ -68,7 +82,7 @@
       (sequence-fold kons nil seq)
       (let* ((ss (cons seq seqs))
              ;; are we morally obliged to use FOLD here?
-             (end (apply min (map sequence-length ss))))
+             (end (sequences-length ss)))
         (let loop ((subtotal nil) (i 0))
           (if (= i end) subtotal
               (loop (apply kons (append! (map (lambda (s)
@@ -92,7 +106,7 @@
       (sequence-fold-right kons nil seq)
       (let* ((ss (cons seq seqs))
              ;; are we morally obliged to use FOLD here?
-             (end (apply min (map sequence-length ss))))
+             (end (sequences-length ss)))
         (let loop ((subtotal nil) (i (- end 1)))
           (if (= i -1) subtotal
               (loop (apply kons (append! (map (lambda (s)
@@ -125,29 +139,43 @@
 
 (define (sequences-for-each proc seq . seqs)
   (let* ((ss (cons seq seqs))
-         (end (apply min (map sequence-length ss))))
+         (end (sequences-length ss)))
     (do ((i 0 (+ i 1)))
         ((= i end) (unspecific))
       (apply proc (map (lambda (s) (sequence-ref s i)) ss)))))
 
 
-(define (sequence-map proc seq . opts)
-  (let-optionals opts ((start 0) (end (sequence-length seq)))
-    (assert (<= start end))
-    (let ((res (make-another-sequence seq end)))
+(define (sequence-map/maker maker proc seq . opts)
+  (let-optionals opts ((start 0)
+                       (end (sequence-length seq)))
+    (assert (<= 0 start end))
+    (let ((res (maker (- end start))))
       (do ((i start (+ i 1)))
           ((= i end) res)
-        (sequence-set! res i (proc (sequence-ref seq i)))))))
+        (sequence-set! res (- i start)
+                       (proc (sequence-ref seq i)))))))
 
 
-(define (sequences-map proc seq . seqs)
+(define (sequence-map proc seq . opts)
+  (apply sequences-map/maker
+         (lambda (n) (make-another-sequence seq n))
+         seq opts))
+
+
+(define (sequences-map/maker maker proc seq . seqs)
   (let* ((ss (cons seq seqs))
-         (end (apply min (map sequence-length ss)))
-         (res (make-another-sequence seq end)))
+         (end (sequences-length ss))
+         (res (maker end)))
     (do ((i 0 (+ i 1)))
         ((= i end) res)
       (sequence-set! res i (apply proc (map (lambda (s) (sequence-ref s i))
                                             ss))))))
+
+
+(define (sequences-map proc seq . seqs)
+  (apply sequences-map/maker (lambda (n) (make-another-sequence seq n))
+         proc seq seqs))
+
 
 (define (sequence-any foo? seq . opts)
   (let-optionals opts ((start 0) (end (sequence-length seq)))
@@ -160,7 +188,7 @@
 
 (define (sequences-any foo? . seqs) 
   (if (null? seqs) #f
-      (let ((end (apply min (map sequence-length seqs))))
+      (let ((end (sequences-length seqs)))
         (let loop ((i 0))
           (cond ((= i end) #f)
                 ((apply foo? (map (lambda (seq) (sequence-ref seq i))
@@ -181,7 +209,7 @@
 
 (define (sequences-every foo? . seqs) 
   (if (null? seqs) #t
-      (let ((end (apply min (map sequence-length seqs))))
+      (let ((end (sequences-length seqs)))
         (let loop ((i 0))
           (cond ((= i end) #t)
                 ((apply foo? (map (lambda (seq) (sequence-ref seq i))
