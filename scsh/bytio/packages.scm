@@ -4,13 +4,16 @@
 ;; byte (rather than character) i/o
 (define-structure bytio bytio-face
   (open krims                           ; assert
-        scheme
+        sequence-lib                    ; subsequence sequence-length
 	byte-vectors 
+	let-opt				; let-optionals
+        srfi-23                         ; error
+        scsh                            ; fdes & port stuff, bitwise-and
+        scheme
 	ascii				; char<->ascii
 	i/o				; read-block
 	ports				; port-buffer
 	primitives			; copy-bytes!
-	let-opt				; let-optionals
 	)
   (files rw-bytes))
 

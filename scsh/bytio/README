@@ -1,0 +1,37 @@
+sunterlib/scsh/bytio -- Byte I/O
+
+Procedures
+
+(read-byte [inport]) --> n in [0:256)
+(peek-byte [inport]) --> n in [0:256)
+(write-byte n [outport]) --> unspec
+
+Synopsis:  Obvious byte analogues to Scheme's character readers and
+writers.  [ Presently these are only wrappers around the char procs.
+That means, the system reads octets, cooks them into characters, that
+we rever to raw numeric meat, small integers in [0:256). ]
+
+                                *
+
+(read-bytes n [fd/port]) --> bytes or #f
+(read-bytes/partial n [fd/port]) --> bytes pr #f
+
+(read-bytes! bytes [fd/port start end]) --> nread or #f
+(read-bytes!/partial bytes [fd/port start end]) --> nread or #f
+
+(write-bytes bytes [fd/port start end]) --> unspec
+
+Synopsis:  Obvious byte analogues of the corresponding string procs
+documented in the scsh manual, with byte-vectors BYTES replacing
+strings.  (String arguments BYTES work, too.)
+ 
+Notes:
+* Byte-vector constructors etc. are in structure BYTE-VECTORS.
+* The present implementation avoids allocating temp buffers by not
+  always reading very much ...
+* The procedures aren't tested well, yet.
+
+                              0Oo
+
+
+
