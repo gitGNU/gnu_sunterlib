@@ -84,3 +84,26 @@ Error: exception
        (channel-maybe-write 32 '#{Byte-vector 10} 0 1 '#{Output-channel 4} ---)
 
 WARNING: Returning does not work from a scsh with a running REPL!!!
+
+
+
+(with-fatal-and-capturing-error-handler handler thunk)
+
+An exception handler with allows to capture the continuation of the
+exception. Here HANDLER is a procedure like
+
+(handler condition continuation decline) -> val
+
+CONDITION and DECLINE are the same as in the usual WITH-HANDLER
+procedure. CONTINUATION represents the continuation of the
+exception. However, this is not a procedure but the VM's continuation
+object. The continuation of HANDLER is the continuation of
+WITH-FATAL-AND-CAPTURING-ERROR-HANDLER.
+
+
+(display-continuation continuation [port] -> unspecified
+
+The procedural analogy to the ,proceed command. Continuation must be a
+continuation object as captured by
+WITH-FATAL-AND-CAPTURING-ERROR-HANDLER, not a procedure as captured by
+CALL-WITH-CURRENT-CONTINUATION.

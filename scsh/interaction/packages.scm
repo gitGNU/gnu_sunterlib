@@ -10,6 +10,8 @@
 (define-structure inspect-exception inspect-exception-interface
 					    
   (open scheme-with-scsh
+        rt-modules
+        exceptions
 	conditions
 	escapes
 	handle

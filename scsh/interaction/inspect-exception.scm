@@ -5,7 +5,7 @@
 ;;; the distribution.
 
 ;; From SUnet plus one more call/cc to capture the continuation of the error
-(define (with-fatal-and-capturing-error-handler* handler thunk)
+(define (with-fatal-and-capturing-error-handler handler thunk)
   (call-with-current-continuation
    (lambda (accept)
      ((call-with-current-continuation
@@ -23,7 +23,7 @@
 	  (lambda () (call-with-values thunk accept)))))))))
 
 (define (with-inspecting-handler port prepare thunk)
-  (with-fatal-and-capturing-error-handler*
+  (with-fatal-and-capturing-error-handler
    (lambda (condition condition-continuation more)
      (with-handler
       (lambda (c2 m2)
@@ -37,3 +37,16 @@
             (with-continuation condition-continuation (lambda () res)))
           (more))))
       thunk))
+
+(define display-preview (eval 'display-preview 
+                              (rt-structure->environment (reify-structure 'debugging))))
+
+(define (display-continuation continuation . maybe-port)
+  (let ((out (if (null? maybe-port)
+                           (current-output-port)
+                           (car maybe-port))))
+    (if continuation
+        (display-preview (continuation-preview continuation)
+                         out)
+        (display 'bottom-contination out))))
+      
