@@ -1,5 +1,5 @@
 (define-package "procedure-tables"
-  (0 0)
+  (0 1)
   ((install-lib-version (1 0)))
   (write-to-load-script
    `((config)
