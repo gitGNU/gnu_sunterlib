@@ -9,7 +9,7 @@
   (install-file "NEWS" 'doc)
   (install-string (COPYING) "COPYING" 'doc)
   (install-file "packages.scm" 'scheme)
-  (install-file "aux.scm" 'scheme)
+  (install-file "auxies.scm" 'scheme)
   (install-file "tiff-prober.scm" 'scheme)
   (install-file "vtiff.scm" 'scheme)
   (install-file "endian.scm" 'scheme)

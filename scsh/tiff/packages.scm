@@ -104,7 +104,7 @@
         scheme-with-scsh                ; error-output-port
         )
   (for-syntax (open scheme))
-  (files aux))
+  (files auxies))
 
 (define-structure ersatz-srfi-4 ersatz-srfi-4-face
   (open (modify scheme (alias (vector? u8vector?)
