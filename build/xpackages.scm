@@ -1,5 +1,5 @@
-#! /usr/local/bin/scsh \
--o filenames -o pp -s
+#! /bin/sh 
+exec scsh -o filenames -o pp -s "$0" "$@"
 !#
 
 ;;; xpackages.scm
