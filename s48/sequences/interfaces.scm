@@ -16,13 +16,16 @@
           sequence-fill!
           subsequence
           sequence-copy
+          sequence-copy!
           sequence-copy/maker
           sequence-append
           sequence-map sequences-map
           sequence-map/maker sequences-map/maker
+          sequence-map-into! sequences-map-into!
           sequence-for-each sequences-for-each
           sequence-fold sequences-fold
           sequence-fold-right sequences-fold-right
+          sequence-null?
           sequence-any sequences-any
           sequence-every sequences-every
           sequence= sequences=
@@ -70,15 +73,19 @@
           vector-tabulate!
           subvector
           vector-copy
+          vector-copy!
           vector-append
           vector-map   ; forget the optional MAKER arg
+          vector-map-into!
           vector-for-each
           vector-fold
           vector-fold-right
+          vector-null?
           vector-any
           vector-every
           vector=
           vectors-map  ; but not vectors-map/maker
+          vectors-map-into!
           vectors-for-each
           vectors-fold
           vectors-fold-right

@@ -13,8 +13,10 @@
 
 ;; specialists for lists, vectors, strings
 (define-structure sequence-specifics sequence-specifics-face
-  (open srfi-1                          ; list procs
+  (open krims                           ; assert
+        srfi-1+                         ; list procs
         srfi-13                         ; string procs
+        let-opt                         ; let-optionals [ from scsh ]
         scheme)
   (files specseqs))
 

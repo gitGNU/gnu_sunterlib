@@ -25,15 +25,12 @@ VECTOR-LIB            SEQUENCE-LIB             ABSEQUENCES, also SL
 * Predicates or so
 vector?               sequence?                absequence?
                                                sequence-behavior?
-[ versions with 1 sequence and optional start & end parameters ]
+vector-null?          sequence-null?
 vector-every          sequence-every
 vector-any            sequence-any
-[ versions with >1 sequence but no optional start & end parameters ]
 vectors-every         sequences-every
 vectors-any           sequences-any
-[ 2 seq. args and opt. start & end parms for both seqs ]
 vector=               sequence=
-[ >=0 sequence args, no start & end parameters ]
 vectors=              sequences=
 
 * Constructors
@@ -54,6 +51,7 @@ vector-ref            sequence-ref             absequence-ref
                                                absequence:behavior
 vector-copy           sequence-copy
                       sequence-copy/maker
+vector-copy!          sequence-copy!
 subvector             subsequence
 
 * Modification
@@ -65,15 +63,15 @@ sequence-tabulate!    vector-tabulate!
 vector-append         sequence-append
 
 * Fold, Unfold & Map
-[ versions with 1 sequence and optional start & end parameters ]
 vector-map            sequence-map
                       sequence-map/maker
+vector-map-into!      sequence-map-into!
 vector-for-each       sequence-for-each
 vector-fold           sequence-fold
 vector-fold-right     sequence-fold-right
-[ versions with >1 sequence but no start & end parameters ]
 vectors-map           sequences-map
                       sequences-map/maker
+vectors-map-into!     sequences-map-into!
 vectors-for-each      sequences-for-each
 vectors-fold          sequences-fold
 vectors-fold-right    sequences-fold-right
@@ -140,8 +138,11 @@ library grows, but please report deviations anyway.
   the respective srfi, the result complies with the srfi spec.
   E.g. ``sequences-fold = fold'' on lists,
        ``sequence-fold = string-fold'' on strings.
-  Exception:  SEQUENCE= vs. STRING= -- parameter lists don't match (ELT=)
-
+  Attention:
+    SEQUENCE= vs. STRING= -- parameter lists don't match (ELT=)
+    SEQUENCE-TABULATE! (and VECTOR-TABULATE) --
+      parameter list is patterned after (STRING-TABULATE proc len), not
+                                  after   (LIST-TABULATE len proc).
 
 * Predicates
 
@@ -152,6 +153,13 @@ library grows, but please report deviations anyway.
 
 Synopsis:  The obvious type predicates.  Note that by the type
 inclusions the boolean B0 ==> B1 and B2 ==> B1.
+
+                                    *
+
+(vector-null? s) --> b
+(sequence-null? s) --> b
+
+Synopsis:  Return B := boolean(s.length = 0).
 
                                     *
 
@@ -224,6 +232,7 @@ of minimal length with the elements S[0] = X0, ...
 (vector-tabulate proc len) --> s
 
 Synopsis:  Make vector s[0:len) with s[i] := (proc i).
+[ after (string-tabulate proc len) rather than (list-tabulate len proc) ]
 
                                   *
 
@@ -283,6 +292,13 @@ packaged in absequence ABS.
 Synopsis:  Make new vector resp. sequence (with MAKER)
 S1 = < s0[start+i] : i in [0:end-start) >.
 [ MAKER intentionally not made third optional arg. ]
+
+                                 *
+
+(vector-copy! s1 start1 s0 [start0 end0]) --> unspec
+(sequence-copy! s1 start1 s0 [start0 end0]) --> unspec
+
+Synopsis:  Set s1[start1 + i] := s0[start0 + i] for 0 <= i < end0 - start0.
 
                                  *
 
@@ -349,6 +365,31 @@ f(s[start]),...,f(s[end-1])  resp.
 Use the MAKER, if supplied, otherwise the maker of the first sequence
 arg's concrete type.  [ MAKER intentionally not made third optional
 arg. ]
+
+                                *
+
+(vector-map-into! s1 proc s0 [start1 end1 start0]) --> s1
+(sequence-map-into! s1 proc s0 [start1 end1 start0]) --> s1
+
+Synopsis:  Set s1[start1 + i] := (proc s0[start0 + i])
+for 0 <= i < end1 - start1, return s1.
+
+Attention:  differing from CL's MAP-INTO, these procs expect
+end1 - start1 <= s0.length - start0, i.e. the destination S1 drives the
+loop, as with MAP! in SRFI-1.  Differing from SEQUENCE-COPY!, the optionals
+relate 2 to the destination S1 and 1 to the source S0 instead of 1 to the
+destination and 2 to the source.  (Why?  Because of the different loop
+termination criteria: dest length vs. src length.)
+
+                                *
+
+(vectors-map-into! s1 proc s00 ...) --> s1
+(sequences-map-into! s1 proc s00 ...) --> s1
+
+Synopsis:  Set s1[i] := (proc s00[i] ...) for i in [0:s1.length), return s1.
+
+Attention: differing from CL's MAP-INTO, these procs expect the sequences
+S00, ... to be no less long than the destination S1, like MAP! in SRFI-1.
 
                                 *
 
