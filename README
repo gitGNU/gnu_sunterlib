@@ -1,0 +1,7 @@
+Scheme Untergrund Library
+
+The Scheme Untergrund Library hosts contributed code for Scheme48 and
+Scsh. In addition to acting as host, the project provides a
+centralized way to access these packages from the languages' module
+system.
+
