@@ -60,6 +60,9 @@
 (define all-afs-permissions
   (make-afs-permissions (map char->afs-permission (string->list "rlidwka"))))
 
+(define (afs-permissions<=? p1 p2)
+  (enum-set=? (enum-set-union p1 p2) p2))
+
 ;; access control lists: lists of pairs of user name and
 ;; afs-permissions
 
