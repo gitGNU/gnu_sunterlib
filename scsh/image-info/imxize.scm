@@ -1,54 +1,6 @@
 ; Copyright (c) 2003 RT Happe <rthappe at web de>
 ; See the file COPYING distributed with the Scheme Untergrund Library
-
-#!
-Loose port of small parts from Marco Schmidt's public domain ImageInfo 1.3
-Java program.  The original code is at
-http://www.geocities.com/marcoschmidt.geo/image-info.html
-
-Synopses
-
-Extracting the image dimension etc.
-
-  (image-dimension img) ==> [w h]
-  extract the width W and height H (in pixels) from the byte source
-  (input port, byte-vector, b.s.(*)) repesenting an image -- or signal 
-  an error.  Supported formats: gif, jpeg, png.  
-
-  (get-image-info bs) ==> info | #f
-  extract information on the image represented by b.s.(*) BS and return
-  an image-info record or #f.  (Don't believe in the colour depth for 
-  gifs.)
-
-  (image:info-format info) ==> format | #f
-  get the symbolic format id from image-info record INFO 
-
-  (image:info-depth info) ==> depth | #f
-  get the colour DEPTH (#bits / pixel) from image-info record INFO 
-
-  (image:info-width/pixel info) ==> w | #f
-  (image:info-height/pixel info) ==> h | #f 
-  get the pixel width W resp. height H from image-info record INFO
-
-  (image:info-width/dpi info) ==> width | #f
-  (image:info-height/dpi info) ==> height | #f 
-  get the physical width W resp. height H in dots per inch from etc.
-
-
-(*) Creating and accessing ``byte streams''
-  byte-streams are random-access lazy byte sequences  
-
-  (inport->byte-stream in) ==> bs
-  convert the input port IN to a b.s. BS
-
-  (byte-vector->byte-stream bv) ==> bs
-  convert the byte-vector bv to a b.s. BS
-
-  (segment-byte-stream bs start end) ==> [bv bs']
-  segment the b.s. BS into the first [start:end) bytes (at most) in the 
-  byte-vector BV and the following [end:*) bytes in the b.s. BS'.  BV and
-  BS' may be empty.
-!#
+; See the file README for documentation.
 
 ;;; since there is no pre-fab lazy-list facility for s48/scsh but a 
 ;;; draft srfi, I don't use what's not there and don't set up a 
@@ -139,6 +91,8 @@ Extracting the image dimension etc.
 ;; width, height : integer -- image size in pixels
 (define (image-dimension img)
   (let* ((bs (cond ((input-port? img)
+                    (inport->byte-stream img))
+                   ((integer? img) ; fdes?
                     (inport->byte-stream img))
                    ((byte-vector? img)
                     (byte-vector->byte-stream img))
