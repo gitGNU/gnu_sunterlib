@@ -1,0 +1,5 @@
+version 0.1 - 2003-03-21
+
+* Initial release.
+* New s48 libraries: args-fold	concurrency  module-system
+* New scsh libraries: afs  dir-streams  interaction  pps
