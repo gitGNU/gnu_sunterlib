@@ -20,7 +20,7 @@
          (apply vector-fill! s x opts))
         ((string? s)
          (apply string-fill! s x opts))
-        ((pair? s)
+        ((and (pair? s) (null? opts))
          (apply list-fill! s x opts))
         (else
          (apply contiguous-sequence-fill! s x opts))))
