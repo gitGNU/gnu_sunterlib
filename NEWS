@@ -1,6 +1,6 @@
 version 0.6
-*
-New scsh libraries: file-mode
+* New scsh libraries: file-mode
+* New s48 libraries: SRFI-34/SRFI-35 exceptions and conditions
 
 version 0.5 2003-11-19
 * New s48 libraries: procedure-tables.
