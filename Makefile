@@ -21,16 +21,16 @@ s48 : $(s48-targets)
 scsh : $(scsh-targets)
 
 s48-interfaces.scm : $(s48-interfaces)
-	cat $(s48-interfaces) > s48-interfaces.scm
+	cat build/header.scm $(s48-interfaces) > s48-interfaces.scm
 
 s48-packages.scm : $(s48-packages)
-	build/xpackages.scm s48-packages.scm $(s48-packages)
+	build/xpackages.scm s48-packages.scm build/header.scm $(s48-packages)
 
 interfaces.scm : $(s48-interfaces) $(scsh-interfaces)
-	cat $(s48-interfaces) $(scsh-interfaces) > interfaces.scm
+	cat build/header.scm $(s48-interfaces) $(scsh-interfaces) > interfaces.scm
 
 packages.scm : $(s48-packages) $(scsh-packages)
-	build/xpackages.scm packages.scm $(s48-packages) $(scsh-packages)
+	build/xpackages.scm packages.scm build/header.scm $(s48-packages) $(scsh-packages)
 
 .PHONY : clean
 clean :
