@@ -7,8 +7,8 @@ version 0.6
   * interfaces.scm + packages.scm -> load.scm
   * add pkg-def.scm
 * New scsh library: scsh-packages
-* New s48 library: mini-profiler
-* New s48 library: reinitializer
+* New s48 library: profiler 
+* New s48 library: heap-images 
 * New scsh libraries: file-mode
 * New s48 libraries: SRFI-34/SRFI-35 exceptions and conditions, SRFI-10
 
