@@ -6,19 +6,18 @@
 
 ;;;;;; - Conditions -
 
+;;;; I'll switch to SRFIs 34 and 35 once someone substitutes them
+;;;; for the current exception system in Scheme48's main source.
+
 (define-condition-type 'banana-error '(error))
 (define banana-error? (condition-predicate 'banana-error))
 ;; BANANA-ERROR conditions contain information about who signalled
-;; them in their CADRs.
+;; them for better debugging.  [use CALL-ERROR instead?]
 (define banana-error-caller cadr)
 
 (define-condition-type 'banana:unknown-byte '(banana-error))
 (define unknown-byte-error?
   (condition-predicate 'banana:unknown-byte?))
-;; See the note about BANANA-ERROR conditions.  For that reason,
-;; and that BANANA:UNKNOWN-BYTE is a subtype of BANANA-ERROR, all
-;; the information in BANANA:UNKNOWN-BYTE conditions (and all the
-;; others below BANANA-ERROR) store their own fields in the CDDRs.
 (define unknown-byte-error-byte caddr)
 (define unknown-byte-error-profile cadddr)
 
@@ -31,13 +30,13 @@
 (define-condition-type 'read-eof-error '(read-error))
 (define read-eof-error? (condition-predicate 'read-eof-error))
 
-;;;;;; - Utility functions. -
+;;;;;; - Utility functions -
 
 ;; Used in NONE-ENCODER/STRING.
-(define (map-string->byte-vector f s . rest)
-  (let* ((len (string-length s))
-         (new (make-byte-vector len 0)))
-    (do ((i 0 (+ i 1)))
+(define (map-string->byte-vector f s)
+  (let ((len (string-length s)))
+    (do ((new (make-byte-vector len 0))
+         (i 0 (+ i 1)))
         ((= i len) new)
       (byte-vector-set! new i
                         (f (string-ref s i))))))
@@ -63,65 +62,56 @@
 
 ;; Variant of BYTE-VECTOR-CONCATENATE.
 (define (byte-vector-append . vecs)
-  (if (null? vecs)
-      ;; No need to even bother calling BYTE-VECTOR-CONCATENATE.
-      (make-byte-vector 0 0)
-      (byte-vector-concatenate vecs)))
+  (cond ((null? vecs) ;fast paths
+         (make-byte-vector 0 0))
+        ((null? (cdr vecs))
+         (car vecs))
+        (else
+         (byte-vector-concatenate vecs))))
 
 ;; Maybe these and the two above should be done using the
 ;; SEQUENCES structures that also come with Sunterlib.
+;; 
+;; Or with the COPY-BYTES! VM primitive, if we care about speed.
 (define (byte-vector->string bv)
-  (let* ((len (byte-vector-length bv))
-         (new (make-string len)))
-    (do ((i 0 (+ i 1)))
+  (let ((len (byte-vector-length bv)))
+    ;(let ((new (make-string len)))
+    ;  (copy-bytes! bv 0 new 0 len)
+    ;  bv)
+    (do ((new (make-string len))
+         (i 0 (+ i 1)))
         ((= i len) new)
       (string-set! new i (ascii->char (byte-vector-ref bv i))))))
 
 (define (string->byte-vector s)
-  (let* ((len (string-length s))
-         (new (make-byte-vector len 0)))
-    (do ((i 0 (+ i 1)))
+  (let ((len (string-length s)))
+    ;(let ((new (make-byte-vectoro len)))
+    ;  (copy-bytes! s 0 new 0 len)
+    ;  s)
+    (do ((new (make-byte-vector len 0))
+         (i 0 (+ i 1)))
         ((= i len) new)
       (byte-vector-set! new i (char->ascii (string-ref s i))))))
 
-(define (list->byte-vector l)
-  (let* ((len (length l))
-         (new (make-byte-vector len 0)))
-    (do ((i 0 (+ i 1))
+;; [use the REVERSE-LIST->STRING VM primitive and then COPY-BYTES!
+;; (to move the characters from the resulting string to a byte
+;; vector) for wicked speed?]
+(define (reverse-list->byte-vector l)
+  (let ((len (length l)))
+    (do ((new (make-byte-vector len 0))
+         (i (- len 1) (- i 1))
          (l l (cdr l)))
-        ((= i len) new)
+        ((null? l) new)
       (byte-vector-set! new i (car l)))))
 
 ;; POSINT->BYTE-VECTOR converts nonnegative integers (the name is
 ;; a tad misleading, but it's easier to write and say than
 ;; NONNEGINT->BYTE-VECTOR or something) to byte vectors as
 ;; specified by the Banana protocol.
-;;
-;; *FIXME* - Shouldn't this be able to be implemented better than
-;; by consing up a list...and then reversing that list...and then
-;; converting that list into a byte vector?
-;;
-;; Tail-recursive, iterative version.
 (define (posint->byte-vector int)
   (do ((int int (arithmetic-shift int -7))
        (bytes '() (cons (bitwise-and int #x7f) bytes)))
-      ((zero? int) (list->byte-vector (reverse bytes)))))
-
-;; CPS version.
-; (define (posint->byte-vector int)
-;   (do ((int int (arithmetic-shift int -7))
-;        (k (lambda (x) x)
-;           (lambda (x) (k (cons (bitwise-and int #x7f) x)))))
-;       ((zero? int) (list->byte-vector (k '())))))
-
-;; Linear-recursive version.
-; (define (posint->byte-vector int)
-;   (list->byte-vecctor
-;    (let loop ((int int))
-;      (if (zero? int)
-;          bytes
-;          (cons (bitwise-and int #x7f)
-;                (loop (arithmetic-shift int -7)))))))
+      ((zero? int) (reverse-list->byte-vector bytes))))
 
 ;; BYTE-VECTOR->POSINT is just like POSINT->BYTE-VECTOR but the
 ;; other way around.
@@ -153,57 +143,77 @@
 (define (prettify-byte-vector bv)
   (map-byte-vector->list prettify-byte bv))
 
-(define alist->integer-table
-  (let ((make (make-table-maker = abs)))
-    (lambda (alist)
-      (let ((table (make)))
-        (for-each (lambda (key/value)
-                    (table-set! table
-                                (car key/value)
-                                (cdr key/value)))
-                  alist)
-        table))))
+;;;;;; - Banana -
 
-;;;;;; Here starts the actual Banana code.
+;;;; Decoder tables
+
+(define minimum-etb #x80) ;offset for bytes in decoder tables
+
+;; Decoder tables used to be implemented with tables of integers.
+;; How silly to not have written it to use vectors in the first
+;; place.
+
+(define (alist->decoder-table alist)
+  ;; Hope there are no duplicates in ALIST.
+  (let ((vec (make-decoder-table (length alist))))
+    (for-each (lambda (byte+decoder)
+                (vector-set! vec
+                             (- (car byte+decoder)
+                                minimum-etb)
+                             (cdr byte+decoder)))
+              alist)
+    vec))
+
+(define (make-decoder-table size)
+  (make-vector size #f))
+
+(define (decoder-table-ref dt byte)
+  (vector-ref dt (- byte minimum-etb)))
+(define (decoder-table-set! dt byte value)
+  (vector-set! dt (- byte minimum-etb) value))
+(define (decoder-table-size dt)
+  (+ (vector-length dt) minimum-etb))
+
+;;;; Profiles
 
 (define-record-type profile :profile
-  (really-make-profile name encoder decoder-table super-profile)
+  (really-make-profile name encoder decoder-table parent)
   profile?
   (name profile-name)
   (encoder profile-encoder)
   (decoder-table profile-decoder-table)
-  (super-profile profile-super-profile))
+  (parent profile-parent))
+
+(define-record-discloser :profile
+  (letrec ((profile-names (lambda (p)
+                            (if p
+                                (cons (profile-name p)
+                                      (profile-names
+                                       (profile-parent p)))
+                                '()))))
+    (lambda (p) `(profile . ,(profile-names p)))))
 
 (define (make-profile name encoder decoder-alist)
   (extend-profile #f name encoder decoder-alist))
 
-(define (extend-profile super-profile name encoder decoder-alist)
+(define (extend-profile parent name encoder decoder-alist)
   (really-make-profile name encoder
-                       (alist->integer-table decoder-alist)
-                       super-profile))
-
-;; Why did this ever take a variable number of arguments?
-; (define extend-profile
-;   (case-lambda
-;     ((super-profile profile)
-;      (really-make-profile (profile-name profile)
-;                           (profile-encoder profile)
-;                           (profile-decoder-table profile)
-;                           super-profile))
-;     ((super-profile name encoder decoder-alist)
-;      (really-make-profile name encoder
-;                           (alist->integer-table decoder-alist)
-;                           super-profile))))
+                       (alist->decoder-table decoder-alist)
+                       parent))
 
 ;; ETB = Element Type Byte
 (define (lookup-etb-decoder byte profile)
   (let loop ((p profile))
     (if p
-        (or (table-ref (profile-decoder-table p) byte)
-            (loop (profile-super-profile p)))
+        (or (let ((decoders (profile-decoder-table p)))
+              (and (< byte (decoder-table-size decoders))
+                   (decoder-table-ref decoders byte)))
+            (loop (profile-parent p)))
         (signal 'banana:unknown-byte
                 'lookup-etb-decoder
                 byte profile))))
+
+;;;; The 'none' profile
 
 (define none-etb/list          #x80)
 (define none-etb/posint        #x81)
@@ -241,6 +251,7 @@
     (byte-vector-append
      (posint->byte-vector (string-length str))
      (byte-vector none-etb/string)
+     ;; COPY-BYTES! would do this much faster!
      (map-string->byte-vector char->ascii str))))
 
 (define none-encoder/negint
@@ -346,12 +357,12 @@
 
 (define none-decoder/float
   (lambda (bytes inport)
-    (let ((s (make-string 9)))
-      (string-set! s 0 (ascii->char none-etb/float))
+    (let ((v (make-byte-vector 9 0)))
+      (byte-vector-set! v 0 none-etb/float)
       (do ((i 1 (+ i 1)))
           ((= i 9))
-        (string-set! s i (read-char inport)))
-      (byte-vector->real (string->byte-vector s)))))
+        (byte-vector-set! v i (char->ascii (read-char inport))))
+      (byte-vector->real v))))
 
 ;; NONE-DECODER/POSINT and NONE-DECODER/LARGEPOSINT really do the
 ;; same thing -- the only difference is that they're called in
@@ -373,7 +384,7 @@
       (,none-etb/largenegint . ,none-decoder/largenegint))))
 
 (define (etb? b)
-  (> b 127))
+  (> b #x7f))
 
 (define (read-element! inport profile)
   (let loop ((bytes '()))
@@ -386,7 +397,7 @@
           (let ((current-byte (char->ascii current-char)))
             (if (etb? current-byte)
                 ((lookup-etb-decoder current-byte profile)
-                 (apply byte-vector (reverse bytes))
+                 (reverse-list->byte-vector bytes)
                  inport)
                 (loop (cons current-byte bytes))))))))
 
@@ -394,7 +405,7 @@
   (let ((profile (if (pair? profile) (car profile) profile/none)))
     (cond
      ((input-port?  x) (read-element! x profile))
-     ((string?      x) (read-element! (make-string-input-port x)
+     ((string?      x) (read-element! (open-input-string x)
                                       profile))
      ((byte-vector? x) (decode (byte-vector->string x) profile))
      (else (error "decode: can't decode from source" x)))))

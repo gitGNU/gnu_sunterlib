@@ -5,14 +5,10 @@
         conditions
         exceptions
         signals
-        thread-fluids
-        bitwise
-        tables
         handle
+        bitwise
         byte-vectors
         ascii
-        extended-ports
         srfi-1
-        srfi-2
-        srfi-16)
+        srfi-6)
   (files banana))

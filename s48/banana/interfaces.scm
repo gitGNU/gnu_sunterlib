@@ -21,7 +21,7 @@
      (profile-encoder (proc (:value)
                             (proc (:value) :value)))
      (profile-decoder-table (proc (:value) :value))
-     (profile-super-profile (proc (:value) :value))
+     (profile-parent (proc (:value) :value))
 
    profile/none
 
@@ -37,9 +37,9 @@
   (export
 
    ;; These can be used for other profiles as lengths and such.
-   posint->byte-vector
-   byte-vector->posint
+   (posint->byte-vector (proc (:exact-integer) :byte-vector))
+   (byte-vector->posint (proc (:byte-vector) :exact-integer))
 
    ;; Generally just for debugging or manual testing.
-   prettify-byte
-   prettify-byte-vector))
+   (prettify-byte (proc (:exact-integer) :string))
+   (prettify-byte-vector (proc (:byte-vector) :string))))
