@@ -47,7 +47,7 @@ install : $(targets)
 .PHONY : dist
 dist : $(targets)
 	mkdir sunterlib-$(version)
-	cp pkg-def.scm COPYING INSTALL NEWS README README.contrib install-pkg \
+	cp pkg-def.scm COPYING DETAILS INSTALL NEWS README README.contrib install-pkg \
            pkg-def.scm sunterlib-$(version)/
 	cp -r s48 sunterlib-$(version)/s48
 	cp -r scsh sunterlib-$(version)/scsh
