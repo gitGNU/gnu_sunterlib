@@ -1,5 +1,5 @@
 (define-package "afs"
-  (0 0)
+  (0 1)
   ()
   (write-to-load-script
    `((config)
