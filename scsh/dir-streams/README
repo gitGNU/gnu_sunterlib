@@ -1,10 +1,13 @@
+The structure dir-streams defines procedures to represent and process
+directories as streams of files and sub-directories.
 
-Constructor:
+(dir-stream-from-dir-name dir-name [chase?] [parent]) -> dir-stream
 
-(dir-stream-from-dirname dir-name [chase?] [parent]) -> dir-stream
+Constructor for dir-streams.
 
 
 (dir-stream? thing) -> boolean
+
 Type predicate for dir-streams.
 
 
@@ -12,9 +15,11 @@ Type predicate for dir-streams.
 
 Returns the fs-object corresponding to the directory.
 
+
 (fs-object? thing) -> boolean
 
 Type predicate for file-objects.
+
 
 (fs-object-parent fs-object) -> string
 
@@ -62,7 +67,7 @@ the files and subdirectories for which the predicates return #t.
 		       files-make-stream files-stream-empty 
 		       subdirs-make-stream subdirs-empty) -> return type of make-dir-stream
 
-Replaces the constuctors of the dir-stream by the supplied procedures.
+Replaces the constructors of the dir-stream by the supplied procedures.
 Example:
 (define (disc-usage ds)
   (dir-stream-fold-right ds (lambda (fso sum subdirs) (list (fs-object-filename fso)
