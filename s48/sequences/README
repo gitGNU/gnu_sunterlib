@@ -47,6 +47,7 @@ vector-length         sequence-length          absequence-length
 vector-ref            sequence-ref             absequence-ref
                                                absequence:behavior
 vector-copy           sequence-copy
+                      sequence-copy/maker
 subvector             subsequence
 
 * Modification
@@ -58,7 +59,8 @@ vector-append         sequence-append
 
 * Fold, Unfold & Map
 [ versions with 1 sequence and optional start & end parameters ]
-vector-map            sequence-map [ SM with optional MAKER ]
+vector-map            sequence-map
+                      sequence-map/maker
 vector-for-each       sequence-for-each
 vector-fold           sequence-fold
 vector-fold-right     sequence-fold-right
