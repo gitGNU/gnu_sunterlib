@@ -3,7 +3,7 @@ SHELL = /bin/sh
 .SUFFIXES:
 
 major-version = 0
-minor-version = 6
+minor-version = 7
 version := $(major-version).$(minor-version)
 
 prefix = /tmp/sunterlib
