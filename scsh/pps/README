@@ -1,0 +1,35 @@
+The stucture pps implements a portable version of the ps command. It
+currently supports FreeBSD (4.6), Mac OS X/Darwin (10.2/6.3), Linux
+(2.4.19), AIX (4.3.2), Solaris (SunOS 5.8) (tested version). As the ps
+command is not part of any standard this package is likely to fail if
+the version of your system differs from the one I tested. Please
+report incompatible versions and, if possible, provide an adapted
+version.
+
+(ps) -> process-info list
+
+Calls the ps command and parses the output into a list of process-info
+records.
+
+
+(process-info? thing) -> boolean
+
+Type predicate for process-info.
+
+
+(process-info-pid process-info) -> number
+(process-info-ppid process-info) -> number
+(process-info-logname process-info) -> string
+(process-info-real-uid process-info) -> number
+(process-info-effective-uid process-info) -> number
+(process-info-saved-set-uid process-info) -> number
+(process-info-real-gid process-info) -> number
+(process-info-effective-gid process-info) -> number
+(process-info-saved-set-gid  process-info) -> number
+(process-info-time process-info) -> number
+(process-info-tty process-info) -> string
+(process-info-executable process-info) -> string
+(process-info-command-line process-info) -> string
+
+Selectors for process-info. PROCESS-INFO-TIME returns the CPU time of
+the process in seconds.
