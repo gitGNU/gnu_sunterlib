@@ -1,4 +1,4 @@
-(define-package "binary-parse"
+(define-package "tiff"
   (0 1)
   ()
   (install-file "load.scm" 'base)
