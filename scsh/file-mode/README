@@ -1,0 +1,55 @@
+The structure FILE-MODE implements a data type for file modes. The
+code is copied verbatim from Scheme 48 0.57.
+
+
+A file mode is a boxed integer representing a file protection mask.
+
+    * (file-mode permission-name ...) -> file-mode 	syntax
+    * (file-mode? x) -> boolean 
+    * (file-mode+ file-mode ...) -> file-mode 
+    * (file-mode- file-mode0 file-mode1) -> file-mode  
+
+FILE-MODE is syntax for creating file modes. The mode-names are listed
+below. FILE-MODE? is a predicate for file modes. FILE-MODE+ returns a
+mode that contains all of permissions of its arguments. FILE-MODE-
+returns a mode that has all of the permissions of FILE-MODE0 that are
+not in FILE-MODE1.
+
+    * (file-mode=? file-mode0 file-mode1) -> boolean 
+    * (file-mode<=? file-mode0 file-mode1) -> boolean 
+    * (file-mode>=? file-mode0 file-mode1) -> boolean  
+
+FILE-MODE=? returns true if the two modes are exactly the
+same. FILE-MODE<=? returns true if FILE-MODE0 has a subset of the
+permissions of FILE-MODE1. FILE-MODE>=? is FILE-MODE<=? with the
+arguments reversed.
+
+    * (file-mode->integer file-mode) -> integer 
+    * (integer->file-mode integer) -> file-mode  
+
+INTEGER->FILE-MODE and FILE-MODE->INTEGER translate file modes to and
+from the classic Unix file mode masks. These may not be the masks used
+by the underlying OS.
+
+    Permission name 	Bit mask
+    set-uid 	#o4000 	set user id when executing
+    set-gid 	#o2000 	set group id when executing
+    owner-read 	#o0400 	read by owner
+    owner-write 	#o0200 	write by owner
+    owner-exec 	#o0100 	execute (or search) by owner
+    group-read 	#o0040 	read by group
+    group-write 	#o0020 	write by group
+    group-exec 	#o0010 	execute (or search) by group
+    other-read 	#o0004 	read by others
+    other-write 	#o0002 	write by others
+    other-exec 	#o0001 	execute (or search) by others
+
+    Names for sets of permissions
+    owner 	#o0700 	read, write, and execute by owner
+    group 	#o0070 	read, write, and execute by group
+    other 	#o0007 	read, write, and execute by others
+    read 	#o0444 	read by anyone
+    write 	#o0222 	write by anyone
+    exec 	#o0111 	execute by anyone
+    all 	#o0777 	anything by anyone
+
