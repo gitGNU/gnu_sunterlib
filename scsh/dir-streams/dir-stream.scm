@@ -129,14 +129,13 @@
 ; 			 '()))
 
 (define (apply-to-dir-stream stream-f)
-  (define (f ds file-f dir-f)
+  (lambda (ds file-f dir-f)
     (make-dir-stream
      (dir-f (dir-stream-info ds))
      (stream-f file-f (dir-stream-files-stream ds))
      (stream-f (lambda (sub-ds)
 		   (f sub-ds file-f dir-f))
-	       (dir-stream-subdir-stream ds))))
-  f)
+	       (dir-stream-subdir-stream ds)))))
 
 (define dir-stream-map (apply-to-dir-stream stream-map))
 (define dir-stream-filter-map (apply-to-dir-stream stream-filter-map))
