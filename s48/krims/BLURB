@@ -1,2 +1,1 @@
-krims: SRFI-1+. SRFI-9+. Odds and ends (assert, receive/name,
-gen-dispatch).
+krims: Odds and ends (srfi-1+, srfi-9+, assert and other syntax & stuff)
