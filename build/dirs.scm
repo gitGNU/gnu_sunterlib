@@ -8,7 +8,8 @@
                      -mindepth 1
                      -type d
                      ! -name CVS
-                     ! -name rt-modules)))
+                     ! -name rt-modules
+                     ! -name sequences)))
 
 (define scsh-dirs
   (run/strings (find scsh

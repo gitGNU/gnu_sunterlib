@@ -1,7 +1,10 @@
 (define-package "tiff"
   (1 0)
   ()
-  (install-file "load.scm" 'base)
+  (write-to-load-script
+   `((config)
+     (load ,(absolute-file-name "packages.scm"
+                                (get-directory 'scheme #f)))))
   (install-file "README" 'doc)
   (install-file "NEWS" 'doc)
   (install-string (COPYING) "COPYING" 'doc)
