@@ -16,15 +16,14 @@
 		 (enqueue! queue (receive in-channel))
 		 (loop))
 	       (select
-		(list
-		 (wrap (receive-rv in-channel)
-		       (lambda (message)
-			 (enqueue! queue message)
-			 (loop)))
-		 (wrap (send-rv out-channel (queue-front queue))
-		       (lambda (ignore)
-			 (dequeue! queue)
-			 (loop))))))))))
+		(wrap (receive-rv in-channel)
+		      (lambda (message)
+			(enqueue! queue message)
+			(loop)))
+		(wrap (send-rv out-channel (queue-front queue))
+		      (lambda (ignore)
+			(dequeue! queue)
+			(loop)))))))))
     (really-make-async-channel in-channel
 			       out-channel)))
 
