@@ -4,11 +4,8 @@
 
 (define-syntax assert
       (syntax-rules ()
-	((assert ?x)
-	 (if (not ?x) (error "Assertion failed" '?x)))
-        ((assert ?tag ?x)
-         (if (not ?x) (error (format #f "~a -- assertion failed" ?tag)
-                             '?x)))))
+	((assert ?x ?y0 ...)
+	 (if (not ?x) (error "Assertion failed" '?x ?y0 ...))) ))
 
 
 ;; RECEIVE/NAME is a multiple values analogue of named LET. 
