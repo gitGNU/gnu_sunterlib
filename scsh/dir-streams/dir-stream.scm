@@ -42,7 +42,7 @@
 		     "/"
 		     name)))
 
-(define (fs-object-filename fs-object)
+(define (fs-object-file-name fs-object)
   (combine-path (fs-object-parent fs-object)
 		(fs-object-name fs-object)))
 
@@ -119,7 +119,7 @@
 
 ; Example:
 ; (define (disc-usage ds)
-;   (dir-stream-fold-right ds (lambda (fso sum subdirs) (list (fs-object-filename fso)
+;   (dir-stream-fold-right ds (lambda (fso sum subdirs) (list (fs-object-file-name fso)
 ; 							    (apply + sum (map cadr subdirs))
 ; 							    subdirs))
 ; 			 (lambda (fso accu)

@@ -51,8 +51,8 @@
 (define (fs-object-name-matches? fso regexp)
   (regexp-search? regexp (fs-object-name fso)))
 
-(define (ds-object-filename-matches? fso regexp)
-  (regexp-search? regexp (fs-object-filename fso)))
+(define (ds-object-file-name-matches? fso regexp)
+  (regexp-search? regexp (fs-object-file-name fso)))
 
 ;;; test stuff
 

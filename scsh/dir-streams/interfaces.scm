@@ -7,7 +7,7 @@
 	  fs-object-parent
 	  fs-object-name
 	  fs-object-info
-	  fs-object-filename))
+	  fs-object-file-name))
 
 (define-interface dir-stream-predicates-interfaces
   (export fs-object-size-less-then?
@@ -19,7 +19,7 @@
 	  fs-object-last-accessed-in?
 	  fs-object-created-in?
 	  fs-object-name-matches?
-	  ds-object-filename-matches?))
+	  ds-object-file-name-matches?))
 
 (define-interface streams-interface
   (export the-empty-stream
