@@ -97,4 +97,7 @@ Example:
                         '#(a zopp 36) 2)
           ==> 36
 
+[ Yes, this macro doesn't help much. ]
+
                                  oOo
+
