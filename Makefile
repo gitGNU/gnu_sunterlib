@@ -1,6 +1,6 @@
 SHELL = /bin/sh
 
-prefix = /usr/local
+prefix = /tmp/usr/local
 libdir = $(prefix)/lib
 docdir = $(prefix)/share/doc
 pkglibdir = $(libdir)/sunterlib
@@ -21,8 +21,8 @@ s48-packages := $(shell find s48 \
                   -name packages.scm)
 s48-srcs := $(shell find s48 \
               -mindepth 2 \
-              -not -name interfaces.scm \
-              -not -name packages.scm \
+              ! -name interfaces.scm \
+              ! -name packages.scm \
               -name "*.scm")
 s48-docs := $(shell find s48 \
               -mindepth 2 \
@@ -36,8 +36,8 @@ scsh-packages := $(shell find scsh \
                      -name packages.scm)
 scsh-srcs := $(shell find scsh \
                -mindepth 2 \
-               -not -name interfaces.scm \
-               -not -name packages.scm \
+               ! -name interfaces.scm \
+               ! -name packages.scm \
                -name "*.scm")
 scsh-docs := $(shell find scsh \
               -mindepth 2 \
