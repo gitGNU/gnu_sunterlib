@@ -26,16 +26,17 @@
 ;; Assume MIN <= UBERMAX and BUF length < START + UEBERMAX.
 ;; Read at least MIN bytes from INPORT into BUF starting at index START,
 ;; possibly more if possible w/o blocking, but in toto less than UEBERMAX.
-;; Return the number of bytes (<= UEBERMAX) read into BUF, but eof if 
+;; Return the number of bytes (<= UEBERMAX) read into BUF, but eof if
 ;; min>0 and reading started at end of file.
-;; [ Problem with the underlying READ-BLOCK:  if we want to read (at most) 
-;;   n>0 bytes w/o blocking, we have to communicate the upper bound n by 
-;;   the buffer size.  READ-BOLLOCK prefers to read maybe less than 
+;; [ Problem with the underlying READ-BLOCK:  if we want to read (at most)
+;;   n>0 bytes w/o blocking, we have to communicate the upper bound n by
+;;   the buffer size.  READ-BOLLOCK prefers to read maybe less than
 ;;   available but to avoid allocating a temp buffer ]
 (define (read-bollock buf start min uebermax inport)
-  (assert (<= 0 min uebermax))
+  (assert (<= 0 min uebermax) read-bollock)
   (assert (<= (+ start uebermax)
-              (sequence-length buf)))
+              (sequence-length buf))
+          read-bollock)
   (let* ((len (sequence-length buf))
          (mean (if (= min 0) 0
                    (read-block buf start min inport)))
@@ -49,7 +50,7 @@
 
     (if (eof-object? xtra) mean
         (+ mean xtra))))
-         
+
 
 
 ;; like READ-STRING!/PARTIAL with byte-vectors instead of strings
@@ -58,28 +59,32 @@
   (let-optionals args ((fd/port (current-input-port))
 		       (start   0)
 		       (end     (sequence-length bytes)))
-    (assert (<= 0 start end (sequence-length bytes)))
-    (if (integer? fd/port)
-        (let ((port (fdes->inport fd/port)))
-          (set-port-buffering port bufpol/block (- end start))
-          (read-bytes!/partial bytes port start end))
-        (let ((blocking-i/o? (= 0 (bitwise-and open/non-blocking
-                                               (fdes-status fd/port)))))
-          (read-bollock bytes start
-                        (if blocking-i/o? 1 0) ; cond. forward progress
-                        (- end start)
-                        fd/port)))))
+    (assert (<= 0 start end (sequence-length bytes))
+            read-bytes!/partial)
+    (cond ((= end start) 0)
+          ((integer? fd/port)
+           (let ((port (fdes->inport fd/port)))
+             (set-port-buffering port bufpol/block (- end start))
+             (read-bytes!/partial bytes port start end)))
+          (else
+           (let ((blocking-i/o? (= 0 (bitwise-and open/non-blocking
+                                                  (fdes-status fd/port)))))
+             (read-bollock bytes start
+                           (if blocking-i/o? 1 0) ; cond. forward progress
+                           (- end start)
+                           fd/port))))))
 
 
 (define (read-bytes/partial len . maybe-fd/port)
-  (assert (<= 0 len))
+  (assert (<= 0 len)
+          read-bytes/partial)
   (let* ((fd/port (:optional maybe-fd/port (current-input-port)))
          (buf (make-byte-vector len 0))
-         (nread (read-bytes!/partial buf fd/port 0 len))) 
+         (nread (read-bytes!/partial buf fd/port 0 len)))
     (cond ((not nread) #f)
           ((= nread len) buf)
           (else (subsequence buf 0 nread)))))
-                  
+
 
 ;; The implementation of READ-STRING! should work with byte-vectors but for
 ;; BOGUS-SUBSTRING-SPEC? -- which calls STRING-LENGTH
@@ -88,7 +93,8 @@
   (let-optionals args ((fd/port (current-input-port))
 		       (start   0)
 		       (end     (sequence-length bytes)))
-    (assert (<= 0 start end (sequence-length bytes)))
+    (assert (<= 0 start end (sequence-length bytes))
+            read-bytes!)
     (if (integer? fd/port)
         (let ((port (fdes->inport fd/port)))
           (set-port-buffering port bufpol/block (- end start))
@@ -99,10 +105,10 @@
 
 
 (define (read-bytes len . maybe-fd/port)
-  (assert (<= 0 len))
+  (assert (<= 0 len) read-bytes)
   (let* ((fd/port (:optional maybe-fd/port (current-input-port)))
          (buf (make-byte-vector len 0))
-         (nread (read-bytes! buf fd/port 0 len))) 
+         (nread (read-bytes! buf fd/port 0 len)))
     (cond ((not nread) #f)
           ((= nread len) buf)
           (else (subsequence buf 0 nread)))))
@@ -112,8 +118,9 @@
   (let-optionals args ((fd/port (current-output-port))
 		       (start 0)
 		       (end (sequence-length bytes)))
-    (assert (<= 0 start end (sequence-length bytes)))
-    (error 
+    (assert (<= 0 start end (sequence-length bytes))
+            write-bytes/partial)
+    (error
 "write-bytes/partial : behaves no better than write-string/partial.
 The latter is dereleased, cf. the RELEASE notes."
 )))
@@ -125,7 +132,8 @@ The latter is dereleased, cf. the RELEASE notes."
   (let-optionals args ((fd/port (current-output-port))
 		       (start   0)
 		       (end     (sequence-length bytes)))
-    (assert (<= 0 start end (sequence-length bytes)))
+    (assert (<= 0 start end (sequence-length bytes))
+            write-bytes)
     (let ((port (if (integer? fd/port)
                     (let ((port (fdes->outport fd/port)))
                       (set-port-buffering port bufpol/block (- end start))
