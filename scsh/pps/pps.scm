@@ -99,8 +99,8 @@
     (lambda (time)
       (let ((match-data (regexp-search short-rx time)))
 	(if match-data
-	    (+ (* 60 (string->number (match:substring match-data 1)))
-	       (string->number (match:substring match-data 2))
+	    (+ (* 60 60 (string->number (match:substring match-data 1)))
+	       (* 60 (string->number (match:substring match-data 2)))
 	       (quotient (string->number (match:substring match-data 3)) 50))
 	    0)))))
 
