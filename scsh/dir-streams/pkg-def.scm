@@ -1,5 +1,5 @@
 (define-package "dir-streams"
-  (0 0)
+  (1 0)
   ()
   (write-to-load-script
    `((config)

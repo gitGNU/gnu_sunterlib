@@ -1,5 +1,5 @@
 (define-package "file-mode"
-  (0 1)
+  (1 0)
   ()
   (write-to-load-script
    `((config)
