@@ -1,3 +1,10 @@
+;;; This file and the accompanying README were derived from
+;;; Oleg's code for Gambit available from
+;;;
+;;;        http://okmij.org/ftp/Scheme/index.html#binio
+;;;
+
+
 ;			Binary parsing
 
 ;----------------------------------------
@@ -73,7 +80,7 @@
 ; "interpreter". The abbreviated notation may turn out to look like
 ; Olin's regular expressions.
 
-; $Id: binary-parse.scm,v 1.1 2003/04/14 06:38:47 mainzelM Exp $
+; $Id: binary-parse.scm,v 1.2 2003/04/14 06:45:20 mainzelM Exp $
 
 
 ;----------------------------------------

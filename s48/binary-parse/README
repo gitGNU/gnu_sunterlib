@@ -1,3 +1,10 @@
+[This file and the accompanying source code were derived from
+ Oleg's code for Gambit available from
+
+     http://okmij.org/ftp/Scheme/index.html#binio
+
+]
+
 (make-bit-reader byte-reader) -> bit-reader
 
 Given a BYTE-READER (a thunk), construct and return a function
