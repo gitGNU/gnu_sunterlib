@@ -1,3 +1,9 @@
+;;; This file is part of the Scheme Untergrund Library.
+
+;;; Copyright (c) 2002-2003 by Martin Gasbichler.
+;;; For copyright information, see the file COPYING which comes with
+;;; the distribution.
+
 (define (interface-value-names interface-name)
   (let ((interface (environment-ref (config-package) interface-name))
 	(value-names '()))
@@ -39,18 +45,5 @@
 (define (load-config-file file)
   (load file (config-package)))
 
-;(define-structure t (export b)
-;  (open scheme
-;	signals
-;	define-record-types
-;	primitives)
-;  (begin
-;    (define-record-type bar :bar
-;      (make-bar i)
-;      bar?
-;      (i bar-i))
-;    (define a-bar (make-bar "kjk"))
-;    (add-finalizer! :bar (lambda (a-bar) (warn "finalized a bar")))))
 
-      
 	  
