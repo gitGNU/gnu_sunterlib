@@ -1,2 +1,2 @@
 (define-interface binary-parse-interface
-  (export))
+  (export make-bit-reader))
