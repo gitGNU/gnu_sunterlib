@@ -30,6 +30,9 @@
 (define-structure sequence-extras sequence-extras-face
   (open sequence-basics
         krims                           ; assert
+        util                            ; unspecific
+        srfi-1                          ; append!
+        srfi-23                         ; error
         scheme)
   (files genseqs))
 
@@ -44,6 +47,7 @@
         sequence-basics
         behaved-sequences
         sequence-specifics
+        srfi-1                          ; list-copy
         byte-vectors
         scheme)
   (files composeqs))

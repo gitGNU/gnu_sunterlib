@@ -2,7 +2,8 @@
 ; See the file COPYING distributed with the Scheme Untergrund Library
 
 ;;; sequence operations definABLE in terms of the elementary operations
-;;; [ not much there yet ]
+;;; with no regard to the concrete sequence type
+;;; [ not too much there yet ]
 
 (define (ident x) x)
 
@@ -33,7 +34,23 @@
          (substring s start end))
         (else (contiguous-subsequence s start end))))
 
-;; this is rather inefficient for lists-only uses, but supports mixed
-;; sequences (comparing lists against vectors, for instance) 
-(define every/bounds contiguous-every/bounds)
+
+(define (sequence-copy s)
+  (gen-dispatch
+   ((string? string-copy)
+    (byte-vector? contiguous-sequence-copy)
+    (vector? contiguous-sequence-copy)
+    (list? list-copy)
+    (behaved-sequence? contiguous-sequence-copy))
+   s))
+
+;; The following procedures take or accept >1 sequence argument.
+;; Therefore we don't dispatch on the sequence type so that we
+;; may support mixed sequences: (sequence-append (vector) "abc" '(anton))
+(define sequence-append contiguous-sequence-append)
+(define sequence-map contiguous-sequence-map)
+(define sequence-for-each contiguous-sequence-for-each)
+(define sequence-fold contiguous-sequence-fold)
+(define sequence-every contiguous-sequence-every)
+(define sequence-every/bounds contiguous-sequence-every/bounds)
 

@@ -1,7 +1,7 @@
 ; Copyright (c) 2003 RT Happe <rthappe at web de>
 ; See the file COPYING distributed with the Scheme Untergrund Library
 
-;; the basic protocol + a vanilla constructor
+;; the basic protocol including a vanilla constructor
 (define-interface sequence-basics-face
   (export sequence?
           sequence-length
@@ -14,7 +14,13 @@
   (export sequence->list
           sequence-fill!
           subsequence
-          every/bounds))
+          sequence-copy
+          sequence-append
+          sequence-map
+          sequence-for-each
+          sequence-fold
+          sequence-every
+          sequence-every/bounds))
 
 ;; specialised versions of sequence operations
 (define-interface sequence-specifics-face
