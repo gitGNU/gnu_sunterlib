@@ -1,9 +1,22 @@
-The structure dir-streams defines procedures to represent and process
-directories as streams of files and sub-directories.
+The structure DIR-STREAMS defines procedures to represent and process
+directories as streams of files and sub-directories. Using a lazy data
+structure to represent directories allows the library to minimize
+access to the file system. Files within streams are represented by the
+data type FS-OBJECT which essentially extends scsh's FILE-INFO type by
+a field for the file name.
+
+In addition the structure STREAM provides a library for stream
+processing but we intend to replace this library with SRFI-40
+soon. This is also the reason for the lack of documentation for the
+STREAM package.
+
 
 (dir-stream-from-dir-name dir-name [chase?] [parent]) -> dir-stream
 
-Constructor for dir-streams.
+Constructor for dir-streams. The CHASE? option indicates whether
+symbolic links should be followed or not and defaults to #t. PARENT is
+the directory relative to which DIR-NAME should be interpreted. It
+defaults to "" and is only mildly useful.
 
 
 (dir-stream? thing) -> boolean
@@ -29,31 +42,33 @@ The parent directory of the fs-object.
 
 (fs-object-name fs-object) -> string
 
-The file name of the fs-object.
+The file name of FS-OBJECT.
 
 
 
 (fs-object-info fs-object) -> file-info
 
-The file-info record of the fs-object.
+The file-info record of FS-OBJECT.
 
 
 
 (fs-object-file-name fs-object) -> string
 
-The path to the fs-object.
+The path of FS-OBJECT.
 
 
 
 (dir-stream-files-stream dir-steam) -> fs-object stream
 
-A stream of the fs-objects of the files within the directory.
+A stream of the fs-objects of the files within the directory
+represented by DIR-STREAM.
 
 
 
 (dir-stream-subdir-stream dir-stream) -> dir-stream stream 
 
-A stream of dir-streams of the subdirectories within the directory.
+A stream of dir-streams of the subdirectories within the directory
+represented by DIR-STREAM.
 
 
 (dir-stream-filter dir-stream file-pred dir-pred) -> dir-stream
@@ -80,23 +95,37 @@ Example:
 			 '()))
 
 
-(dir-stream-map dir-stream-map-f dir-stream file-f dir-f)
+(dir-stream-map dir-stream file-f dir-f) -> dir-stream
 
-TODO argument order
+Applies FILE-F to all files in DIR-STREAM and DIR-F to all directories
+in DIR-STREAM and returns the resulting dir-stream.
 
-(dir-stream-filter-map dir-stream-map-f dir-stream file-f dir-f)
+
+(dir-stream-filter-map dir-stream file-f dir-f) -> dir-stream
+
+Applies FILE-F to all files in DIR-STREAM and DIR-F to all directories
+in DIR-STREAM and returns the dir-stream containing all the non-false
+results of FILE-F and DIR-F.
 
 
-(dir-stream-for-each dir-stream file-f dir-f)
+(dir-stream-for-each dir-stream file-f dir-f) -> unspecific
 
-The structure dir-stream-predicates defines some predicates the user
+Applies FILE-F to all files in DIR-STREAM and DIR-F to all directories
+in DIR-STREAM.
+
+
+
+
+The structure DIR-STREAM-PREDICATES defines some predicates the user
 might find useful when programming with dir-streams. 
 
 (fs-object-size-less-than? fs-object size) -> {#t, #f}
 (fs-object-size-greater-than? fs-object size) -> {#t, #f}
 
-Check whether the lenght of the file represented by fs-object is
-less/more than size bytes.
+Check whether the lenght of the file represented by FS-OBJECT is
+less/more than SIZE bytes.
+
+
 
 (days->seconds days) -> integer
 (hours->seconds hours) -> integer
@@ -106,25 +135,28 @@ Auxiliary functions for converting an integer representing a count of
 days/hours/minutes to an integer representing that amount of time in
 seconds.
 
+
+
 (fs-object-last-modified-in? fs-object pair) -> {#t, #f}
 (fs-object-last-accessed-in? fs-object pair) -> {#t, #f}
 (fs-object-created-in? fs-object pair) -> {#t, #f}
 
-pair is a pair representing an interval of time. This function checks
-whether the date when then file represented by fs-object was last
+PAIR is a pair representing an interval of time. These functions check
+whether the date when then file represented by FS-OBJECT was last
 modified/last-accessed/created lies in this interval (includes left
 and right boundary of the interval).
 
+
+
 (fs-object-name-matches? fs-object regexp) -> {#t, #f}
 
-Returns true if regexp-search? for regexp matches the filename of the
-file represented by fs-object.
+Returns #t if REGEXP-SEARCH? for regexp matches the filename of the
+file represented by FS-OBJECT.
+
+
 
 (ds-object-file-name-matches? fs-object regexp) -> {#t, #f}
 
-Returns true if regexp-search? for regexp matches the filename
-(including the absolute path) of the file represented by fs-object.
-
-
-
+Returns #t if REGEXP-SEARCH? for regexp matches the filename
+(including the absolute path) of the file represented by FS-OBJECT.
 
