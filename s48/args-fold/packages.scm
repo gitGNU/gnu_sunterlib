@@ -1,4 +1,4 @@
 (define-structure srfi-37
   srfi-37-interface
   (open scheme srfi-9 srfi-11)
-  (files "s48/args-fold/args-fold.scm"))
+  (files args-fold))
