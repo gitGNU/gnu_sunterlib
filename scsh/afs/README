@@ -1,0 +1,62 @@
+The structure afs-fs calls the fs command to obtain and manipulate
+access control lists in AFS.
+
+The access control list of a directory is represented as an alist of
+username and the enumerated set afs-permissions.
+
+(afs-permission perm) -> afs-permission     Syntax
+
+Constructor for afs-permission. PERM is one of
+read
+list
+insert
+delete
+write
+lock
+administer
+
+
+
+(make-afs-permissions afs-permission-list) -> afs-permissions
+
+Constructor for the enumerated set.
+
+
+
+all-afs-permissions
+
+afs-permissions including all AFS-PERMISSIONs
+
+
+
+(afs-permissions? thing) -> boolean
+
+Type predicate.
+
+
+(afs-permissions<=? afs-permissions1 afs-permissions2) -> boolean
+
+Returns #t if the permissions in AFS-PERMISSIONS1 are all included in
+AFS-PERMISSIONS2, #f otherwise
+
+
+
+(get-acl dir) -> afs-permissions
+
+Returns the access control list of directory DIR.
+
+
+(set-acl! dir acl) -> unspecific
+
+Sets the access control list of directory DIR to ACL.
+
+
+(add-acl! dir acl) -> unspecific
+
+Adds the access control list ACL to the existing acl of directory DIR.
+
+
+
+(set-fs-command! command) -> unspecific
+
+Sets the executable to call. The default value is "fs".
