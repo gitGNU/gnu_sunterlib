@@ -22,13 +22,18 @@
 	       (more))))		; Keep looking for a handler.
 	  (lambda () (call-with-values thunk accept)))))))))
 
-(define (with-inspecting-handler port thunk)
+(define (with-inspecting-handler port prepare thunk)
   (with-fatal-and-capturing-error-handler*
    (lambda (condition condition-continuation more)
-     (let ((res
-	    (remote-repl "Welcome to the command processor of the remote scsh"
-			 condition-continuation
-			 port)))
-       ;; TODO: option to return to continuation of handler (by leaving out the with-continuation)
-       (with-continuation condition-continuation (lambda () res))))
-   thunk))
+     (with-handler
+      (lambda (c2 m2)
+        (more))      
+      (if (prepare condition)
+          (let ((res
+                 (remote-repl "Welcome to the command processor of the remote scsh"
+                              condition-continuation
+                              port)))
+            ;; TODO: option to return to continuation of handler (by leaving out the with-continuation)
+            (with-continuation condition-continuation (lambda () res)))
+          (more))))
+      thunk))

@@ -19,7 +19,7 @@ Same as above but communication is done via a socket on port PORT.
 The structure SOCKET2STDPORTS offers a very simple facility to map the
 current input and output ports to the ports of a socket.
 
-(socket<->std-ports host port)
+(socket<->stdports host port)
 
 This procedure first establishes a TCP socket to port PORT on host
 HOST. Afterwards is reads all data from (current-input-port) and
@@ -28,27 +28,32 @@ from the socket's output port and prints it to
 (current-output-port).
 
 
-(with-inspecting-handler port thunk)
+(with-inspecting-handler port prepare thunk)
 
 This procedure installs a exception handler which captures all
-conditions which satisfy the predicate ERROR?. It will then fire up a
-remote REPL on port PORT with the continuation of the condition as
-focus value. Currently, the continuation of the REPL is the
-continuation of the call to WITH-INSPECTING-HANDLER.
+conditions which satisfy the predicate ERROR?. In case of an exception
+PREPARE is applied to the condition. If it returns #t,
+WITH-INSPECTING-HANDLER will fire up a remote REPL on port PORT with
+the continuation of the condition as focus value. Currently, the
+continuation of the REPL is the continuation of the call to
+WITH-INSPECTING-HANDLER. If PREPARE returns #f the surrounding handler
+is called.
 
 
 As an example for the usage of the remote inspecting utility, consider
 a program using WITH-INSPECTING-HANDLER with an obviously bogus body:
 
-(with-inspecting-handler 8080 (lambda () (/ 1 0)))
-
+>(with-inspecting-handler 8080 
+                        (lambda (cond) (display "Help me on port 8080") #t)
+                        (lambda () (/ 1 0)))
+Help me on port 8080
 
 Now start a second scsh:
 
 [0 gasbichl@ventoux interaction] scsh -lm interfaces.scm -lm packages.scm -o 'socket2stdports'
 Welcome to scsh 0.6.3
 Type ,? for help.
-> (socket<->std-ports "ventoux" 8080)
+> (socket<->stdports "ventoux" 8080)
 Welcome to the command processor of the remote scsh
 #{Exception-continuation (pc 69) (integer/ in ratnums)}
 > ,debug
