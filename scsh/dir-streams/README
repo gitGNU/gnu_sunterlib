@@ -169,3 +169,15 @@ file represented by FS-OBJECT.
 Returns #t if REGEXP-SEARCH? for regexp matches the filename
 (including the absolute path) of the file represented by FS-OBJECT.
 
+
+The structure DIR-STREAM-TOOLS offers two small applications of the library:
+
+(dir-stream-disc-usage dir-stream) -> list
+
+Returns a list with three elements: the name of the directory, the
+disc usage in bytes, and a list of the sub-directories in the same
+format.
+
+(dir-stream-display dir-stream) -> unspecific
+
+Displays DIR-STREAM.

@@ -61,6 +61,10 @@
 	  stream-take-while
 	  stream-drop-while))
 
+(define-interface dir-stream-tools-interface
+  (export dir-stream-disc-usage
+          dir-stream-display))
+
 (define-structure dir-streams dir-streams-interface
   (open scheme-with-scsh
 	handle
@@ -76,6 +80,11 @@
    scheme-with-scsh
    dir-streams)
   (files dir-stream-predicates))
+
+(define-structure dir-stream-tools dir-stream-tools-interface
+  (open scheme-with-scsh
+        dir-streams)
+  (files dir-stream-tools))
 
 (define-structure streams
   streams-interface
