@@ -380,9 +380,9 @@ Assignment is parallel -- if there's no hidden aliasing.
 
 Attention:  differing from CL's MAP-INTO, these procs expect
 end1 - start1 <= s0.length - start0, i.e. the destination S1 drives the
-loop, as with MAP! in SRFI-1.  Differing from SEQUENCE-COPY!, the optionals
-relate 2 to the destination S1 and 1 to the source S0 instead of 1 to the
-destination and 2 to the source.  (Why?  Because of the different loop
+loop, as with MAP! in SRFI-1.  Differing from SEQUENCE-COPY!, two optionals
+relate to the destination S1 and one to the source S0 instead of one to the
+destination and two to the source.  (Why?  Because of the different loop
 termination criteria: dest length vs. src length.)
 
                                 *
