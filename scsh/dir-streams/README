@@ -1,0 +1,86 @@
+
+Constructor:
+
+(dir-stream-from-dirname dir-name [chase?] [parent]) -> dir-stream
+
+
+(dir-stream? thing) -> boolean
+Type predicate for dir-streams.
+
+
+(dir-stream-info dir-stream) -> fs-object
+
+Returns the fs-object corresponding to the directory.
+
+(fs-object? thing) -> boolean
+
+Type predicate for file-objects.
+
+(fs-object-parent fs-object) -> string
+
+The parent directory of the fs-object.
+
+
+
+(fs-object-name fs-object) -> string
+
+The file name of the fs-object.
+
+
+
+(fs-object-info fs-object) -> file-info
+
+The file-info record of the fs-object.
+
+
+
+(fs-object-file-name fs-object) -> string
+
+The path to the fs-object.
+
+
+
+(dir-stream-files-stream dir-steam) -> fs-object stream
+
+A stream of the fs-objects of the files within the directory.
+
+
+
+(dir-stream-subdir-stream dir-stream) -> dir-stream stream 
+
+A stream of dir-streams of the subdirectories within the directory.
+
+
+(dir-stream-filter dir-stream file-pred dir-pred) -> dir-stream
+
+Applies the predicate DIR-PRED to all the subdirectories and FILE-PRED
+to all the files within directory. The returned stream contains only
+the files and subdirectories for which the predicates return #t.
+
+
+(dir-stream-fold-right ds make-dir-stream
+		       files-make-stream files-stream-empty 
+		       subdirs-make-stream subdirs-empty) -> return type of make-dir-stream
+
+Replaces the constuctors of the dir-stream by the supplied procedures.
+Example:
+(define (disc-usage ds)
+  (dir-stream-fold-right ds (lambda (fso sum subdirs) (list (fs-object-filename fso)
+							    (apply + sum (map cadr subdirs))
+							    subdirs))
+			 (lambda (fso accu)
+			   (+ accu (file-info:size (fs-object-info fso))))
+			 0
+			 cons
+			 '()))
+
+
+(dir-stream-map dir-stream-map-f dir-stream file-f dir-f)
+
+TODO argument order
+
+(dir-stream-filter-map dir-stream-map-f dir-stream file-f dir-f)
+
+
+(dir-stream-for-each dir-stream file-f dir-f)
+
