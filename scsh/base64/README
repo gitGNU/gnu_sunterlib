@@ -1,0 +1,40 @@
+Base64 encoding and decoding functions
+
+1. Introduction
+
+This module implements Base64 encoding and decoding as specified by
+section 6.8 of RFC 2045.
+
+2. Functions
+
+2.1. Encoding
+
+(base64-encode-vector byte-vector [output-port]) -> port/string
+
+Encode the given BYTE-VECTOR, put the result on the OUTPUT-PORT, and
+return it. If no OUTPUT-PORT is given, encoding is done in a string,
+which is returned.
+
+(base64-encode-port input-port [output-port]) -> port/string
+
+Encode the contents of the INPUT-PORT and put the result on the
+OUTPUT-PORT. If no OUTPUT-PORT is given, encoding is done in a string,
+which is returned.
+
+2.2. Decoding
+
+(base64-decode-string string [output-port]) -> port/string
+
+Decode the contents of the STRING, and put the result on the
+OUTPUT-PORT. If no OUTPUT-PORT is given, decoding is done in a string,
+which is returned.
+
+(base64-decode-port input-port [output-port]) -> port/string
+
+Decode the contents of the INPUT-PORT, and put the result on the
+OUTPUT-PORT. If no OUTPUT-PORT is given, decoding is done in a string,
+which is returned.
+
+3. References
+
+RFC 2045  http://www.faqs.org/rfcs/rfc2045.html
