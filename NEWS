@@ -1,5 +1,7 @@
 version 0.1 - 2003-03-24
 
 * Initial release.
-* New s48 libraries: args-fold	concurrency  module-system
-* New scsh libraries: afs  dir-streams  interaction  pps
+* New s48 libraries: args-fold concurrency continuation-data-type
+  krims module-system sequences
+* New scsh libraries: afs bytio dir-streams image-info interaction
+  pps
