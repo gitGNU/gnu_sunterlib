@@ -12,6 +12,7 @@
 	   process-info-effective-gid
 	   process-info-saved-set-gid
 	   process-info-time
+           process-info-%cpu
 	   process-info-tty
 	   process-info-executable
 	   process-info-command-line))

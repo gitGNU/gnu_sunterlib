@@ -8,7 +8,7 @@
   (really-make-process-info pid ppid logname 
 			    real-uid effective-uid saved-set-uid 
 			    real-gid effective-gid saved-set-gid
-			    time tty executable command-line)
+			    time %cpu tty executable command-line)
   process-info?
   (pid process-info-pid)
   (ppid process-info-ppid)
@@ -20,6 +20,7 @@
   (effective-gid process-info-effective-gid)
   (saved-set-gid process-info-saved-set-gid)  
   (time process-info-time)
+  (%cpu process-info-%cpu)
   (tty process-info-tty)
   (executable process-info-executable)
   (command-line process-info-command-line))
@@ -33,7 +34,7 @@
 	 pid ppid logname 
 	 real-uid effective-uid saved-set-uid 
 	 real-gid effective-gid saved-set-gid
-	 time tty executable . command-line)
+	 time %cpu tty executable . command-line)
   (really-make-process-info 
    (string->number pid) (string->number ppid) logname 
    (string->number real-uid) (string->number effective-uid) 
@@ -41,6 +42,7 @@
    (string->number real-gid) (string->number effective-gid)
    (string->number saved-set-gid)
    ((ps-time->seconds ps-functions) time)
+   (string->number %cpu)
    tty executable command-line))
 
 (define *os-pss* '())
@@ -87,7 +89,7 @@
   (let ((res (run/strings 
 	      (ps -axww 
 		  ;; uses rgid instead of gid
-		  "-opid,ppid,user,ruid,uid,svuid,rgid,rgid,svgid,time,tty,ucomm,command"))))
+		  "-opid,ppid,user,ruid,uid,svuid,rgid,rgid,svgid,time,%cpu,tty,ucomm,command"))))
     (if (null? res)
 	(error "ps failed")
 	(cdr res))))
@@ -136,7 +138,7 @@
 (define (linux-ps-command)
   (let ((res (run/strings 
 	      (ps -A ;axww 
-		  "-opid,ppid,user,ruid,uid,svuid,rgid,gid,svgid,time,tty,ucomm,command"))))
+		  "-opid,ppid,user,ruid,uid,svuid,rgid,gid,svgid,time,%cpu,tty,ucomm,command"))))
     (if (null? res)
 	(error "ps failed")
 	(cdr res))))
@@ -164,7 +166,7 @@
   (let ((res (run/strings 
 	      (ps -A
 		  ;; uses ruid/rgid instead of svuid/svgid
-		  -opid -oppid -ouser -oruid -ouid -oruid -orgid -ogid -orgid -otime -otty -oucomm -oargs))))
+		  -opid -oppid -ouser -oruid -ouid -oruid -orgid -ogid -orgid -otime -opcpu -otty -oucomm -oargs))))
     (if (null? res)
 	(error "ps failed")
 	(cdr res))))
@@ -195,7 +197,7 @@
   (let ((res (run/strings 
 	      (ps -A
 		  ;; uses ruid/rgid instead of svuid/svgid
-		  -opid -oppid -ouser -oruid -ouid -oruid -orgid -ogid -orgid -otime -otty -ocomm -oargs))))
+		  -opid -oppid -ouser -oruid -ouid -oruid -orgid -ogid -orgid -otime -opcpu -otty -ocomm -oargs))))
     (if (null? res)
 	(error "ps failed")
 	(cdr res))))

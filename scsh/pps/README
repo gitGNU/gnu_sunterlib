@@ -1,6 +1,6 @@
 The structure pps implements a portable version of the ps command. It
-currently supports FreeBSD (4.6), Mac OS X/Darwin (10.2/6.3), Linux
-(2.4.19), AIX (4.3.2), Solaris (SunOS 5.8) (tested version). As the ps
+currently supports FreeBSD (4.6,5.2), Mac OS X/Darwin (10.2/6.3), Linux
+(2.4.19), AIX (4.3.2), Solaris (SunOS 5.8,5.9) (tested version). As the ps
 command is not part of any standard this package is likely to fail if
 the version of your system differs from the one I tested. Please
 report incompatible versions and, if possible, provide an adapted
@@ -38,6 +38,7 @@ Type predicate for process-info.
 (process-info-effective-gid process-info) -> number
 (process-info-saved-set-gid  process-info) -> number
 (process-info-time process-info) -> number
+(process-info-%cpu process-info) -> float-number
 (process-info-tty process-info) -> string
 (process-info-executable process-info) -> string
 (process-info-command-line process-info) -> string
