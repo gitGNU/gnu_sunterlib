@@ -1,3 +1,5 @@
+version 0.5
+
 version 0.4 2003-05-19
 * New file "sunterlib.scm" contains the old "interfaces.scm" and
   "packages.scm" ("interfaces.scm" and "packages.scm" are deprecated
