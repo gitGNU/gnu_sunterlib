@@ -37,9 +37,9 @@
   (export
 
    ;; These can be used for other profiles as lengths and such.
-   (posint->byte-vector (proc (:exact-integer) :byte-vector))
-   (byte-vector->posint (proc (:byte-vector) :exact-integer))
+   (posint->byte-vector (proc (:exact-integer) :value))
+   (byte-vector->posint (proc (:value) :exact-integer))
 
    ;; Generally just for debugging or manual testing.
    (prettify-byte (proc (:exact-integer) :string))
-   (prettify-byte-vector (proc (:byte-vector) :string))))
+   (prettify-byte-vector (proc (:value) :string))))
