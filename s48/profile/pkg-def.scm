@@ -8,5 +8,6 @@
   (install-file "README" 'doc)
   (install-file "NEWS" 'doc)
   (install-string (COPYING) "COPYING" 'doc)
+  (install-file "packages.scm" 'scheme)
   (install-file "no-profile.scm" 'scheme)
   (install-file "profile.scm" 'scheme))

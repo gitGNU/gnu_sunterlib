@@ -8,6 +8,7 @@
   (install-file "README" 'doc)
   (install-file "NEWS" 'doc)
   (install-string (COPYING) "COPYING" 'doc)
+  (install-file "packages.scm" 'scheme)
   (install-file "async-channels.scm" 'scheme)
   (install-file "placeholder.scm" 'scheme)
   (install-file "trans-id.scm" 'scheme)

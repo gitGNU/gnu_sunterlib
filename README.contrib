@@ -26,12 +26,13 @@ touch files in your library's tree.
   pkg-def.scm -- (NEW in Sunterlib 0.6) the package definition for
     your library. Use the COPYING procedure to generate the COPYING
     file. For an example, see s48/args-fold/pkg-def.scm
-  load.scm -- (WAS interfaces.scm, packages.scm before Sunterlib 0.6)
-    the interfaces and packages defined by your library.
 
 Our administration and the build systems depends on those files.
 
   README -- a text file documenting your library. Recomended
+  package.scm -- (WAS interfaces.scm, packages.scm before Sunterlib
+    0.6) the interfaces and packages defined by your
+    library. Recomended
 
 3. Add an entry for your library to the NEWS file in the top-level
 directory of Sunterlib.

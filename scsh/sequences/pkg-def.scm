@@ -8,6 +8,7 @@
   (install-file "README" 'doc)
   (install-file "NEWS" 'doc)
   (install-string (COPYING) "COPYING" 'doc)
+  (install-file "packages.scm" 'scheme)
   (install-file "baseqs.scm" 'scheme)
   (install-file "genseqs.scm" 'scheme)
   (install-file "uniseqs.scm" 'scheme)
