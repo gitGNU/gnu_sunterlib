@@ -5,3 +5,37 @@ Scsh. In addition to acting as host, the project provides a
 centralized way to access these packages from the languages' module
 system.
 
+Sunterlib is hosted at Savannah:
+  http://savannah.nongnu.org/projects/sunterlib/
+
+USE
+
+To use sunterlib, first make sure the library is installed (see
+INSTALL).
+
+After installation, the library is available in
+  /usr/local/lib/sunterlib,
+and the documentation is available in
+  /usr/local/share/doc/sunterlib
+(or the corresponding subdirectories of the prefix used for
+installation).
+
+The files "interfaces.scm" and "packages.scm", are the full sunterlib
+for use with scsh.
+
+The files "s48-interfaces.scm" and "s48-packages.scm", are a sunterlib
+subset for use with scheme48.
+
+A typical scsh script might start like this:
+
+#!/usr/local/bin/scsh \
+-lm /usr/local/lib/sunterlib/interfaces.scm -lm /usr/local/lib/sunterlib/packages.scm -o foo -s
+!#
+
+where "foo" is a sunterlib package needed by your script.
+
+BUGS
+
+Please use the bug tracking system to report bugs:
+  http://savannah.nongnu.org/bugs/?group=sunterlib
+
