@@ -97,8 +97,8 @@ dist :
 	cp -r build sunterlib-$(version)/build
 	cp -r s48 sunterlib-$(version)/s48
 	cp -r scsh sunterlib-$(version)/scsh
-	find sunterlib-0.1/ -name CVS | xargs rm -rf
-	find sunterlib-0.1/ -name "*~" | xargs rm -f
+	find sunterlib-$(version)/ -name CVS | xargs rm -rf
+	find sunterlib-$(version)/ -name "*~" | xargs rm -f
 	tar -czf sunterlib-$(version).tar.gz sunterlib-$(version)
 	rm -rf sunterlib-$(version)
 
