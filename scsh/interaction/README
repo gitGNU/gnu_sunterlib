@@ -1,3 +1,14 @@
+The interaction library currently offers three structures that provide
+a programmatic interface to Scheme 48's debugging facilities: 
+
+* REPLS starts the read-eval-print-loop with arbitrary input and
+  output ports.
+
+* INSPECT-EXCEPTION provides exception handlers that allow interactive
+  inspection of exceptions and their backtrace.
+
+* GC provides a small run-time interface to the garbage collector.
+
 The structure REPLS offers procedures to start up the
 read-eval-print-loop (REPL) from a script.
 
@@ -27,6 +38,9 @@ forwards it into the socket's input port. Likewise it reads all data
 from the socket's output port and prints it to
 (current-output-port).
 
+
+The structure INSPECT-EXCEPTION makes some of the functionality of the
+,debug and ,preview commands available.
 
 (with-inspecting-handler port prepare thunk)
 
@@ -107,3 +121,17 @@ The procedural analogy to the ,proceed command. Continuation must be a
 continuation object as captured by
 WITH-FATAL-AND-CAPTURING-ERROR-HANDLER, not a procedure as captured by
 CALL-WITH-CURRENT-CONTINUATION.
+
+
+The structure GC provides a procedure equivalent to the ,collect
+command and offers some statistics about the garbage collector.
+
+(collect outport) -> unspecified
+
+Invokes the GC and prints the number of free words before and after
+the collection to OUTPORT.
+
+(gc-count) -> number
+
+Returns the number of times the garbage collector has been invoked
+since the start of the system.
