@@ -57,7 +57,7 @@ in the REPL.
 
 
 
-(rt-structure-binding surflet name) --> value
+(rt-structure-binding rt-structure name) --> value
 
 Gets the binding for NAME (a symbol) from a rt-structure.
 
