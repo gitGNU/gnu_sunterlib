@@ -42,6 +42,9 @@
     (generic-lookup (rt-structure-meta-structure structure)
 		    name))))
 
+(define (rt-structure->environment rt-structure)
+  (structure-package (rt-structure-meta-structure rt-structure)))
+
 (define (load-config-file file)
   (load file (config-package)))
 

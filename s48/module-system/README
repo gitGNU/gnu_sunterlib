@@ -74,6 +74,10 @@ Evaluate body with the names from INTERFACE bound to the bindings
 provided by RT-STRUCTURE.
 
 
+(rt-structure->environment rt-structure) --> environment
+
+Turns RT-STRUCTURE into an object suitable as second argument to EVAL.
+
 
 
 
