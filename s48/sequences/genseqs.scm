@@ -9,6 +9,7 @@
 ;;;
 ;;; sequence->list
 ;;; sequence-fill!
+;;; sequence-tabulate!
 ;;; subsequence
 ;;; sequence-copy
 ;;; sequence-append
@@ -23,7 +24,7 @@
 (define (id x) x)
 
 ;; seqs : nonempty proper list of sequences
-;; compute min sequence-length
+;; compute min sequence-length [ for internal use ]
 (define (sequences-length seqs)
   ;; we got the time, we got the space ...
   (apply min (map sequence-length seqs)))
@@ -45,6 +46,17 @@
           (begin
             (sequence-set! s i x)
             (loop (+ i 1)))))))
+
+
+(define (sequence-tabulate! s start proc len)
+  (assert (and (sequence? s)
+               (procedure? proc)
+               (<= 0 start (+ start len) (sequence-length s)))
+          sequence-tabulate!)
+  (do ((i 0 (+ i 1)))
+      ((= i len) s)
+    (sequence-set! s (+ start i) (proc i))))
+
 
 
 (define (sequence-copy/maker maker s . opts)

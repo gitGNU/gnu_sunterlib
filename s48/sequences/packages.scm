@@ -48,7 +48,7 @@
   (open krims                           ; assert
         util                            ; unspecific
         let-opt                         ; let-optionals [ from scsh ]
-        srfi-1+                         ; append! first rest
+        srfi-1+                         ; append! drop first rest
         scheme)
   ;; bind the basic operations to vector specialists
   (begin
@@ -58,36 +58,9 @@
     (define sequence-set! vector-set!)
     (define (make-another-sequence v k . maybe-fill)
       (apply make-vector k maybe-fill)))
-  (files genseqs)
-  ;; rename extras not supplied by scheme and def list->vector with opts
-  (begin
-    (define subvector subsequence)
-    (define vector-copy sequence-copy)
-    (define vector-fill! sequence-fill!) ; with opt. start & end
-    (define vector-append sequence-append)
-    (define vector-map sequence-map)
-    (define vector-for-each sequence-for-each)
-    (define vector-fold sequence-fold)
-    (define vector-fold-right sequence-fold-right)
-    (define vector-any sequence-any)
-    (define vector-every sequence-every)
-    (define vector= sequence=)
-    (define vectors-map sequences-map)
-    (define vectors-for-each sequences-for-each)
-    (define vectors-fold sequences-fold)
-    (define vectors-fold-right sequences-fold-right)
-    (define vectors-any sequences-any)
-    (define vectors-every sequences-every)
-    (define vectors= sequences=)
-    (define (list->vector xs . opts)
-      (let-optionals opts ((start 0) (end (length xs)))
-        (assert (<= 0 start end))
-        (let ((v (make-vector (- end start))))
-          (do ((i start (+ i 1))
-               (ys xs (rest ys)))
-              ((= i end) v)
-            (vector-set! v (- i start) (first ys))))))
-    ))
+  (files genseqs     ; generic code
+         vecnames)   ; renames stuff, defines constructors
+)
 
 
 ;; elementary and other general sequence operations, typically dispatching

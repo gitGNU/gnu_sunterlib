@@ -26,6 +26,11 @@
          (apply contiguous-sequence-fill! s x opts))))
 
 
+(define (sequence-tabulate! s start proc len)
+  ((if (vector? s) vector-tabulate! sequence-tabulate!)
+   s start proc len))
+
+
 (define (subsequence s start end)
   (cond ((vector? s)
          (subvector s start end))

@@ -38,7 +38,9 @@ vectors=              sequences=
 
 * Constructors
 make-vector           make-another-sequence    make-absequence/behavior
-vector                                         absequence/behavior
+vector
+vector-tabulate
+                                               absequence/behavior
                                                make-sequence-behavior
                                                make-absequence-record
 
@@ -57,6 +59,7 @@ subvector             subsequence
 * Modification
 vector-set!           sequence-set!            absequence-set!
 sequence-fill!        vector-fill!             absequence-fill!
+sequence-tabulate!    vector-tabulate!
 
 * Reverse & Append
 vector-append         sequence-append
@@ -218,6 +221,12 @@ of minimal length with the elements S[0] = X0, ...
 
                                   *
 
+(vector-tabulate proc len) --> s
+
+Synopsis:  Make vector s[0:len) with s[i] := (proc i).
+
+                                  *
+
 (make-sequence-behavior maker predicate getter setter meter) --> sb
 
 Synopsis: Package the concrete sequence behaviour (basic procedures
@@ -231,7 +240,7 @@ in the absequence record ABS.
 
 List & Sequence Conversion
 
-(list->vector xs [sbart end]) --> s
+(list->vector xs [start end]) --> s
 (list->absequence/behavior sb xs [start end]) --> s
 
 Synopsis:  Make a new vector (absequence with sequence-behavior SB) S
@@ -301,6 +310,16 @@ Synopsis:  Set s[i] := x.
 Synopsis:  Set s[i] := x for all i in [start:end) etc.
 
                                 *
+
+(vector-tabulate! s start proc len) --> s
+(sequence-tabulate! s start proc len) --> s
+
+Synopsis:  Set s[start+i] := (proc i) for all i in [0:len), return s.
+[ Destructive-update analogue to STRING-TABULATE, exceptionally with a
+  useful return value. ]
+
+                                *
+
 
 Reverse & Append
 

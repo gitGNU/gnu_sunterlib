@@ -12,6 +12,7 @@
 ;; things definable in terms of the basic protocol
 (define-interface sequence-extras-face
   (export sequence->list
+          sequence-tabulate!
           sequence-fill!
           subsequence
           sequence-copy
@@ -52,9 +53,11 @@
 ;; [ extends the union of SEQUENCE-BASICS- and -EXTRAS-INTERFACE with
 ;;   `VECTOR' replacing `SEQUENCE' ]
 (define-interface vector-lib-face
-  (export ;; std constructors
-          vector
+  (export ;; constructors and the like
           make-vector
+          vector
+          list->vector                  ; with opts
+          vector-tabulate
           ;; basics w/o the vanilla constructor
           vector?
           vector-length
@@ -64,6 +67,7 @@
           ;; extras
           vector->list
           vector-fill!
+          vector-tabulate!
           subvector
           vector-copy
           vector-append
