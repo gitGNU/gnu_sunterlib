@@ -1,7 +1,8 @@
 ; Copyright (c) 2003 RT Happe <rthappe at web de>
 ; See the file COPYING distributed with the Scheme Untergrund Library
 
-;;; refers to structure KRIMS from sunterlib/s48/krims
+;;; refers to structures from sunterlib/s48/krims
+;;; relies on implicit shadowing of exported bindings
 
 ;; sequences as data + behaviour
 (define-structure absequences absequences-face
@@ -17,7 +18,9 @@
         srfi-1+                         ; list procs
         srfi-13                         ; string procs
         let-opt                         ; let-optionals [ from scsh ]
-        scheme)
+        (modify scheme (hide map for-each member assoc) ; srfi-1+
+                       (hide string->list string-copy string-fill!) ; srfi-13
+                ))
   (files specseqs))
 
 ;; basic sequence accessors etc.
@@ -29,7 +32,8 @@
         byte-vectors
         srfi-1                          ; make-list
         srfi-23                         ; error
-        scheme)
+        (modify scheme (hide map for-each member assoc) ; srfi-1
+                ))
   (files baseqs))
 
 ;; sequence operations defined in terms of the basic protocol
@@ -40,7 +44,8 @@
         srfi-1+                         ; append! rest
         srfi-23                         ; error
         let-opt                         ; let-optionals [ from scsh ]
-        scheme)
+        (modify scheme (hide map for-each member assoc) ; srfi-1+
+                ))
   (files genseqs))
 
 
@@ -51,7 +56,8 @@
         util                            ; unspecific
         let-opt                         ; let-optionals [ from scsh ]
         srfi-1+                         ; append! drop first rest
-        scheme)
+        (modify scheme (hide map for-each member assoc) ; srfi-1+
+                ))
   ;; bind the basic operations to vector specialists
   (begin
     (define sequence? vector?)
@@ -80,5 +86,8 @@
         srfi-13                         ; string procs
         byte-vectors
         let-opt                         ; let-optionals [ from scsh ]
-        scheme)
+        (modify scheme (hide map for-each member assoc) ; srfi-1
+                       (hide string->list string-copy string-fill!) ; srfi-13
+                       (hide vector-fill! list->vector) ; vector-lib
+                       ))
   (files composeqs))

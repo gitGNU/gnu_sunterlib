@@ -17,11 +17,12 @@ parameters) and consists mainly of generic sequence code compiled with
 the basic sequence operation names bound to the corresponding vector
 procedures.  The library is neither complete nor tweaked nor tested
 sytematically.  (The idea to recycle parts of the srfi-13 code came
-too late.)  It contains the folllowing procedures, arranged in
-columns=structures and `* categories' from SRFI-13 and -1.
+too late.)  It contains the following procedures, arranged in
+columns=structures and `* categories' from SRFI-13 and -1, followed
+by the list of name clashes with standard modules.
 
 
-VECTOR-LIB            SEQUENCE-LIB             ABSEQUENCES, also SL
+VECTOR-LIB            SEQUENCE-LIB             ABSEQUENCES, also S.L.
 * Predicates or so
 vector?               sequence?                absequence?
                                                sequence-behavior?
@@ -75,6 +76,17 @@ vectors-map-into!     sequences-map-into!
 vectors-for-each      sequences-for-each
 vectors-fold          sequences-fold
 vectors-fold-right    sequences-fold-right
+
+* Name clashes with scheme
+vector-fill!
+list->vector
+
+When using both SCHEME and VECTOR-LIB, you should choose the binding
+explicitly, like so:
+
+    (open (modify scheme (hide vector-fill!
+                               list->vector))
+          vector-lib)
 
                                   *
 
