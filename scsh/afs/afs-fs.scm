@@ -95,7 +95,8 @@
 	    acl))
 
 (define (set-acl! dir acl)
-  (run (,fs setacl ,dir -acl ,@(acl->strings acl) -clear)))
+  (if (not (zero? (run (,fs setacl ,dir -acl ,@(acl->strings acl) -clear))))
+      (error "set-acl!: error while setting ACL" dir acl)))
 
 (define (add-acl! dir acl)
   (run (,fs setacl ,dir -acl ,@(acl->strings acl))))
