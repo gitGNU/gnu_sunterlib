@@ -58,7 +58,7 @@ The path of FS-OBJECT.
 
 
 
-(dir-stream-files-stream dir-steam) -> fs-object stream
+(dir-stream-files-stream dir-stream) -> fs-object stream
 
 A stream of the fs-objects of the files within the directory
 represented by DIR-STREAM.

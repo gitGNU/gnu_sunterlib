@@ -6,7 +6,7 @@ the version of your system differs from the one I tested. Please
 report incompatible versions and, if possible, provide an adapted
 version.
 
-(ps) -> process-info list
+(pps) -> process-info list
 
 Calls the ps command and parses the output into a list of process-info
 records.
