@@ -9,6 +9,9 @@ How to make a release:
 5. Tag the release. For example to tag sunterlib-0.1.tar.gz
   cvs tag sunterlib-0-1 .
 6. Post the release:
-  scp sunterlib-0.1.tar.gz subversions.gnu.org:/upload/sunterlib/release.pkg/0.1/
+  $ ftp savannah.nongnu.org
+  ftp> cd incoming/savannah/sunterlib
+  ftp> put sunterlib-0.1.tar.gz
+  ftp> put sunterlib-0.1.tar.gz.sig
 7. Increment the version number in Makefile.
 8. Start a new version entry in the top level NEWS file.

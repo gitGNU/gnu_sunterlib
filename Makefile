@@ -47,7 +47,7 @@ install : $(targets)
 .PHONY : dist
 dist : $(targets)
 	mkdir sunterlib-$(version)
-	cp pkg-def.scm COPYING DETAILS INSTALL NEWS README README.contrib install-pkg \
+	cp pkg-def.scm COPYING DETAILS INSTALL NEWS README README.contrib \
            pkg-def.scm sunterlib-$(version)/
 	cp -r s48 sunterlib-$(version)/s48
 	cp -r scsh sunterlib-$(version)/scsh
@@ -55,6 +55,7 @@ dist : $(targets)
 	find sunterlib-$(version)/ -name "*~" | xargs rm -f
 	tar -czf sunterlib-$(version).tar.gz sunterlib-$(version)
 	rm -rf sunterlib-$(version)
+	gpg -b sunterlib-$(version).tar.gz
 
 .PHONY : clean distclean
 clean :
