@@ -1,10 +1,21 @@
-sunterlib/s48/sequences -- Finite Sequences
+sunterlib/scsh/sequences -- Finite Sequences
 
 A sequence library in various structures dealing with
 * abstract sequences defined by their behaviour
 * general sequences or a union type of built-in and abstract sequences
 * vectors in particular
   [ for list and string libraries ,open srfi-1 resp. srfi-13 ]
+
+                                 *
+
+Package Dependencies
+
+SEQUENCES' structures depend on structures from this other sunterlib
+project:
+            krims
+
+                                 *
+
 
 The library comes in three structures:
 * ABSEQUENCES  -- basic procedures for abstract sequences, contained in

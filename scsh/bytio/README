@@ -1,6 +1,15 @@
 sunterlib/scsh/bytio -- Byte I/O
 
-Procedures
+Package-Dependencies
+
+BYTIO's structure BYTIO depends on structures from these other sunterlib
+projects:
+             krims
+             sequences
+
+                                  *
+
+Procedures exported by BYTIO
 
 (read-byte [inport]) --> n in [0:256)
 (peek-byte [inport]) --> n in [0:256)
@@ -9,7 +18,7 @@ Procedures
 Synopsis:  Obvious byte analogues to Scheme's character readers and
 writers.  [ Presently these are only wrappers around the char procs.
 That means, the system reads octets, cooks them into characters, that
-we rever to raw numeric meat, small integers in [0:256). ]
+we revert to raw numeric meat, i.e. small integers in [0:256). ]
 
                                 *
 
@@ -24,7 +33,7 @@ we rever to raw numeric meat, small integers in [0:256). ]
 Synopsis:  Obvious byte analogues of the corresponding string procs
 documented in the scsh manual, with byte-vectors BYTES replacing
 strings.  (String arguments BYTES work, too.)
- 
+
 Notes:
 * Byte-vector constructors etc. are in structure BYTE-VECTORS.
 * The present implementation avoids allocating temp buffers by not

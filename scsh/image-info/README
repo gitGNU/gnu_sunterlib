@@ -27,6 +27,16 @@ inline images programmatically, like so:
 
                                   *
 
+Package Dependencies
+
+IMAGE-INFO's structures depend on structures from the following other
+sunterlib projects:
+                        krims
+                        bytio
+                        sequences
+
+                                  *
+
 Procedures
 
 exported by structure IMAGE-INFO.  IMAGE-DIMENSION is the convenient

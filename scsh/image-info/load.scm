@@ -19,7 +19,7 @@
 
 ;;; refers to structures SRFI-9+ and KRIMS from sunterlib/s48/krims
 ;;;                      BYTIO             from sunterlib/s48/bytio
-;;;                      SEQUENCE-LIB from sunterlib/s48/sequences
+;;;                      SEQUENCE-LIB from sunterlib/scsh/sequences
 
 ;; extracting w x h etc. from images
 (define-structure image-info image-info-face

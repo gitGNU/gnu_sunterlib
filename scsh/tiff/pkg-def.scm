@@ -1,5 +1,5 @@
 (define-package "tiff"
-  (0 1)
+  (1 0)
   ()
   (install-file "load.scm" 'base)
   (install-file "README" 'doc)

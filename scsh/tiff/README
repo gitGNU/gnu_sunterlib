@@ -6,6 +6,17 @@ http://okmij.org/ftp/Scheme/binary-io.html#tiff
 This distribution comes with two family-friendly tiff files in sunterlib/
 scsh/tiff/.
 
+
+** Package Dependencies
+
+TIFF's structures depend on structures from these other sunterlib projects:
+
+    krims
+    sequences
+
+                                  *
+
+
 ** Reading TIFF files
 
 [ Oleg's announcement.  Main changes to the announced library: modularisation

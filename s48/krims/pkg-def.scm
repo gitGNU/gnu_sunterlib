@@ -1,5 +1,5 @@
 (define-package "krims"
-  (0 0)
+  (0 1)
   ()
   (install-file "load.scm" 'base)
   (install-file "README" 'doc)

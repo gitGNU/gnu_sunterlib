@@ -1,5 +1,5 @@
 (define-package "bytio"
-  (0 0)
+  (0 1)
   ()
   (install-file "load.scm" 'base)
   (install-file "README" 'doc)
