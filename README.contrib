@@ -1,1 +1,56 @@
-<to be written>
+GUIDLINES FOR CONTRIBUTORS
+
+ADDING A NEW LIBRARY
+
+1. Create a new subdirectory of s48 or scsh for your library. Only
+touch files in your library's tree.
+
+2. Your library's tree should have at least these files:
+  interfaces.scm -- the interfaces defined by your library.
+  packages.scm -- the packages defined by your library.
+  README -- a text file documenting your library.
+
+3. Currently, the install script only installs ".scm" source files and
+README documentation files.
+
+CONVENTIONS
+
+Sunterlib welcomes contributions from many authors. Please help keep
+spacing consistant in the library:
+
+1. Don't commit files indented with tabs. In (x)emacs, use:
+ (setq-default indent-tabs-mode nil)
+
+2. Use linefeed to end lines, not CR or CR-LF.
+
+3. Don't commit files with trailing spaces. In (x)emacs, use
+"remove-trailing-spaces" use:
+
+(defun remove-trailing-spaces ()
+  "Remove trailing spaces from the end of the lines in the buffer"
+  (interactive)
+  (let ((p (point))
+	s)
+    ;; Check for, and potentially remove whitespace appearing at the
+    ;; end of different lines.
+    (progn
+      (goto-char (point-min))
+      ;; search for anything, but space, taab or newline: [^ \t\n].
+      ;; Record a matched substirng consisting of
+      ;; one or more spaces and tabs: \\([ \t])
+      ;; at the end of the line: &
+      ;;
+      (while ;; (re-search-forward "[^ \t\n]\\([ \t]+\\)$" nil t)
+	  (re-search-forward "\\([ \t]+\\)$" nil t)
+	(message "found trailing space at %d-%d" (match-beginning 0) (match-end 0))
+	(delete-region (match-beginning 0) (match-end 0)))
+      (goto-char p) ; restore cursor
+      nil)))
+
+If you want to make remove-trailing-spaces automatically, then this
+after-save-hook will check for trailing spaces AFTER every save. You
+can use undo to revert the modification (before saving the trimmed
+version) in the rare case that removing trailing spaces is not
+desired:
+
+(add-hook 'after-save-hook 'remove-trailing-spaces)
