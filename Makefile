@@ -1,6 +1,6 @@
 SHELL = /bin/sh
 
-prefix = /tmp/usr/local
+prefix = /usr/local
 libdir = $(prefix)/lib
 docdir = $(prefix)/share/doc
 pkglibdir = $(libdir)/sunterlib
@@ -60,18 +60,26 @@ scsh-targets := interfaces.scm packages.scm
 targets := $(s48-targets) $(scsh-targets) DETAILS
 
 .PHONY: all s48 scsh
-all : s48 scsh
+all : s48 scsh DETAILS
 s48 : $(s48-targets)
 scsh : $(scsh-targets)
 
 s48-interfaces.scm : $(s48-interfaces) build/header.scm
-	cat build/header.scm $(s48-interfaces) > s48-interfaces.scm
+	cat build/header.scm > s48-interfaces.scm
+	for interface in $(s48-interfaces) ; \
+	  do \
+	    cat $${interface} >> s48-interfaces.scm ; \
+          done
 
 s48-packages.scm : $(s48-packages) build/header.scm
 	build/xpackages.scm s48-packages.scm build/header.scm $(s48-packages)
 
 interfaces.scm : $(s48-interfaces) $(scsh-interfaces) build/header.scm
-	cat build/header.scm $(s48-interfaces) $(scsh-interfaces) > interfaces.scm
+	cat build/header.scm > interfaces.scm
+	for interface in $(s48-interfaces) $(scsh-interfaces) ; \
+	  do \
+	    cat $${interface} >> interfaces.scm ; \
+	  done
 
 packages.scm : $(s48-packages) $(scsh-packages) build/header.scm
 	build/xpackages.scm packages.scm build/header.scm $(s48-packages) $(scsh-packages)
@@ -80,26 +88,33 @@ DETAILS : $(s48-authors) $(s48-blurbs) $(scsh-authors) $(scsh-blurbs)
 	build/details.scm
 
 .PHONY : install uninstall
-install : s48 scsh
+install : s48 scsh DETAILS
 	$(INSTALL) -d $(pkglibdir)
 	$(INSTALL_DATA) s48-interfaces.scm s48-packages.scm $(pkglibdir)
 	$(INSTALL_DATA) interfaces.scm packages.scm $(pkglibdir)
-	$(foreach s48-src, \
-                  $(s48-srcs), \
-                  $(INSTALL) -d $(pkglibdir)/$(dir $(s48-src)); \
-                  $(INSTALL_DATA) $(s48-src) $(pkglibdir)/$(s48-src);)
-	$(foreach s48-doc, \
-                  $(s48-docs), \
-                  $(INSTALL) -d $(pkgdocdir)/$(dir $(s48-doc)); \
-                  $(INSTALL_DATA) $(s48-doc) $(pkgdocdir)/$(s48-doc);)
-	$(foreach scsh-src, \
-                  $(scsh-srcs), \
-                  $(INSTALL) -d $(pkglibdir)/$(dir $(scsh-src)); \
-                  $(INSTALL_DATA) $(scsh-src) $(pkglibdir)/$(scsh-src);)
-	$(foreach scsh-doc, \
-                  $(scsh-docs), \
-                  $(INSTALL) -d $(pkgdocdir)/$(dir $(scsh-doc)); \
-                  $(INSTALL_DATA) $(scsh-doc) $(pkgdocdir)/$(scsh-doc);)
+	$(INSTALL) -d $(pkgdocdir)
+	$(INSTALL_DATA) README $(pkgdocdir)
+	$(INSTALL_DATA) DETAILS $(pkgdocdir)
+	for s48src in $(s48-srcs); \
+	  do \
+            $(INSTALL) -d $(pkglibdir)/`dirname $${s48src}`; \
+            $(INSTALL_DATA) $${s48src} $(pkglibdir)/$${s48src}; \
+          done
+	for s48doc in $(s48-docs); \
+	  do \
+            $(INSTALL) -d $(pkgdocdir)/`dirname $${s48doc}`; \
+            $(INSTALL_DATA) $${s48doc} $(pkgdocdir)/$${s48doc}; \
+          done
+	for scshsrc in $(scsh-srcs); \
+	  do \
+            $(INSTALL) -d $(pkglibdir)/`dirname $${scshsrc}`; \
+            $(INSTALL_DATA) $${scshsrc} $(pkglibdir)/$${scshsrc}; \
+          done
+	for scshdoc in $(scsh-docs); \
+	  do \
+            $(INSTALL) -d $(pkgdocdir)/`dirname $${scshdoc}`; \
+            $(INSTALL_DATA) $${scshdoc} $(pkgdocdir)/$${scshdoc}; \
+          done
 
 uninstall :
 	-rm -rf $(pkglibdir) $(pkgdocdir)
