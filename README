@@ -15,3 +15,7 @@ BUGS
 
 Please use the bug tracking system to report bugs:
   http://savannah.nongnu.org/bugs/?group=sunterlib
+
+TODO
+
+It should be possible to install an individual library.

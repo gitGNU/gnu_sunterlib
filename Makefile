@@ -42,7 +42,7 @@ pkg-def.scm : $(s48-authors) $(scsh-authors) \
 
 .PHONY : install uninstall
 install : $(targets)
-	./install-pkg --prefix $(prefix)
+	scsh-install-pkg --prefix $(prefix)
 
 .PHONY : dist
 dist : $(targets)
