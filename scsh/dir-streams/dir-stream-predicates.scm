@@ -11,10 +11,10 @@
 (define (dir-stream-display ds)
   (dir-stream-for-each ds display display))
 
-(define (fs-object-size-less-then? fs-object size)
+(define (fs-object-size-less-than? fs-object size)
   (< (file-info:size (fs-object-info fs-object)) size))
 
-(define (fs-object-size-greater-then? fs-object size)
+(define (fs-object-size-greater-than? fs-object size)
   (> (file-info:size (fs-object-info fs-object)) size))
 
 (define (minutes->seconds minutes)

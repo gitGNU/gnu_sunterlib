@@ -10,8 +10,8 @@
 	  fs-object-file-name))
 
 (define-interface dir-stream-predicates-interfaces
-  (export fs-object-size-less-then?
-	  fs-object-size-greater-then?
+  (export fs-object-size-less-than?
+	  fs-object-size-greater-than?
 	  days->seconds
 	  hours->seconds
 	  minutes->seconds
