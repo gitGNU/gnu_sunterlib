@@ -2,8 +2,8 @@
 ; See the file COPYING distributed with the Scheme Untergrund Library
 ; See the file README for documentation.
 
-;;; since there is no pre-fab lazy-list facility for s48/scsh but a 
-;;; draft srfi, I don't use what's not there and don't set up a 
+;;; since there is no pre-fab lazy-list facility for s48/scsh but a
+;;; draft srfi, I don't use what's not there and don't set up a
 ;;; full-fledged facility myself.  An ad hoc hack shall do for now.
 
 (define (inport->byte-stream in)
@@ -20,7 +20,7 @@
           (delay '())))))
 
 (define (segment-byte-stream bs start end)
-  (assert (<= start end))
+  (assert (<= start end) segment-byte-stream)
   (let* ((bv (make-byte-vector (- end start) 0)))
     (let loop ((i 0) (bs bs))
       (cond ((< i start)
@@ -58,11 +58,11 @@
                           width/dpi height/dpi)
   image-info?
   (format image-info:format set-format!)
-  (depth image-info:depth set-depth!)   
-  (width/pixel image-info:width/pixel set-width/pixel!)   
-  (height/pixel image-info:height/pixel set-height/pixel!) 
-  (width/dpi image-info:width/dpi set-width/dpi!)       
-  (height/dpi image-info:height/dpi set-height/dpi!)     
+  (depth image-info:depth set-depth!)
+  (width/pixel image-info:width/pixel set-width/pixel!)
+  (height/pixel image-info:height/pixel set-height/pixel!)
+  (width/dpi image-info:width/dpi set-width/dpi!)
+  (height/dpi image-info:height/dpi set-height/dpi!)
   )
 
 ;; initialize all fields with #f
@@ -83,8 +83,8 @@
   (if (get r) `((,tag ,(get r))) '()))
 
 
-                          
-            
+
+
 
 ;; img : input-port | byte-vector | byte-stream
 ;; ==> [width height]
@@ -103,7 +103,7 @@
         (values (image-info:width/pixel info)
                 (image-info:height/pixel info))
         (error "image-dimension : could not extract W x H"))))
-                 
+
 
 ;; img : byte-stream
 ;; ==> info or #f
@@ -120,7 +120,7 @@
          (= 11 (byte-vector-length bytes))
          (= #x47 (byte-vector-ref bytes 0))
          (= #x49 (byte-vector-ref bytes 1))
-         
+
          ;; magic 8?a
          (= #x46 (byte-vector-ref bytes 2))
          (= #x38 (byte-vector-ref bytes 3))
@@ -182,7 +182,7 @@
                     (receive (bytes bs) (segment-byte-stream bs 0 6)
                       (if (< 6 (byte-vector-length bytes)) #f
                           (get-most!/jpeg info bytes))))
-                   (else 
+                   (else
                     (loop (segment-byte-stream bs (- size 2) (+ size 2))))
                    ))))
      )))
@@ -207,11 +207,11 @@
   (define (cm->inch x)
     (floor (/ (* x 254) 100)))
   (and ;; app0 id
-       (= #x4a (byte-vector-ref bv 0)) 
-       (= #x46 (byte-vector-ref bv 1)) 
-       (= #x49 (byte-vector-ref bv 2)) 
-       (= #x46 (byte-vector-ref bv 3)) 
-       (= #x00 (byte-vector-ref bv 4)) 
+       (= #x4a (byte-vector-ref bv 0))
+       (= #x46 (byte-vector-ref bv 1))
+       (= #x49 (byte-vector-ref bv 2))
+       (= #x46 (byte-vector-ref bv 3))
+       (= #x00 (byte-vector-ref bv 4))
 
        ;; possibly read physical w x h
        (cond ((= 1 (byte-vector-ref bv 7))
@@ -229,7 +229,7 @@
               (set-height/dpi! info
                               (cm->inch (assemble-bytes
                                          (byte-vector-ref bv 11)
-                                         (byte-vector-ref bv 10)))))))) 
+                                         (byte-vector-ref bv 10))))))))
 
 
 
@@ -239,7 +239,7 @@
          (= 26 (byte-vector-length bytes))
          (= #x89 (byte-vector-ref bytes 0))
          (= #x50 (byte-vector-ref bytes 1))
-         
+
          ;; png magic
          (= #x4e (byte-vector-ref bytes 2))
          (= #x47 (byte-vector-ref bytes 3))
