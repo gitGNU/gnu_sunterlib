@@ -23,7 +23,7 @@
 		     (cons (+ 1 (car count.time))
 			   (+ run-time (cdr count.time))))))
    (else
-    (table-set! *profile-table* name (cons name run-time)))))
+    (table-set! *profile-table* name (cons 0 run-time)))))
 
 (define (hundredths n) 
   (let ((n (round (quotient n 10))))
