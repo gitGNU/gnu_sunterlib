@@ -6,5 +6,5 @@
   (install-file "NEWS" 'doc)
   (install-string (COPYING) "COPYING" 'doc)
   (install-file "srfi-10.scm" 'scheme)
-  (install-file "test/test.scm" 'scheme)
+  (install-file "test/math.scm" 'scheme)
   (install-file "test/pi.scm" 'scheme))
