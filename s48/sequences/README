@@ -75,13 +75,13 @@ vectors-fold-right    sequences-fold-right
 
 Prelude
 
-For our purposes, (each valid state of) a sequence with length n maps a 
+For our purposes, (each valid state of) a sequence with length n maps a
 bounded segment of integers [0:n) into a set of Scheme values, typically
-Anything or Character.  Any kind Sq of sequences with elements in T 
-supports the following basic operations, whatever the names, with the 
+Anything or Character.  Any kind Sq of sequences with elements in T
+supports the following basic operations, whatever the names, with the
 obvious jobs:
                  maker :     (make-sq n [e]) --> s
-                 predicate : (sq? x) --> b 
+                 predicate : (sq? x) --> b
                  getter :    (sq-ref s k) --> s[k]
                  setter :    (sq-set! s k x) --> unspec
                  meter :     (sq-length s) --> n
@@ -93,7 +93,7 @@ The following kinds of sequences are supported by this facility:
   Absequence := a record type (record packages data + behaviour)
   Sequence := Vector | Byte-Vector | String | Proper-List | Absequence
 
-Absequences carry a SEQUENCE-BEHAVIOR record that contains MAKER, 
+Absequences carry a SEQUENCE-BEHAVIOR record that contains MAKER,
 PREDICATE, etc. procedures.  They are the official backdoor where
 user-defined sequence types enter the general sequence lib.  There are
 Examples.
@@ -102,14 +102,37 @@ Examples.
 
 The Procedures
 
-Optional [START END] (abbreviating [START [END]]) parameters default to 0 
+Optional [START END] (abbreviating [START [END]]) parameters default to 0
 resp. the sequence length.  An optional MAKER parameter defaults to
 the maker of the actual type of the (first) sequence argument.
 Sequence arguments of vector and absequence procedures must be vectors
 resp. absequences, notwithstanding the generic parameter name S used below.
-Sequence arguments of general sequence procedures may have different 
-actual sequence types, e.g. (SEQUENCE-EVERY CHAR=? "abc" '#(#\a)) is
+Sequence arguments of general sequence procedures may have different
+actual sequence types, e.g. (SEQUENCES-EVERY CHAR=? "abc" '#(#\a)) is
 ok since both String and Vector <= Sequence.
+
+Equivalences
+  as far as the specs go, that is: the equivalences don't extend to
+unspecified behaviour but I didn't bother to spell this out in detail.
+The stated equivalences may have to suffer from exceptions as the
+library grows, but please report deviations anyway.
+
+* (sequences-foo x ...) = (sequence-foo x ...) and
+  (vectors-foo x ...) = (vector-foo x ...)
+  if the arg.list is admissible for both procedures.
+  [ SEQUENCES-procedures don't support optional [start:end)
+  parameters;  SEQUENCE-procedures don't support an arbitrary number
+  of sequence arguments.  Same for vectors. ]
+
+* if all sequence arguments to a general sequence procedure are
+  vectors the result is that of the corresponding vector procedure.
+  E.g. ``sequence-map = vector-map'' on vectors.
+
+* if all sequence arguments to a general sequence procedure are lists
+  (strings) and there is a corresponding list (string) procedure in
+  the respective srfi, the result complies with the srfi spec.
+  E.g. ``sequences-fold = fold'' on lists,
+       ``sequence-fold = string-fold'' on strings.
 
 
 * Predicates
@@ -159,7 +182,7 @@ Constructors
 (make-vector len [fill]) --> s
 (make-absequence/behavior sb len [fill]) --> s
 
-Synopsis:  Make a fresh vector resp. absequence S (with sequence-behavior 
+Synopsis:  Make a fresh vector resp. absequence S (with sequence-behavior
 SB) of length LEN (and all elements = FILL).
 
                                   *
@@ -167,7 +190,7 @@ SB) of length LEN (and all elements = FILL).
 (vector x0 ...) --> s
 (absequence/behavior sb x0 ...) --> s
 
-Synopsis:  Make a fresh vector (absequence with sequence-behavior SB) 
+Synopsis:  Make a fresh vector (absequence with sequence-behavior SB)
 of minimal length with the elements S[0] = X0, ...
 
                                   *
@@ -205,7 +228,7 @@ Synopsis:  Return xs = (list s[start] ... s[end-1]).
 (absequence-length s) --> n
 
 Synopsis:  Return length N of vector / sequence / absequence S.
-                  
+
                                  *
 
 (vector-ref v k) --> v[k]
@@ -225,7 +248,7 @@ packaged in absequence ABS.
 (sequence-copy s0 [start end]) --> s1
 (sequence-copy/maker maker s0 [start end]) -- s1
 
-Synopsis:  Make new vector resp. sequence (with MAKER) 
+Synopsis:  Make new vector resp. sequence (with MAKER)
 S1 = < s0[start+i] : i in [0:end-start) >.
 [ MAKER intentionally not made third optional arg. ]
 
@@ -254,7 +277,7 @@ Synopsis:  Set s[i] := x.
 
 Synopsis:  Set s[i] := x for all i in [start:end) etc.
 
-                                *                              
+                                *
 
 Reverse & Append
 
@@ -278,8 +301,8 @@ Fold, Unfold & Map
 (sequences-map f s0 s1 ...) --> fs
 (sequences-map/maker maker f s0 s1 ...) --> fs
 
-Synopsis:  Make new vector / sequence FS representing the sequence 
-f(s[start]),...,f(s[end-1])  resp. 
+Synopsis:  Make new vector / sequence FS representing the sequence
+f(s[start]),...,f(s[end-1])  resp.
 (f(s0[i],...) : 0<=i<n)      with n = min.k sequence-length sk.
 Use the MAKER, if supplied, otherwise the maker of the first sequence
 arg's concrete type.  [ MAKER intentionally not made third optional
@@ -293,8 +316,8 @@ arg. ]
 (sequences-for-each proc s0 s1 ...) --> unspec
 
 Synopsis:  Call (proc v[i]) for all i in [start:end) in some order, resp.
-call (proc v0[i] v1[i] ...) for all i in [0:n) in some order with 
-n = min.k sequence-length sk.  
+call (proc v0[i] v1[i] ...) for all i in [0:n) in some order with
+n = min.k sequence-length sk.
 
                                 *
 
@@ -305,8 +328,8 @@ n = min.k sequence-length sk.
 
 Synopsis:  Let  y o x             := (kons x      y)  resp.
                 y o (x0, x1, ...) := (kons x0 ... y),
- 
-and let o be left-associative (so that we can spare us the brackets).  
+
+and let o be left-associative (so that we can spare us the brackets).
 Compute
         sq = nil o s[start]          o ... o s[end-1],       resp.
         sq = nil o (s0[0],s1[0],...) o ... o (s0[n-1],s1[n-1],...)
@@ -322,8 +345,8 @@ with
 
 Synopsis:  Let  x o y := (kons x      y)       resp.
       (x0,x1,...) o y := (kons x0 ... y),
- 
-and let o be right-associative (so that we can spare us the brackets).  
+
+and let o be right-associative (so that we can spare us the brackets).
 Compute
         sq = s[start]    o ... o s[end-1]      o nil,  resp.
         sq = (s0[0] ...) o ... o (s0[n-1] ...) o nil
@@ -375,7 +398,7 @@ Examples:
 
 (define shaseq-behavior
   (make-sequence-behavior make-shaseq shaseq?
-                          shaseq-ref shaseq-set! 
+                          shaseq-ref shaseq-set!
                           shaseq-length))
 
 (define a-string (string-copy "brachman foo gratz bladotzky"))
