@@ -1,3 +1,12 @@
+version 0.3
+* Handler of WITH-FATAL-AND-CAPTURING-ERROR-HANDLER also receives the
+  continuation of the handler as a procedure
+* Continuation and its dynamic environment is re-installed after exit of remote 
+  REPL
+
+version 0.2
+* ???
+
 version 0.1
 * New package system.
 * New structure GC in interaction

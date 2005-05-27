@@ -10,31 +10,34 @@
    (lambda (accept)
      ((call-with-current-continuation
        (lambda (k)
-	 (with-handler 
-	  (lambda (condition more)
-	    (primitive-cwcc
-	     (lambda (condition-continuation)
-	       (if (error? condition)
-		   (call-with-current-continuation
-		    (lambda (decline)
-		      (k (lambda () 
-			   (handler condition condition-continuation decline))))))
-	       (more))))		; Keep looking for a handler.
-	  (lambda () (call-with-values thunk accept)))))))))
+         (with-handler 
+          (lambda (condition more)
+            (primitive-cwcc
+             (lambda (raw-condition-continuation)
+               (call-with-current-continuation
+                (lambda (condition-continuation)
+                  (call-with-current-continuation
+                   (lambda (decline)
+                     (k (lambda () 
+                          (handler condition raw-condition-continuation 
+                                   condition-continuation decline)))))
+                  (more))))))           ; Keep looking for a handler.
+          (lambda () (call-with-values thunk accept)))))))))
 
 (define (with-inspecting-handler port prepare thunk)
   (with-fatal-and-capturing-error-handler
-   (lambda (condition condition-continuation more)
+   (lambda (condition raw-condition-continuation condition-continuation more)
      (with-handler
-      (lambda (c2 m2)
+      (lambda (condition-continuation ignore)
         (more))      
       (if (prepare condition)
           (let ((res
                  (remote-repl "Welcome to the command processor of the remote scsh"
-                              condition-continuation
+                              raw-condition-continuation
                               port)))
-            ;; TODO: option to return to continuation of handler (by leaving out the with-continuation)
-            (with-continuation condition-continuation (lambda () res)))
+            ;; TODO: option to return to continuation of handler 
+            ;; (by leaving out this call)
+            (condition-continuation res))
           (more))))
       thunk))
 
