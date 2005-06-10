@@ -49,6 +49,14 @@ Type predicate.
 Returns #t if the permissions in AFS-PERMISSIONS1 are all included in
 AFS-PERMISSIONS2, #f otherwise
 
+(afs-permissions->string afs-permissions) -> string
+
+Returns the string representation of the afs-permissions.
+
+
+(string->afs-permissions string) -> afs-permissions
+
+Parses a string as afs-permissions.
 
 
 (get-acl dir) -> afs-permissions

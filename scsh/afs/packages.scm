@@ -5,6 +5,8 @@
    all-afs-permissions
    make-afs-permissions
    afs-permissions<=?
+   afs-permissions->string
+   string->afs-permissions
    get-acl
    set-acl!
    add-acl!

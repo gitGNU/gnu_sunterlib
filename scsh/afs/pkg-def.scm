@@ -1,5 +1,5 @@
 (define-package "afs"
-  (0 1)
+  (0 2)
   ((install-lib-version (1 0)))
   (write-to-load-script
    `((config)

@@ -1,2 +1,5 @@
+version 0.2
+* export afs-permissions->string, string->afs-permissions
+
 version 0.1
 * New package system.
