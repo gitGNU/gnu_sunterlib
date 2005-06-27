@@ -11,7 +11,8 @@ touch files in your library's tree.
 2. Your library's tree should have at least these files:
   AUTHORS -- (CHANGED in Sunterlib 0.6) a list of your library's
     copyright(s), keep the year up to date if you make changes to your
-    library.
+    library. If the code is from the public domain, then substitute
+    "Public Domain" for "Copyright".
   BLURB -- a one or two line description of your library. It should
     start with the name of your library's directory followed by a
     colon.
