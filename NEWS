@@ -1,4 +1,5 @@
 version 0.8
+* New s48 library: riatables
 
 version 0.7 2004-06-03
 * The MS-DOS accommodation release. Cygwin tar can't deal with
