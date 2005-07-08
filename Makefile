@@ -52,7 +52,7 @@ install : $(targets)
 dist : $(targets)
 	mkdir sunterlib-$(version)
 	cp pkg-def.scm COPYING DETAILS INSTALL NEWS README README.contrib \
-           pkg-def.scm sunterlib-$(version)/
+           sunterlib-$(version)/
 	cp -r s48 sunterlib-$(version)/s48
 	cp -r scsh sunterlib-$(version)/scsh
 	find sunterlib-$(version)/ -name CVS | xargs rm -rf
