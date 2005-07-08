@@ -22,10 +22,14 @@ scsh-blurbs := $(shell find scsh \
                  -maxdepth 2 -mindepth 2 \
                  -name BLURB)
 
-targets := DETAILS COPYING pkg-def.scm
+.PHONY: version-check
+version-check :
+	build/version-check.scm
+
+targets := DETAILS COPYING pkg-def.scm version-check
 
 .PHONY: all
-all : $(targets)
+all : $(targets) check-versions
 
 DETAILS : $(s48-authors) $(s48-blurbs) $(scsh-authors) $(scsh-blurbs) \
           build/details.scm build/dirs.scm build/header.scm
