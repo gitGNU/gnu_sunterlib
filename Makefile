@@ -7,6 +7,7 @@ minor-version = 8
 version := $(major-version).$(minor-version)
 
 prefix = /tmp/sunterlib
+dest-dir = /tmp/stage
 
 s48-authors := $(shell find s48 \
                   -maxdepth 2 -mindepth 2 \
@@ -44,9 +45,15 @@ pkg-def.scm : $(s48-authors) $(scsh-authors) \
               build/dirs.scm
 	build/make-pkg-def.scm $(major-version) $(minor-version)
 
-.PHONY : install uninstall
+.PHONY : install uninstall build-phase install-phase
 install : $(targets)
-	scsh-install-pkg --prefix $(prefix)
+	scsh-install-pkg --prefix $(prefix) --dest-dir $(dest-dir)
+
+build-phase: $(targets)
+	scsh-install-pkg --prefix $(prefix) --dest-dir $(dest-dir) --phases build
+
+install-phase: $(targets)
+	scsh-install-pkg --prefix $(prefix) --dest-dir $(dest-dir) --phases install
 
 .PHONY : dist
 dist : $(targets)

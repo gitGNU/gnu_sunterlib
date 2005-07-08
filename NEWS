@@ -1,4 +1,6 @@
 version 0.8
+* Use install lib version 1.2.0
+* Automatically check if libraries' NEWS and pkg-def.scm versions match.
 * New s48 library: riatables
 
 version 0.7 2004-06-03

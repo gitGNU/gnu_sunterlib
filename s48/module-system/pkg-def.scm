@@ -1,6 +1,6 @@
 (define-package "module-system"
   (1 0)
-  ((install-lib-version (1 0)))
+  ((install-lib-version (1 2 0)))
   (write-to-load-script
    `((config)
      (load ,(absolute-file-name "packages.scm"
