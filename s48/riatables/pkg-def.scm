@@ -1,5 +1,5 @@
 (define-package "riatables"
-  (0 1)
+  (0 2)
   ((install-lib-version (1 2 0)))
   (write-to-load-script
    `((config)

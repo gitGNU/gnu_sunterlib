@@ -32,6 +32,7 @@
           modify-table-entry!
           pop-table-entry!
           walk-table
+          table->alist
 
           table-template
 

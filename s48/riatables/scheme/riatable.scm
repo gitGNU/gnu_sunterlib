@@ -262,58 +262,59 @@
     (bucket-index entry)
   (and entry
        (begin (expunge-entry-from-table! table bucket-index entry)
-              (if (table-tail-weak? entry)
+              (if (table-tail-weak? table)
                   (weak-entry-value entry)
                   (entry-value entry)))))
 
-(define (walk-table table proc)
+;++ This should also clean out any of the table's broken weak entries.
+
+(define (table->alist table)
   (let* ((buckets (table-bucket-vector table))
-         (bcount (vector-length buckets)))
+         (bcount (vector-length buckets))
+         (cons-entry
+          (let ((head-weak? (table-head-weak? table))
+                (tail-weak? (table-tail-weak? table)))
+            (cond ((and head-weak? tail-weak?)
+                   (lambda (entry alist)
+                     (cond ((weak-entry-key entry)
+                            => (lambda (k)
+                                 (cond ((weak-entry-value entry)
+                                        => (lambda (v)
+                                             (cons (cons k v) alist)))
+                                       (else alist))))
+                           (else alist))))
+                  (head-weak?
+                   (lambda (entry alist)
+                     (cond ((weak-entry-key entry)
+                            => (lambda (k)
+                                 (cons (cons k (entry-value entry))
+                                       alist)))
+                           (else alist))))
+                  (tail-weak?
+                   (lambda (entry alist)
+                     (cond ((weak-entry-value entry)
+                            => (lambda (v)
+                                 (cons (cons (entry-key entry) v)
+                                       alist)))
+                           (else alist))))
+                  (else
+                   (lambda (entry alist)
+                     (cons (cons (entry-key entry) (entry-value entry))
+                           alist)))))))
     (let outer-loop ((alist '())
                      (i 0))
       (if (= i bcount)
-          (walk-table-alist alist proc
-                            (table-head-weak? table)
-                            (table-tail-weak? table))
+          alist
           (let inner-loop ((alist alist)
                            (bucket (vector-ref buckets i)))
             (if (bucket-empty? bucket)
-                (outer-loop (+ i 1))
-                (inner-loop (cons (let ((entry (bucket-entry bucket)))
-                                    (cons (entry-key entry)
-                                          (entry-value entry)))
-                                  alist)
+                (outer-loop alist (+ i 1))
+                (inner-loop (cons-entry (bucket-entry bucket) alist)
                             (bucket-next bucket))))))))
 
-(define (walk-table-alist alist proc head-weak? tail-weak?)
-  ;++ Probably shouldn't break the weakness abstraction here.  (Weak
-  ;++ pointers are supposed to be dealt with only by WEAK-ENTRY-VALUE
-  ;++ &c.; they're meant to be invisible to all other code here.)
-  ;++ Also, WALK-TABLE should expunge broken entries; it shouldn't be
-  ;++ the job of this to filter them out when determining what to pass
-  ;++ to PROC.  Better yet, there would just be a TABLE->ALIST that
-  ;++ does everything right.  I'm too lazy now.
-  (for-each (if head-weak?
-                (if tail-weak?
-                    (lambda (key.value)
-                      (cond ((weak-pointer-ref (car key.value))
-                             => (lambda (key)
-                                  (cond ((weak-pointer-ref
-                                          (cdr key.value))
-                                         => (lambda (value)
-                                              (proc key value))))))))
-                    (lambda (key.value)
-                      (cond ((weak-pointer-ref (car key.value))
-                             => (lambda (key)
-                                  (proc key (cdr key.value)))))))
-                (if tail-weak?
-                    (lambda (key.value)
-                      (cond ((weak-pointer-ref (cdr key.value))
-                             => (lambda (value)
-                                  (proc (car key.value) value)))))
-                    (lambda (key.value)
-                      (proc (car key.value) (cdr key.value)))))
-            alist))
+(define (walk-table table proc)
+  (for-each (lambda (k.v) (proc (car k.v) (cdr k.v)))
+            (table->alist table)))
 
 
 
@@ -546,32 +547,37 @@
 (define-syntax define-bucket-dumper
   (syntax-rules ()
     ((define-bucket-dumper name
-       entry
-       (key key-expression)
+       entry-var
+       (key-var key-expression)
        test)
      (define (name key-hash)
-       (lambda (bucket-vector old-buckets index)
-         (let ((mod (vector-length bucket-vector)))
-           (let loop ((bucket (vector-ref old-buckets index))
-                      (count 0))
-             (if (bucket-empty? bucket)
-                 count
-                 (let* ((entry (bucket-entry bucket))
-                        (next (bucket-next bucket))
-                        (key key-expression))
-                   (loop next
-                         (if test
-                             (let ((hash (key-hash key mod)))
-                               (if (not (eq? hash index))
-                                   (begin (set-bucket-next!
-                                           bucket
-                                           (vector-ref bucket-vector
-                                                       hash))
-                                          (vector-set! bucket-vector
-                                                       hash
-                                                       bucket)))
-                               (+ count 1))
-                             count)))))))))))
+       (letrec ((loop
+                 (lambda (buckets index bucket count mod)
+                   (if (bucket-empty? bucket)
+                       count
+                       (let* ((entry-var (bucket-entry bucket))
+                              (next (bucket-next bucket))
+                              (key-var key-expression))
+                         (loop buckets index
+                               next
+                               (if test
+                                   (let ((hash (key-hash key-var mod)))
+                                     (if (not (eq? hash index))
+                                         (begin (set-bucket-next!
+                                                 bucket
+                                                 (vector-ref buckets
+                                                             hash))
+                                                (vector-set! buckets
+                                                             hash
+                                                             bucket)))
+                                     (+ count 1))
+                                   count)
+                               mod))))))
+         (lambda (bucket-vector old-buckets index)
+           (loop bucket-vector index
+                 (vector-ref old-buckets index)
+                 0
+                 (vector-length bucket-vector))))))))
 
 (define-bucket-dumper make-weak-bucket-dumper
   entry
@@ -812,8 +818,9 @@
                                 'integer-table))
   (symbol-table-template make-symbol-table
     (make-strong-table-template symbol? eq?
-                         (lambda (s mod)
-                           (modular-string-hash (symbol->string s)
-                                                mod))
-                         #f             ; GC-insensitive hash function
-                         'symbol-table)))
+                                (lambda (sym mod)
+                                  (modular-string-hash
+                                   (symbol->string sym)
+                                   mod))
+                                #f      ; GC-insensitive hash function
+                                'symbol-table)))
