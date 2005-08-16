@@ -1,5 +1,5 @@
 (define-package "krims"
-  (0 1)
+  (0 2)
   ((install-lib-version (1 2 0)))
   (write-to-load-script
    `((config)
@@ -9,4 +9,6 @@
   (install-file "NEWS" 'doc)
   (install-string (COPYING) "COPYING" 'doc)
   (install-file "packages.scm" 'scheme)
-  (install-file "krims.scm" 'scheme))
+  (install-file "krims.scm" 'scheme)
+  (install-file "onebol.scm" 'scheme)
+  (install-file "test.scm" 'scheme))

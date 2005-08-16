@@ -26,6 +26,53 @@ printable list starting with a symbol.
 
                                   *
 
+structure ONEBOL -- poor man's unit testing framework (sans framework)
+
+Caution, it is really primitive (but ate not much of my time so far:
+its main raison d'etre).
+
+
+(fail msg e0 ...)                                             PROCEDURE
+
+Synopsis:  Signal a failure with message MSG and related values E0 ...
+
+
+
+(assert exp x0 ...)                                              SYNTAX
+
+Signal a failure if EXP is false, reporting both the failed assertion EXP
+(literally) and the values of X0 ...  Don't evaluate X0 ... if EXP holds
+true.
+
+
+(deny exp x0 ...)                                                SYNTAX
+
+Signal a failure if EXP is true, reporting both the failed assertion
+(NOT EXP) literally and the values of X0 ...  Don't evaluate X0 ...
+if EXP doesn't hold true.
+
+
+(should-raise condition exp)                                     SYNTAX
+(should-raise* condition thunk)                               PROCEDURE
+
+Evaluate the expression EXP resp. call the THUNK and signal a failure
+if the expression or thunk doesn't raise the CONDITION.
+
+
+(shouldnt-raise condition exp)                                  SYNTAX
+(shouldnt-raise* condition thunk)                            PROCEDURE
+
+Evaluate the expression EXP resp. call the THUNK and signal a failure
+if the expression or thunk does raise the CONDITION.
+
+
+(failure? condition)                                         PROCEDURE
+(error? condition)                                           PROCEDURE
+
+Convenience exports, also available from structure CONDITIONS.
+
+                                  *
+
 
 structure KRIMS -- Odds and Ends
 

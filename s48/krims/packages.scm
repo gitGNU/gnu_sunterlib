@@ -38,6 +38,20 @@
 	  lset-union! lset-intersection! lset-difference! lset-xor!
 	  lset-diff+intersection!))
 
+(define-interface onebol-face
+  (export fail error
+          (assert :syntax)
+          (deny :syntax)
+          should-raise*
+          shouldnt-raise*
+          (should-raise :syntax)
+          (shouldnt-raise :syntax)
+          ;; should we export more or less condition predicates?
+          failure?
+          error?                        ; imported from conditions
+          ))
+
+
 ;; odds and ends
 (define-structure krims
   (export (assert :syntax)
@@ -69,3 +83,21 @@
 	((define-record-type type-name . stuff)
 	 (sys:define-record-type type-name type-name . stuff))))
     (define define-record-discloser sys:define-record-discloser)))
+
+
+;; open
+;; ,open handle conditions signals srfi-9
+;; open (subset handle (with-handler))
+
+(define-structure onebol onebol-face
+  (open (subset handle (with-handler))
+        conditions
+        signals
+        srfi-9
+        scheme)
+  (files onebol))
+
+;; run stuff from test.scm ,in onebol-testbed
+(define-structure onebol-testbed (export )
+  (open onebol scheme)
+  (files ))
