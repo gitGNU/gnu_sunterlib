@@ -1,5 +1,5 @@
 (define-package "bytio"
-  (1 0)
+  (1 1)
   ((install-lib-version (1 2 0)))
   (write-to-load-script
    `((config)
