@@ -1,5 +1,5 @@
 (define-package "sequences"
-  (1 0)
+  (1 1)
   ((install-lib-version (1 2 0)))
   (write-to-load-script
    `((config)
@@ -14,4 +14,5 @@
   (install-file "uniseqs.scm" 'scheme)
   (install-file "composeqs.scm" 'scheme)
   (install-file "specseqs.scm" 'scheme)
-  (install-file "vecnames.scm" 'scheme))
+  (install-file "vecnames.scm" 'scheme)
+  (install-file "test.scm" 'scheme))

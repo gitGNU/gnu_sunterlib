@@ -184,3 +184,10 @@
                        (hide vector-fill! list->vector) ; vector-lib
                        ))
   (files composeqs))
+
+
+(define-structure sequences-testbed (export )
+  (open sequence-lib onebol scheme))
+
+(define-structure vectors-testbed (export )
+  (open vector-lib onebol scheme))
