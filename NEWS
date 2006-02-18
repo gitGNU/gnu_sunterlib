@@ -1,3 +1,5 @@
+version 0.9
+
 version 0.8 2006-02-18
 * Use install lib version 1.2.0
 * Automatically check if libraries' NEWS and pkg-def.scm versions match.
