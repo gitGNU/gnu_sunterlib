@@ -1,5 +1,7 @@
 SHELL = /bin/sh
 
+.DEFAULT_GOAL := all
+
 .SUFFIXES:
 
 major-version = 0
