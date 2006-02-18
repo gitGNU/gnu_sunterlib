@@ -32,7 +32,7 @@ version-check :
 targets := DETAILS COPYING pkg-def.scm version-check
 
 .PHONY: all
-all : $(targets) check-versions
+all : $(targets)
 
 DETAILS : $(s48-authors) $(s48-blurbs) $(scsh-authors) $(scsh-blurbs) \
           build/details.scm build/dirs.scm build/header.scm
