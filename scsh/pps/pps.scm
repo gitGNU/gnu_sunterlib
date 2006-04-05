@@ -116,7 +116,7 @@
   (let ((res (run/strings 
 	      (ps -axww 
 		  ;; uses rgid instead of gid
-		  "-opid,ppid,user,ruid,uid,svuid,rgid,svgid,time,tty,ucomm,command"))))
+		  "-opid,ppid,user,ruid,uid,svuid,rgid,svgid,time,%cpu,tty,ucomm,command"))))
     (if (null? res)
 	(error "ps failed")
 	(cdr res))))
