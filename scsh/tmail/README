@@ -1,0 +1,10 @@
+- This is a mail daemon (lots of protocols)
+Basically run scsh, ',open records sockets reduce' or sometimes
+',open sockets records' and '(load "tdaemon.scm")' 
+telnet localhost 1025 and type in APOP\r\n or QUIT\r\n
+for asking the server.
+
+mailer daemon command history:
+APOP retrieves full mailbox (FIXME)
+STAT returns
+LIST returns

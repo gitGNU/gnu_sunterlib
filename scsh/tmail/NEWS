@@ -1,0 +1,12 @@
+version 0.1
+* working connection with a few commands (telnet localhost 1025 and
+* type in MAIL\r\n or QUIT\r\n
+* tdaemon.scm script which can be run in scsh to (run-daemon-child staterecord)
+* "rc" alike tforks.scm, tserver.scm tclient.scm which contain tell-client and ask-server methods.
+* tforks.scm contains record and daemon to be spawned by e.g. init or daemontools
+* and uses fork-and-forget with 10 commands per session.
+* old/ code directory
+* daemon state record (port, host, etc.)
+* telnetable daemon
+* daemon state record
+* dispatch object second executable file
