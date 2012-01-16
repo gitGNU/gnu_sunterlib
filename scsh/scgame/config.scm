@@ -1,4 +1,4 @@
-;;; scgameutil.scm - a scheme game library utility
+;;; config.scm - a scheme game library (needs a scx-0.2 or scheme48-fb)
 ;;;
 ;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;
@@ -26,29 +26,4 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-;; aspect-oriented features
-
-(define (aspecterror)
-  (display "::error:: Message not understood."))
-
-(define (aspectmsg)
-  (display "::message:: "))
-
-;; FIX : use scsh regexp instead of these following 2 functions
-
-(define (string-cat s j)
-  (if (< j (string-length s))
-      (begin
-	(display j)
-	(string-append (string (string-ref s j)) (string-cat s (+ j 1)))
-	)
-      ""))
-
-(define (substring? needle haystack j)
-;;  (define (max? s1 s2 j)
-  (if (and (string? haystack)(string? needle))
-      (let ((hs (string-cat haystack j)))
-        (if (string<=? needle hs)
-            hs
-            #f))
-      #f))
+(define SCGAMEDEBUG #t)

@@ -42,6 +42,13 @@
 ;; interface 2
 (define (coolness? x) (not (null? x))) ;; coolness
 
+;; debugging vars
+
+(load "config.scm")
+(define (display-msg msg)
+  (if SCGAMEDEBUG
+      (for-each display (list (aspectmsg) " " msg))))
+
 ;; override for scx-0.2
 (define (putpixel x y colorname)
  (let ((gc (create-gc dpy win
@@ -59,7 +66,7 @@
 (define (make-scdraw2)
   (define (draw-line x0 y0 x1 y1 . w) ;; FIXME w == line width
     (let ((width (if (coolness? w)(if (number? (car w)) (car w) 1))))
-      ;;(display "drawing line...")
+      (display-msg "drawing line...")
       ;;This should be optimized Bresenham
       (let ((steep (> (abs (- y1 y0))
 		      (abs (- x1 x0))))
@@ -75,7 +82,7 @@
 			      (do ((i y (+ i 1)))
 				  ((= y x) l)
 				(set! l (append l (list i)))))
-			     (else (display "range : x == y")
+			     (else (display-msg "range : x == y")
 				   x)))))
 	    )
 	(if steep
@@ -102,7 +109,7 @@
 		      ))))))))
 
     (define (draw-lines l1 . w)
-      ;;(display "drawing lines...")
+      (display-msg "drawing lines...")
       (for-each draw-line l1)
       )
 
@@ -114,7 +121,7 @@
 
 ;; color table out of xpm pre
 
-(define (make-color-table)
+(define (make-xpm-color-table)
   (let ((dict (make-dictionary)))
     (define (add! key color)
       (dictionary-add! dict key color))
@@ -139,7 +146,7 @@
     (define (load-xpm-image filename)
       (let ((in (open-input-file filename))
 	    (colorcharsdictionary (make-color-dictionary 8)) ;;
-	    (colorcharstable (make-color-table))
+	    (colorcharstable (make-xpm-color-table))
 	    )
 	(do ((str (read in) (read in)))
 	    ((string<=? "{" str)#t))
@@ -167,17 +174,19 @@
 
     (define (load-image filename)
       ;; FIXME read in xpm or png
-      (display "loading image...")
+      (display-msg "loading image...")
       (cond ((string<=? ".xpm" filename)
-	     (load-xpm-image filename)
+             (display-msg "loading xpm suffixed file..")
+	     (load-xpm-image-scx filename)
 	     )
+            (else #f)))
 
     (lambda (msg)
-      (cond ((eq? msg 'load-image)load-image)
-	    (else (aspecterror)(display "scimage2"))))
-    ))
+      (cond ((eq? msg 'load-image) load-image)
+	    (else (aspecterror)(display "scimage2"))))))
 
 ;; Give a #t as arg and have a nice interface
+
 (define (make-scgame . tm)
   (cond ((not (null? tm)
 	      (let ((*scdraw (make-scdraw1))

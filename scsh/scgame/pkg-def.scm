@@ -9,6 +9,7 @@
   (install-file "NEWS" 'doc)
   (install-string (COPYING) "COPYING" 'doc)
   (install-file "packages.scm" 'scheme)
+  (install-file "config.scm" 'scheme)
   (install-file "scgamedictionaries.scm" 'scheme)
   (install-file "scgameutil.scm" 'scheme)
   (install-file "scgamewidgets.scm" 'scheme)
