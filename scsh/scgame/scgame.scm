@@ -1,4 +1,4 @@
-;;; scgame.scm - a scheme game library (needs a scheme48 with X11 support)
+;;; scgame.scm - a scheme game library (needs a scx-0.2)
 ;;;
 ;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;
@@ -29,12 +29,31 @@
 (load "scgameutil.scm")
 (load "scgamedictionaries.scm")
 
+;; NOTE: You need to load a display and window e.g.
+;; (define dpy (open-display))
+;; (define root (default-root-window dpy))
+;; (define width 640) (define height 480)
+;; (define win (create-simple-window dpy root 0 0 width height 1 black white))
+
 ;; interface 1
 (define (make-scdraw1) (lambda (msg) (aspecterror)(display "make-scdraw1")))
 (define (make-scimage1) (lambda (msg) (aspecterror)(display "make-scimage1")))
 
 ;; interface 2
 (define (coolness? x) (not (null? x))) ;; coolness
+
+;; override for scx-0.2
+(define (putpixel x y colorname)
+ (let ((gc (create-gc dpy win
+                      (make-gc-value-alist (background (string->color 'White)
+                                                       (foreground (string->Color colorname)))))))
+   (draw-point dpy win gc (inexact->exact x) (inexact->exact y))))
+(define (putpixel x y foregroundcolorname backgroundcolorname)
+  (let ((gc (create-gc dpy win
+                       (make-gc-value-alist (background (string->color backgroundcolorname)
+                                                        (foreground (string->Color foregroundcolorname)))))))
+    (draw-point dpy win gc (inexact->exact x) (inexact->exact y))))
+
 
 (define (make-scdraw2)
   (define (draw-line x0 y0 x1 y1 . w) ;; FIXME w == line width
@@ -71,8 +90,8 @@
 		      (+ ystep 1)
 		      (- ystep 1)
 		      (for-each (if steep
-				    (putpixel y x 254)
-				    (putpixel x y 254))
+				    (putpixel y x 'Black)
+				    (putpixel x y ))
 
 				(set! error (- error deltay))
 				(if (< error 0)
