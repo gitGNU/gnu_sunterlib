@@ -1,9 +1,14 @@
-scgame is a drawing package.
+scgame is a drawing package a la Carbon.
 
-For a working putpixel method check out the scheme48-fb as a basis for
+It is based on Xlib for scsh and thus needs scx-0.2.
+
+
+Another homebrewed library for the linux framebuffer :
+
+For another working putpixel method check out the scheme48-fb as a basis for
 scsh images. You can get it at http://soft.vub.ac.be/~jceuppen/scheme/
 
-fb stands for linux's framebuffer to draw on.
+fb stands for linux's framebuffer to draw on, the packages are named scheme48-*fb-*.
 
 In the above scheme48-1.8-fb-x11 packages, X11 window drawing is
 supported with xputpixel method.
