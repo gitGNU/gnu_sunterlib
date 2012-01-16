@@ -13,5 +13,5 @@ How to make a release:
   ftp> cd incoming/savannah/sunterlib
   ftp> put sunterlib-0.1.tar.gz
   ftp> put sunterlib-0.1.tar.gz.sig
-7. Increment the version number in Makefile.
+7. Increment the version number in Makefile, pkg-def.scm.
 8. Start a new version entry in the top level NEWS file.

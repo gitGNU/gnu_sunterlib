@@ -1,6 +1,6 @@
 (define-package "procedure-tables"
   (0 1)
-  ((install-lib-version (1 2 0)))
+  ((install-lib-version (1 3 0)))
   (write-to-load-script
    `((config)
      (load ,(absolute-file-name "packages.scm"
