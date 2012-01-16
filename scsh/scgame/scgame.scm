@@ -132,6 +132,9 @@
     (define (load-xpm-image-native filename)
       (xputxpm filename))
 
+    (define (load-xpm-image-scx filename)
+      (read-file-to-pixmap win filename '()));;FIXME xpm-attributes == '()
+
     (define (load-xpm-image filename)
       (let ((in (open-input-file filename))
 	    (colorcharsdictionary (make-color-dictionary 8)) ;;
