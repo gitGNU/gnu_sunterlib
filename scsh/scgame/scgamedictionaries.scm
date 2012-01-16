@@ -1,4 +1,4 @@
-;;; scgamedictionaries.scm - a scheme dictionary system for scgame 
+;;; scgamedictionaries.scm - a scheme dictionary system for scgame
 ;;;
 ;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;
@@ -28,7 +28,7 @@
 ;; Dictionary ADT with ref,set!,add!,make public methods at the end
 
 (define (make-dictionary1)
-  ;; methods are FIFO (first fixed first out)  
+  ;; methods are FIFO (first fixed first out)
   (let ((*dict '()))
 
     (define (get key) ;; get key
@@ -47,10 +47,10 @@
 	   (set! *dict (append res (cdr l))))
 	))
 
-    
+
     (lambda (msg)
       (cond ((eq? msg 'get) get)
-	    ((eq? msg 'set) set)	    
+	    ((eq? msg 'set) set)
 	    ((eq? msg 'add) add)
 	    (else (aspecterror)(display "make-dictionary"))))
     ))
@@ -65,10 +65,10 @@
 
 (define (string->color str)
   (let ((colornumber 0))
-    (do ((i 0 (+ i 1)))
-	((< i (string-length str)) colornumber)
-      (let* ((c (string-ref str i))
-	     (n (cond ((or (eq? c #\a)(eq? c #\A))
+    (do ((i (- (string-length str) 1) (- i 1)))
+	((< i 0) colornumber)
+      (let ((c (string-ref str i)))
+        (let ((n (cond ((or (eq? c #\a)(eq? c #\A))
 		       10)
 		      ((or (eq? c #\b)(eq? c #\B))
 		       11)
@@ -81,7 +81,7 @@
 		      ((or (eq? c #\f)(eq? c #\F))
 		       15)
 		      (else (string->number (string c))))))
-	(set! colornumber (+ (* n 16) colornumber))))))
+	(set! colornumber (+ (* (+ n 1) 16 i) colornumber)))))))
 
 (define (little-endian->big-endian n)
   (let ((str (string n))
@@ -89,8 +89,8 @@
     (do ((i (string-length str) (- i 1)))
 	((<= i 0)
 	 (string->number rets))
-      (set! rets (string 
-		  (bitwise-and 
+      (set! rets (string
+		  (bitwise-and
 		   (string->number (* (expt 2 i)(string-ref str i)))
 		   (string->number rets)))))
     ))
@@ -101,8 +101,8 @@
     (do ((i 0 (+ i 1)))
 	((>= i (string-length str))
 	 (string->number rets))
-      (set! rets (string 
-		  (bitwise-and 
+      (set! rets (string
+		  (bitwise-and
 		   (string->number (* (expt 2 i)(string-ref str i)))
 		   (string->number rets)))))
     ))
@@ -111,9 +111,9 @@
 (define (make-color-dictionary bpp)
   (let ((dict (make-dictionary))
 	(pow (expt 2 bpp)))
-    (cond ((= pow 16) ;; 16 colors 
+    (cond ((= pow 16) ;; 16 colors
 	   (do ((i 0 (+ i 1)))
-	       ((< i pow) 
+	       ((< i pow)
 		(dictionary-add! dict i i)))
 	   (dictionary-add! dict 'black 0)
 
@@ -123,7 +123,7 @@
 	   (dictionary-add! dict 'black 0)
 	   ;; ... FIXME fill in 8-bit colors
 	   dict)
-	  (else (display "color-dictionary : no or unsupported bit depth. Using CSS dictionary")	  
+	  (else (display "color-dictionary : no or unsupported bit depth. Using CSS dictionary")
 		(dictionary-add! dict 'Black   "000000")
 		(dictionary-add! dict 'Navy   "000080")
 		(dictionary-add! dict 'DarkBlue   "00008B")
@@ -272,5 +272,5 @@
 		(dictionary-add! dict 'Ivory   "FFFFF0")
 		(dictionary-add! dict 'White   "FFFFFF")
 		))
-    
+
     ))
