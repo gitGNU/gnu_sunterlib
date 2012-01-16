@@ -25,13 +25,16 @@
 ;;; THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-;; Dictionary ADT with ref,set!,add!,make public methods at the end
+
 
 (load "scgameutil.scm")
 
-;; Usage :
+;; Example :
 ;; (define d (make-color-dictionary 1024))
 ;; (dictionary-ref d 'Navy) ;; returns "000080"
+;; (string->color "000080") ;; returns 751, the RGB/BGR value
+
+;; Dictionary ADT with ref,set!,add!,make public methods at the end
 
 (define (make-dictionary1)
   ;; methods are FIFO (first fixed first out)
