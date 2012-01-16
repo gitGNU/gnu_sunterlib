@@ -66,7 +66,7 @@
 (define (string->color str)
   (let ((colornumber 0))
     (do ((i (- (string-length str) 1) (- i 1)))
-	((< i 0) colornumber)
+	((< i 0) (- colornumber 1))
       (let ((c (string-ref str i)))
         (let ((n (cond ((or (eq? c #\a)(eq? c #\A))
 		       10)
