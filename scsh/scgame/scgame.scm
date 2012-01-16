@@ -39,8 +39,8 @@
 (define (make-scdraw2)
   (define (draw-line x0 y0 x1 y1 . w) ;; FIXME w == line width
     (let ((width (if (coolness? w)(if (number? (car w)) (car w) 1))))
-      (display "FIX drawing line...")
-      ;;FIXME This should be Bresenham
+      ;;(display "drawing line...")
+      ;;This should be optimized Bresenham
       (let ((steep (> (abs (- y1 y0))
 		      (abs (- x1 x0))))
 	    (swap (lambda (x y)
@@ -82,7 +82,7 @@
 		      ))))))))
 
     (define (draw-lines l1 . w)
-      (display "FIX drawing lines...")
+      ;;(display "drawing lines...")
       (for-each draw-line l1)
       )
 
@@ -110,6 +110,8 @@
   (let ((*db (make-dictionary)))
 
     ;; private methods
+    (define (load-xpm-image-native filename)
+      (xputxpm filename))
 
     (define (load-xpm-image filename)
       (let ((in (open-input-file filename))
