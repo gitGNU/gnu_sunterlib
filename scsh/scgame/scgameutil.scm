@@ -43,8 +43,9 @@
 
 (define (substring? needle haystack j)
 ;;  (define (max? s1 s2 j)
-    (if (and (string? haystack)(string? needle))
-	(let ((hs (string-cat haystack j)))
-	  ((string>=? needle hs) hs))
-	#f))
-
+  (if (and (string? haystack)(string? needle))
+      (let ((hs (string-cat haystack j)))
+        (if (string<=? needle hs)
+            hs
+            #f))
+      #f))

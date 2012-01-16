@@ -1,4 +1,4 @@
-;;; scgame.scm - a scheme game library (needs a scx-0.2)
+;;; scgame.scm - a scheme game library (needs a scx-0.2 or scheme48-fb)
 ;;;
 ;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;
@@ -48,6 +48,7 @@
                       (make-gc-value-alist (background (string->color 'White)
                                                        (foreground (string->Color colorname)))))))
    (draw-point dpy win gc (inexact->exact x) (inexact->exact y))))
+
 (define (putpixel x y foregroundcolorname backgroundcolorname)
   (let ((gc (create-gc dpy win
                        (make-gc-value-alist (background (string->color backgroundcolorname)

@@ -1,4 +1,4 @@
-;;; scgamewidgets.scm - a scheme game library (needs scx-0.2)
+;;; scgamewidgets.scm - a scheme game library (needs scx-0.2 or scheme48-fb)
 ;;;
 ;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;

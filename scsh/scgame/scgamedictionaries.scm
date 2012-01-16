@@ -27,6 +27,12 @@
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;; Dictionary ADT with ref,set!,add!,make public methods at the end
 
+(load "scgameutil.scm")
+
+;; Usage :
+;; (define d (make-color-dictionary 1024))
+;; (dictionary-ref d 'Navy) ;; returns "000080"
+
 (define (make-dictionary1)
   ;; methods are FIFO (first fixed first out)
   (let ((*dict '()))
@@ -34,8 +40,20 @@
     (define (get key) ;; get key
       (do ((l *dict (cdr l)))
 	  ((eq? key (caar l))
-	   (cadr l));;returns value
+	   (cadar l));;returns value
 	))
+
+    (define (get-substring key) ;; get key
+      (do ((l *dict (cdr l)))
+	  ((string<=? (if (symbol? key)
+                          (symbol->string key)
+                          (if (string? key)
+                              key
+                              (display "dictionary-get-substring : unknown key type")))
+                      (symbol->string (caar l)))
+           (cadr l));;returns value
+	))
+
     (define (add key value)
       (set! *dict (append *dict (list (list key value)))))
 
@@ -43,20 +61,23 @@
       (do ((l *dict (cdr l))
 	   (res '() (append (list (car l) res))))
 	  ((eq? key (caar l))
-	   (set! (cadr res) value)
+	   (set-car! (cdr res) value)
 	   (set! *dict (append res (cdr l))))
 	))
 
 
     (lambda (msg)
       (cond ((eq? msg 'get) get)
+            ((eq? msg 'get-substring) get-substring)
 	    ((eq? msg 'set) set)
 	    ((eq? msg 'add) add)
 	    (else (aspecterror)(display "make-dictionary"))))
     ))
 
-(define (make-dictionary) (make-dictionary1))
+(define make-dictionary make-dictionary1)
 (define (dictionary-ref dict key) ((dict 'get) key))
+;; NOTE: dictionary-ref-substring:  match key part with keys in dict
+(define (dictionary-ref-substring dict key) ((dict 'get-substring) key))
 (define (dictionary-set! dict key value) ((dict 'set) key value))
 (define (dictionary-add! dict key value) ((dict 'add) key value))
 
@@ -272,5 +293,4 @@
 		(dictionary-add! dict 'Ivory   "FFFFF0")
 		(dictionary-add! dict 'White   "FFFFFF")
 		))
-
-    ))
+    dict))
