@@ -30,6 +30,8 @@
 
 ;; for inits see scgame.scm
 
+;; FIXME refactor and cleanup
+
 (define (make-scgame-widget)
   (define (draw)
     (display-msg "subclass responsability"))
@@ -61,17 +63,38 @@
         (set! height (cadr wh))
         ))
 
-    (define (draw-pressed-image dpy win gc)
+    (define (press-button dpy win gc)
       (init-sync-x-events dpy)
       (map-window dpy win)
       (call-with-event-channel
-       dpy win (event-mask exposure button-press)
+       dpy win (event-mask button-press)
        (lambda (channel)
          (let loop ()
            (if
             (let ((e (receive channel)))
               (cond
-               ((expose-event? e)
+               ((button-press-event? e)
+                (clear-window dpy win)
+                (draw-pressed-image dpy win gc)
+                )
+               ((button-release-event? e)
+                (clear-window dpy win)
+                (draw-image dpy win gc)
+                )
+               (else #f)))
+            (loop))))))
+
+    (define (draw-pressed-image dpy win gc)
+      (init-sync-x-events dpy)
+      (map-window dpy win)
+      (call-with-event-channel
+       dpy win (event-mask exposure)
+       (lambda (channel)
+         (let loop ()
+           (if
+            (let ((e (receive channel)))
+              (cond
+               ((or (expose-event? e)(map-event? e))
                 (clear-window dpy win)
                 (draw-points dpy win gc (* width height) 0 0
                              (/ width 2) (/ height 2))
@@ -84,13 +107,13 @@
       (init-sync-x-events dpy)
       (map-window dpy win)
       (call-with-event-channel
-       dpy win (event-mask exposure button-press)
+       dpy win (event-mask exposure map)
        (lambda (channel)
          (let loop ()
            (if
             (let ((e (receive channel)))
               (cond
-               ((expose-event? e)
+               ((or (expose-event? e)(map-event? e))
                 (clear-window dpy win)
                 (draw-points dpy win gc (* width height) 0 0
                              (/ width 2) (/ height 2))
