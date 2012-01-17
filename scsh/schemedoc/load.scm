@@ -32,9 +32,28 @@
 ;; main program
 ;;
 
-(define $SCHEMEDOCDIR (getenv "SCHEMEDOCDIR"))
-(case $SCHEMEDOCDIR
-  ((#f) (for-each display
-                  '("set your SCHEMEDOCDIR env var to the paths where pods and sods reside." (eoln) "exiting" (eoln))
-                  (exit) ;; NOTE exit
-                  )))
+(define ask (getenv "SCHEMEDOCDIR"))
+(case ask
+  ((#f) (begin (for-each
+                display
+                '("set your SCHEMEDOCDIR env var to the paths where pods and sods reside." (eoln) "exiting" (eoln)))
+               (exit) ;; NOTE exit
+               )))
+
+
+;;(for-each schemedoc-parser-grep SCHEMEDOCDIR)
+(define directoriesl (schemedoc-get-env-list SCHEMEDOCDIR))
+(for-each display directoriesl)
+(display directoriesl)
+(do ((l directoriesl (cdr l)))
+    ((null? l)
+     0)
+  (display (directory-files (car l)) )
+  (do ((l2 (directory-files (car l)) (cdr l2)))
+      ((null? l2)0)
+    (schemedoc-parser-grep (car l2)))
+  )
+
+
+
+;;(for-each directory-files directoriesl)
