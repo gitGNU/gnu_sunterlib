@@ -209,7 +209,7 @@
 ;; This is the main loop you call on your window's
 ;; widget tree (see above)
 
-(define (widget-tree-eventloop widget-tree)
+(define (widget-tree-eventloop dpy win widget-tree)
   (let ((mousex 0)
         (mousey 0))
     (init-sync-x-events dpy)
@@ -225,12 +225,16 @@
              ((motion-event? e)
               (set! mousex (motion-event-x))
               (set! mousey (motion-event-y)))
-             ((button-press-event? e)
-              (let ((widget (widget-node-collide? widget-tree mousex mouse)))
-                ((widget 'press!))))
-             ((button-release-event? e)
-              (let ((widget (widget-node-collide? widget-tree mousex mouse)))
-                ((widget 'press!))))
+             ((map-event? e)
+              (map-window dpy win))
+             ((unmap-event? e)
+              (unmap-window dpy win))
+             ((button-event? e)
+              (let ((state button-event-state))
+                (let ((widget (widget-node-collide? widget-tree mousex mouse)))
+                  (if state
+                      ((widget 'press!))
+                      ((widget 'release!))))))
              (else #f))))
          (loop))))))
 
