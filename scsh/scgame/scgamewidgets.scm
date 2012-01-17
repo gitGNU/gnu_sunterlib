@@ -56,6 +56,7 @@
 (define (widget-node-add! node n)
   (set! node (append node (list n))))
 
+;; throws backwards inner widget
 (define (widget-node-collide? node x y)
   (define (frec l)
     (cond ((null? l) #f)
@@ -66,7 +67,7 @@
                 (<= x (+ (((car l)'get-x)))(((car l)'get-w)))
                 (>= y (((car l)'get-y)))
                 (<= y (+ (((car l)'get-y)))(((car l)'get-h))))
-           #t)
+           (car l))
           (else (frec (cdr l)))))
 
   (if (widget-node? node)
@@ -191,28 +192,6 @@
       (release-button dpy win gc)
       (set! pressed #f))
 
-    (init-sync-x-events dpy)
-    (map-window dpy win)
-    (call-with-event-channel
-     dpy win (event-mask button-press)
-     (lambda (channel)
-       (fork-and-forget
-        ;; FIXME calibrate at 10 times or using nanosleep
-        (let loop ()
-          (if
-           (let ((e (receive channel)))
-             (cond
-              ((button-press-event? e)
-               (press!)
-               (draw-pressed-image dpy win gc)
-               )
-              ((button-release-event? e)
-               (release!)
-               (draw-image dpy win gc)
-               )
-              (else #f)))
-           (loop))))))
-
 
     (lambda (msg)
       (cond ((eq? 'set-image) set-image)
@@ -223,5 +202,35 @@
             ((eq? get-y) get-y)
             ((eq? get-w) get-w)
             ((eq? get-h) get-h)
+            ((eq? draw) draw)
 	    (widget msg)
 	    ))))
+
+;; This is the main loop you call on your window's
+;; widget tree (see above)
+
+(define (widget-tree-eventloop widget-tree)
+  (let ((mousex 0)
+        (mousey 0))
+    (init-sync-x-events dpy)
+    (map-window dpy win)
+    (call-with-event-channel
+     dpy win (event-mask button-press)
+     (lambda (channel)
+       ;; FIXME calibrate at 10 times or using nanosleep
+       (let loop ()
+         (if
+          (let ((e (receive channel)))
+            (cond
+             ((motion-event? e)
+              (set! mousex (motion-event-x))
+              (set! mousey (motion-event-y)))
+             ((button-press-event? e)
+              (let ((widget (widget-node-collide? widget-tree mousex mouse)))
+                ((widget 'press!))))
+             ((button-release-event? e)
+              (let ((widget (widget-node-collide? widget-tree mousex mouse)))
+                ((widget 'press!))))
+             (else #f))))
+         (loop))))))
+
