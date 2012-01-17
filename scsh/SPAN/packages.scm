@@ -1,10 +1,9 @@
 (define-interface SPAN-interface
   (export
-   make-SPAN-server
-   make-SPAN-client))
+   SPAN-question~))
 
 (define-structure SPAN 
   schemedoc-interface
   (open scheme)
-  (files SPAN-client SPAN-server SPAN))
+  (files SPAN-client SPAN-server SPAN load SPAN-util))
 

@@ -1,4 +1,4 @@
-;;; trecords.scm - records for tmail
+;;; SPAN-server-daemon-record.scm - records for SPAN server side
 ;;;
 ;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;
@@ -26,20 +26,17 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define :daemon-record
-  (make-record-type 'daemon-record
-		    '(hostname port sock motd ack apop stat list bye)))
-(define make-daemon-record
-  (record-constructor :daemon-record
-		      '(hostname port sock motd ack apop stat list bye)))
+(define :SPAN-daemon-record
+  (make-record-type 'SPAN-daemon-record
+		    '(hostname port sock motd ack bye)))
+(define make-SPAN-daemon-record
+  (record-constructor :SPAN-daemon-record
+		      '(hostname port sock motd ack bye)))
 
-(define hostname (record-accessor :daemon-record 'hostname))
-(define port (record-accessor :daemon-record 'port))
-(define sock (record-accessor :daemon-record 'sock))
-(define motd (record-accessor :daemon-record 'motd))
-(define ack (record-accessor :daemon-record 'ack))
-(define apop (record-accessor :daemon-record 'apop))
-(define stat (record-accessor :daemon-record 'stat))
-(define list (record-accessor :daemon-record 'list))
-(define bye (record-accessor :daemon-record 'bye))
+(define hostname (record-accessor :SPAN-daemon-record 'hostname))
+(define port (record-accessor :SPAN-daemon-record 'port))
+(define sock (record-accessor :SPAN-daemon-record 'sock))
+(define motd (record-accessor :SPAN-daemon-record 'motd))
+(define ack (record-accessor :SPAN-daemon-record 'ack))
+(define bye (record-accessor :SPAN-daemon-record 'bye))
 
