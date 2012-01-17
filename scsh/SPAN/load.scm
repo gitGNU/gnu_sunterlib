@@ -31,4 +31,8 @@
 (SPAN-question~ SPAN-shell-droptext-1
                 "SPAN build and cache directory"
                 ""
-                (string-append (getenv "HOME") "/.span"))
+                (string-append (getenv "HOME") "/.span")
+                (lambda (answer)
+                  (let ((dir (create-directory answer)))
+                    (file-directory? answer)
+                    )))

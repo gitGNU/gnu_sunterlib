@@ -32,7 +32,7 @@ configuration. The CPAN module needs a directory of its own to cache
 important index files and maybe keep a temporary mirror of CPAN files.
 This may be a site-wide or a personal directory."
 
-(define (SPAN-question~ droptext question answer defaultchoice)
+(define (SPAN-question~ droptext question answer defaultchoice procedure)
   (let ((s ""))
     (display droptext)
     (newline)
@@ -49,5 +49,6 @@ This may be a site-wide or a personal directory."
            (set! answer defaultchoice))
           ((string? (symbol->string s))
            (set! answer (symbol->string s)))
-          (else (SPAN-question~ droptext question answer defaultchoice)))))
+          (else (SPAN-question~ droptext question answer defaultchoice)))
+    (procedure answer)))
 
