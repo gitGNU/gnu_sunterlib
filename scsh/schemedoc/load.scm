@@ -26,59 +26,15 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+(load "schemedoc.scm")
 
-(define (eoln)(string #\newline))
-
-(define sod-regexp1 (rx (| "=item")))
-
-(define (sod regexp filename)
-  (let ((in (open-input-file filename)))
-    (let ((contents ""))
-      (do ((s (read-char in)(read-char in)))
-          ((eof-object? s) contents))
-      (string-match regexp contents))))
-
-
-(define (schemedoc-print-doc filename)
-  (let ((l (list (sod (if (regexp? sod-regexp1)
-                          sod-regexp1
-                          (rx ("")))
-                      filename))))
-    (for-each display l)))
-
-(define (schemedoc-print-doc-to-file filename outfilename)
-  (let ((out (open-output-file outfilename)))
-    (let ((l (list (sod (if (regexp? sod-regexp1)
-                            sod-regexp1
-                            (rx ("")))
-                        filename))))
-      (define (display-rec ll)
-        (do ((e ll (cdr e)))
-            ((null? e)0)
-          (display (car e) out)))
-      (display-rec l))))
 ;;
-;; parser :
-;;
-;; make a list of chars from filename contents
+;; main program
 ;;
 
-(define (schemedoc-parser-doc filename)
-  (define (parse in)
-    (let ((c (read-char in)))
-      (if (eof-object? c)
-          c
-          (append (list c) (parse in)))))
-
-  (define (read-rec in)
-    (call-with-values
-        (lambda ()
-          (parse in)
-          )
-      (lambda (l)
-        (display l)
-        l)))
-
-  (let ((in (open-input-file filename)))
-    (read-rec in)))
-
+(define $SCHEMEDOCDIR (getenv "SCHEMEDOCDIR"))
+(case $SCHEMEDOCDIR
+  ((#f) (for-each display
+                  '("set your SCHEMEDOCDIR env var to the paths where pods and sods reside." (eoln) "exiting" (eoln))
+                  (exit) ;; NOTE exit
+                  )))

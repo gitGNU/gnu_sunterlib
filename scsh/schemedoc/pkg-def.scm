@@ -9,4 +9,5 @@
   (install-file "NEWS" 'doc)
   (install-string (COPYING) "COPYING" 'doc)
   (install-file "packages.scm" 'scheme)
+  (install-file "load.scm" 'scheme)
   (install-file "schemedoc.scm" 'scheme))
