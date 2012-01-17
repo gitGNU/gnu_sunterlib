@@ -32,22 +32,107 @@
 
 ;; FIXME refactor and cleanup
 
+
+;; widget tree
+
+(define (make-widget-tree)
+  '())
+
+(define (make-widget-tree-leaf widget)
+  (delay widget))
+
+(define (widget-leaf? n)
+  (and (widget? n)(not (list? n))))
+
+(define (make-widget-tree-node widgetlist)
+  (delay widgetlist))
+
+(define (widget-node? n)
+  (and (not (widget? n))(list? n)))
+
+(define (widget-tree-add! tree n)
+  (set! tree (append tree (list n))))
+
+(define (widget-node-add! node n)
+  (set! node (append node (list n))))
+
+(define (widget-node-collide? node x y)
+  (define (frec l)
+    (cond ((null? l) #f)
+          ((and (widget? (car l))
+                (>= x (((car l)'get-x)))
+                (<= x (+ (((car l)'get-x)))(((car l)'get-w)))
+                (>= y (((car l)'get-y)))
+                (<= y (+ (((car l)'get-y)))(((car l)'get-h))))
+           #t)
+          (else (frec (cdr l)))))
+
+  (if (widget-node? node)
+      (for-each frec (force node))
+      #f))
+
+(define (widget-leaf-collide? leaf x y)
+  (if (widget-leaf? leaf)
+      (cond ((and (widget? leaf)
+                  (>= x ((leaf 'get-x)))
+                  (<= x (+ ((leaf 'get-x)))((leaf 'get-w)))
+                  (>= y ((leaf 'get-y)))
+                  (<= y (+ ((leaf 'get-y)))((leaf 'get-h))))
+             #t))
+      #f))
+
+;; widgets
+
 (define (make-scgame-widget)
   (define (draw)
-    (display-msg "subclass responsability"))
+    (display-msg "widget - draw - subclass responsability"))
+
+  (define (widget?)
+    #t)
+
+  (define (get-x)
+    (display-msg "widget - get-x - subclass responsability")
+    0)
+
+  (define (get-y)
+    (display-msg "widget - get-y - subclass responsability")
+    0)
+
+  (define (get-w)
+    (display-msg "widget - get-w - subclass responsability")
+    0)
+
+  (define (get-h)
+    (display-msg "widget - get-h - subclass responsability")
+    0)
 
   (lambda (msg)
     (cond ((eq? msg 'draw) draw)
+          ((eq? msg 'widget?) widget?)
           (else
            (display-msg "subclass responsability")))))
 
-(define (make-button-widget)
+(define (make-button-widget xx yy)
   (let ((widget (make-scgame-widget))
 	(image #f) ;; pixel array
         (pressed-image #f) ;; pixel array
         (pressed #f)
+        (x xx)
+        (y yy)
         (width 0)
         (height 0))
+
+    (define (get-x)
+      x)
+
+    (define (get-y)
+      y)
+
+    (define (get-w)
+      w)
+
+    (define (get-h)
+      h)
 
     (define (set-image win filename)
       (set! image (((make-scimage2)'load-image) win filename))
@@ -106,6 +191,7 @@
                (else #f)))
             (loop))))))
 
+    ;; NOTE : you can remap a button (image) to a new window win if you like
     (define (draw-image dpy win gc)
       (init-sync-x-events dpy)
       (map-window dpy win)
@@ -158,5 +244,9 @@
             ((eq? 'set-pressed-image) set-pressed-image)
             ((eq? 'press!) press!)
             ((eq? 'release!) release!)
+            ((eq? get-x) get-x)
+            ((eq? get-y) get-y)
+            ((eq? get-w) get-w)
+            ((eq? get-h) get-h)
 	    (widget msg)
 	    ))))
