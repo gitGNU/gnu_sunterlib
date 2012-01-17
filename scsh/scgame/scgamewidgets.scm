@@ -1,4 +1,5 @@
-;;; scgamewidgets.scm - a scheme game library (needs scx-0.2 or scheme48-fb)
+;;; scgamewidgets.scm - a scheme game library widgets
+;;  (needs scx-0.2 or scheme48-fb)
 ;;;
 ;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;
@@ -84,6 +85,21 @@
                   (<= y (+ ((leaf 'get-y)))((leaf 'get-h))))
              #t))
       #f))
+
+(define (draw-widget-tree widget-tree)
+  (define (frec l)
+    (cond ((null? l) #f)
+          ((list? (car l))
+           (frec (car l)))
+          ((widget? (car l))
+           (((car l) 'draw)))
+          (else (frec (cdr l)))))
+
+  (if (widget-node? node)
+      (for-each frec (force node))
+      #f))
+
+
 
 ;; widgets
 
@@ -210,36 +226,41 @@
 ;; This is the main loop you call on your window's
 ;; widget tree (see above)
 
-(define (widget-tree-eventloop dpy win widget-tree)
-  (let ((mousex 0)
-        (mousey 0))
-    (init-sync-x-events dpy)
-    (map-window dpy win)
-    (call-with-event-channel
-     dpy win (event-mask button-press)
-     (lambda (channel)
-       ;; FIXME calibrate at 10 times or using nanosleep
-       (let loop ()
-         (if
-          (let ((e (receive channel)))
-            (cond
-             ((motion-event? e)
-              (set! mousex motion-event-x)
-              (set! mousey motion-event-y))
-             ((map-event? e)
-              (map-window dpy map-event-window))
-             ((unmap-event? e)
-              (unmap-window dpy unmap-event-window))
-             ((button-event? e)
-              (let ((state button-event-state))
-                (let ((widget (widget-node-collide? widget-tree mousex mouse)))
-                  (if state
-                      ((widget 'press!))
-                      ((widget 'release!))))))
-             ((expose-event? e)
-              (expose-window dpy expose-event-window))
-             ((destroy-widow-event? e)
-              (expose-window dpy destroy-window-event-window))
-             (else #f))))
-         (loop))))))
+(define (widget-tree-eventloop dpy win tree)
+  (let ((mousex 0))
+    (let ((mousey 0))
+      (let ((widget-tree tree))
+        (init-sync-x-events dpy)
+        (map-window dpy win)
+        (call-with-event-channel
+         dpy win (event-mask button-press)
+         (lambda (channel)
+           ;; FIXME calibrate at 10 times or using nanosleep for your machine
+           (let loop ()
+             (if
+              (let ((e (receive channel)))
+                ;; process events
+                (cond
+                 ((motion-event? e)
+                  (set! mousex motion-event-x)
+                  (set! mousey motion-event-y))
+                 ((map-event? e)
+                  (map-window dpy map-event-window))
+                 ((unmap-event? e)
+                  (unmap-window dpy unmap-event-window))
+                 ((button-event? e)
+                  (let ((state button-event-state))
+                    (let ((widget (widget-node-collide? widget-tree mousex mouse)))
+                      (if state
+                          ((widget 'press!))
+                          ((widget 'release!))))))
+                 ((expose-event? e)
+                  (expose-window dpy expose-event-window))
+                 ((destroy-widow-event? e)
+                  (expose-window dpy destroy-window-event-window))
+                 (else #f))
+                ;; draw widgets in tree
+                (draw-widget-tree widget-tree)
+                ))
+             (loop))))))))
 
