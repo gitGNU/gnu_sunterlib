@@ -121,3 +121,11 @@
             (set! directory "")))
       (set! directory (string-append directory (string (string-ref SCHEMEDOCDIR i)))))
     directories))
+
+(define (schemedoc-parser-get-items keyword itemtexts)
+  (let ((returntext ""))
+    (do ((l itemtexts (cdr l)))
+        ((null? l)0)
+      (cond ((string<=? keyword (car l))
+             (set! returntext (string-append returntext (car l))))))
+    returntext))
