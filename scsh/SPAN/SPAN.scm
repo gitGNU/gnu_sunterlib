@@ -42,8 +42,10 @@
            (set! answer defaultchoice))
           ((string=? (symbol->string s)(string #\return))
            (set! answer defaultchoice))
-          ((string? (symbol->string s))
+          ((and (symbol? s)(string? (symbol->string s)))
            (set! answer (symbol->string s)))
+          ((and (number? s)(string? (number->string s)))
+           (set! answer (number->string s)))
           (else (SPAN-question~ droptext question answer defaultchoice)))
     (procedure answer)))
 
@@ -213,3 +215,4 @@ a valid CPAN URL now.
 
 cpan shell -- CPAN exploration and modules installation (v1.9402)
 Enter 'h' for help.")
+
