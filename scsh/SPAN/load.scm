@@ -1,6 +1,6 @@
-;;; schemedoc.scm - a scheme perldoc utility
+;;; load.scm - a scheme SPAN
 ;;;
-;;; Copyright (c) 2011-2012 Johan Ceuppens
+;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
 ;;; All rights reserved.
 ;;;
@@ -27,8 +27,13 @@
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (load "SPAN.scm")
+(load "SPAN-client.scm")
 
 ;; initialization
+
+;; Commands:
+;; h : display help
+;; get : fetch file
 
 ;; question 1
 
@@ -147,10 +152,29 @@
                   #f))
 
 (display SPAN-shell-droptext-22)
-(do ((s (read)(read))
-     ((and (symbol? s)
-           (string<=? (symbol->string s)(string #\return)))
-      0)
-     #t))
+(define (url-bite-off url)
+  (let ((s "")
+        (do ((i 0 (+ i 1)))
+            ((>= i (string-length url))
+             ;;(if (= (string-ref url i) #\/)
+             ;;    (set!
+             s)
+          (set! s (string-append s (string (string-ref url i)))))
+        (if (or (eq? s "http://")(eq? s "ftp://"))
+            (set! s "")))))
 
-(display "Signing off - rest is under dev"))
+(do ((s (read)(read)))
+    ((null? s)0)
+  (cond ((symbol? s)
+         (cond ((string<=? (symbol->string s)(string #\return))
+                0)
+               ((string=? "h" (symbol->string s))
+                (display "Commands : get ")
+                0)
+               ((string<=? "get" (symbol->string s))
+                (display "enter package to fetch : ")
+                (SPAN-ask-server (string-append "get " (symbol->string (read)))
+                                 (url-bite-off SPAN-mirror-url) 6969))
+               ))
+        ))
+(display "Signing off.")

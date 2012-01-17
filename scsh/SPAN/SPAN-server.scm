@@ -1,6 +1,6 @@
 ;;; server.scm - a full-duplex connect-to-client
 ;;;
-;;; Copyright (c) 2011-2012 Johan Ceuppens
+;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
 ;;; All rights reserved.
 ;;;

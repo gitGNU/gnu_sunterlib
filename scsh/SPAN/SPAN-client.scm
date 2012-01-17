@@ -1,6 +1,6 @@
 ;;; client.scm - a full-duplex connect-to-server
 ;;;
-;;; Copyright (c) 2011-2012 Johan Ceuppens
+;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
 ;;; All rights reserved.
 ;;;
@@ -26,10 +26,10 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define (SPAN-ask-server request port-number)
+(define (SPAN-ask-server request hostname port)
   (call-with-values
     (lambda ()
-      (socket-client (get-host-name) port-number))
+      (socket-client hostname port))
     (lambda (in out)
        (display request out)
        (close-output-port out)
