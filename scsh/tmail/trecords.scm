@@ -1,4 +1,4 @@
-;;; trecords.scm - records for tmail 
+;;; trecords.scm - records for tmail
 ;;;
 ;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;
@@ -27,31 +27,19 @@
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define :daemon-record
-  (make-record-type 'daemon-record 
-		    '(hostname port sock MOTD ACK APOP STAT LIST BYE SPAWNEND ERROR500 HELO EHLO)))
-(define make-daemon-record 
-  (record-constructor :daemon-record 
-		      '(hostname port sock MOTD ACK APOP STAT LIST BYE SPAWNEND ERROR500 HELO EHLO)))
-;; (define make-daemon-record-default 
-;;   (record-constructor :daemon-record 
-;; 		      '(hostname 
-;; 		 	1025 #f
-;; 			"Hello."
-;; 			"OK." 
-;; 			"Bye." 
-;; 			"500 Command not understood." 
-;; 			"EHLO Server ready.")))
+  (make-record-type 'daemon-record
+		    '(hostname port sock motd ack apop stat list bye)))
+(define make-daemon-record
+  (record-constructor :daemon-record
+		      '(hostname port sock motd ack apop stat list bye)))
+
 (define hostname (record-accessor :daemon-record 'hostname))
 (define port (record-accessor :daemon-record 'port))
 (define sock (record-accessor :daemon-record 'sock))
-(define MOTD (record-accessor :daemon-record 'MOTD))
-(define ACK (record-accessor :daemon-record 'ACK))
-(define APOP (record-accessor :daemon-record 'APOP))
-(define STAT (record-accessor :daemon-record 'STAT))
-(define LIST (record-accessor :daemon-record 'LIST))
-(define BYE (record-accessor :daemon-record 'BYE))
-(define SPAWNEND (record-accessor :daemon-record 'SPAWNEND))
-(define ERROR500 (record-accessor :daemon-record 'ERROR500))
-(define HELO (record-accessor :daemon-record 'HELO))
-(define EHLO (record-accessor :daemon-record 'EHLO))
-					    
+(define motd (record-accessor :daemon-record 'motd))
+(define ack (record-accessor :daemon-record 'ack))
+(define apop (record-accessor :daemon-record 'apop))
+(define stat (record-accessor :daemon-record 'stat))
+(define list (record-accessor :daemon-record 'Llist))
+(define bye (record-accessor :daemon-record 'bye))
+

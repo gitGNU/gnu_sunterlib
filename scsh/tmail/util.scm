@@ -1,4 +1,4 @@
-;;; util.scm - tmail utilities 
+;;; util.scm - tmail utilities
 ;;;
 ;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;
@@ -26,6 +26,6 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define (aspecterror) (display " message not understood. "))
-
-
+(define (errormsg) (display " message not understood. "))
+(define (eoln) (string #\newline))
+(define (servermsg) (display "::message::"))

@@ -1,4 +1,4 @@
-;;; tdaemon.scm - a scheme pop mail daemon (instantiated) 
+;;; tdaemon.scm - a scheme pop mail daemon (instantiated)
 ;;;
 ;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;
@@ -26,34 +26,22 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-;;#!/home/erana/scheme/bin/scsh -ds \
-;;!#
-
-;;#!/home/erana/scheme/bin/scsh \
-;;-lm tmail.scm -o mail-daemon -s
-
 (load "trecords.scm")
-(load "tclient.scm")
-(load "tserver.scm")
 (load "tforks.scm")
-(display "FIXMES: mail-daemon structure needs carriage return statement")
 (newline)
 
-(define rc (make-daemon-record 
-	    (delay "localhost") ;; virtual host
-	    (delay 1110) 
-	    (delay (open-socket (force (port rc)))) 
-	    (delay "POP3 tmail server ready")
-	    (delay "+OK ")
-	    (delay "APOP ")
-	    (delay "STAT")
-	    (delay "LIST")
-	    (delay "+OK POP3 server signing off")
-	    (delay "Exceeded maximum transactions.")
-	    (delay "500 Command not understood.")
-	    (delay "HELO")
-	    (delay "EHLO")))
-(run-daemon-child rc)
+(define rc (make-daemon-record
+	    "localhost" ;; virtual host
+	    1110
+            #f
+	    "POP3 tmail server ready"
+	    "+OK "
+	    "APOP "
+	    "STAT"
+	    "LIST"
+	    "+OK POP3 server signing off"
+            ))
+(run-daemon-child-mail rc)
 
 (display "mail-daemon ends.")
 (newline)
