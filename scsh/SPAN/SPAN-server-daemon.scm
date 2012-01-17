@@ -32,6 +32,14 @@
 (define (eoln) (string #\newline))
 (define (servermsg) (display "::message::"))
 
+(define (get-package package-name)
+  (let* ((in (open-input-file (if (string<=? ".tar.gz" package-name)
+                                  package-name
+                                  (string-append package-name ".tar.gz"))))
+         (contents ""))
+    (do ((c (read-char in) (read-char in)))
+        ((eof-object? c)contents)
+      (set! contents (string-append contents (string c))))))
 
 (define (run-daemon-child-SPAN rec)
   (let ((*hostname (hostname rec))
@@ -63,7 +71,7 @@
              (if (symbol? answer)
                  (cond ((eq? 'get answer)
                         (let ((answer2 (read (make-string-input-port in))))
-                          (write (tmail-get-mail-with-index (getenv "USER") idx) out)))
+                          (write (get-package answer2) out)))
                        ((eq? 'QUIT answer)
                         (write *bye out)
                         (close-input-port in)
