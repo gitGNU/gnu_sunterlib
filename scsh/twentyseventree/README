@@ -1,4 +1,4 @@
-scgame is a drawing package and should be useful to make widgets
+twentyseventree is an octree extension for 3D and pseudo-3D
 
 For a working putpixel method check out the scheme48-fb as a basis for
 scsh images. You can get it at http://soft.vub.ac.be/~jceuppen/scheme/
