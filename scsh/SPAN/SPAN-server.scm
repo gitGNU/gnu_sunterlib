@@ -26,7 +26,7 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define (tell-client request port-number sock)
+(define (SPAN-tell-client request port-number sock)
   (call-with-values
       (lambda ()
         (socket-accept sock))

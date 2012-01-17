@@ -1,4 +1,4 @@
-;;; SPAN.scm - Scheme Perl Archive Network 
+;;; SPAN.scm - Scheme Perl Archive Network
 ;;;
 ;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;
@@ -26,4 +26,28 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+(define SPAN-shell-droptext-1
+"The following questions are intended to help you with the
+configuration. The CPAN module needs a directory of its own to cache
+important index files and maybe keep a temporary mirror of CPAN files.
+This may be a site-wide or a personal directory."
+
+(define (SPAN-question~ droptext question answer defaultchoice)
+  (let ((s ""))
+    (display droptext)
+    (newline)
+    (display question)(display " ")
+    (display "[")(display defaultchoice)(display "] ")
+    (set! s (read))
+    (cond ((and (symbol? s)
+                (string=? (symbol->string s) defaultchoice))
+           (set! answer defaultchoice))
+          ((and (number? s)
+                (string=? (symbol->number s) defaultchoice))
+           (set! answer defaultchoice))
+          ((string=? (symbol->string s)(string #\return))
+           (set! answer defaultchoice))
+          ((string? (symbol->string s))
+           (set! answer (symbol->string s)))
+          (else (SPAN-question~ droptext question answer defaultchoice)))))
 

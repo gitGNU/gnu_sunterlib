@@ -26,3 +26,9 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+(load "SPAN.scm")
+;;prototype (define (SPAN-question~ droptext question answer defaultchoice)
+(SPAN-question~ SPAN-shell-droptext-1
+                "SPAN build and cache directory"
+                ""
+                (string-append (getenv "HOME") "/.span"))
