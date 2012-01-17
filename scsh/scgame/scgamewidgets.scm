@@ -150,68 +150,18 @@
         (set! height (cadr wh))
         ))
 
-    (define (press-button dpy win gc)
-      (init-sync-x-events dpy)
-      (map-window dpy win)
-      (call-with-event-channel
-       dpy win (event-mask button-press)
-       (lambda (channel)
-         (let loop ()
-           (if
-            (let ((e (receive channel)))
-              (cond
-               ((button-press-event? e)
-                (clear-window dpy win)
-                (draw-pressed-image dpy win gc)
-                )
-               ((button-release-event? e)
-                (clear-window dpy win)
-                (draw-image dpy win gc)
-                )
-               (else #f)))
-            (loop))))))
-
-    (define (release-button dpy win gc)
-      (press-button dpy win gc))
-
     (define (draw-pressed-image dpy win gc)
       (init-sync-x-events dpy)
       (map-window dpy win)
-      (call-with-event-channel
-       dpy win (event-mask exposure map)
-       (lambda (channel)
-         (let loop ()
-           (if
-            (let ((e (receive channel)))
-              (cond
-               ((or (expose-event? e)(map-event? e))
-                (clear-window dpy win)
-                (draw-points dpy win gc (* width height) 0 0
-                             (/ width 2) (/ height 2))
-                )
-
-               (else #f)))
-            (loop))))))
+      (draw-points dpy win gc (* width height) 0 0
+                   (/ width 2) (/ height 2)))
 
     ;; NOTE : you can remap a button (image) to a new window win if you like
     (define (draw-image dpy win gc)
       (init-sync-x-events dpy)
       (map-window dpy win)
-      (call-with-event-channel
-       dpy win (event-mask exposure map)
-       (lambda (channel)
-         (let loop ()
-           (if
-            (let ((e (receive channel)))
-              (cond
-               ((or (expose-event? e)(map-event? e))
-                (clear-window dpy win)
-                (draw-points dpy win gc (* width height) 0 0
-                             (/ width 2) (/ height 2))
-                )
-
-               (else #f)))
-            (loop))))))
+      (draw-points dpy win gc (* width height) 0 0
+                   (/ width 2) (/ height 2)))
 
     (define (draw-points dpy win gc count x y)
       (if (zero? (modulo count 100))
@@ -240,6 +190,29 @@
     (define (release!)
       (release-button dpy win gc)
       (set! pressed #f))
+
+    (init-sync-x-events dpy)
+    (map-window dpy win)
+    (call-with-event-channel
+     dpy win (event-mask button-press)
+     (lambda (channel)
+       (fork-and-forget
+        ;; FIXME calibrate at 10 times or using nanosleep
+        (let loop ()
+          (if
+           (let ((e (receive channel)))
+             (cond
+              ((button-press-event? e)
+               (press!)
+               (draw-pressed-image dpy win gc)
+               )
+              ((button-release-event? e)
+               (release!)
+               (draw-image dpy win gc)
+               )
+              (else #f)))
+           (loop))))))
+
 
     (lambda (msg)
       (cond ((eq? 'set-image) set-image)
