@@ -26,23 +26,31 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define regexp "");;FIXME grepper for comments
+;;FIXME grepper for comments
+;;FIXME use make-regexp in a record
+(define sod-regexp1 (rx (| "=item")))
 
 (define (sod regexp filename)
   (let ((in (open-input-file filename)))
     (let ((contents ""))
       (do ((s (read-char in)(read-char in)))
-          ((eof-object? s)return)
-        (regexp contents)))))
+          ((eof-object? s) contents))
+      (string-match regexp contents))))
 
 
 (define (schemedoc-print-doc filename)
-  (let ((l (list (sod regexp filename))))
+  (let ((l (list (sod (if (regexp? sod-regexp1)
+                          sod-regexp1
+                          (rx ("")))
+                      filename))))
     (for-each display l)))
 
 (define (schemedoc-print-doc-to-file filename outfilename)
   (let ((out (open-output-file outfilename)))
-    (let ((l (list (sod regexp filename))))
+    (let ((l (list (sod (if (regexp? sod-regexp1)
+                            sod-regexp1
+                            (rx ("")))
+                        filename))))
       (define (display-rec ll)
         (do ((e ll (cdr e)))
             ((null? e)0)
