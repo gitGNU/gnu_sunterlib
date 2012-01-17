@@ -1,4 +1,4 @@
-;;; tdaemon.scm - a scheme pop mail daemon (instantiated)
+;;; tdaemon.scm - a scheme pop mail daemon
 ;;;
 ;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;
