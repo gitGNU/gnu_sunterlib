@@ -26,10 +26,10 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(load "scgameutil.scm")
-(load "scganaduutil.scm")
 ;; This code fabricates xanadu hypertext files to attach
 ;; to xanandu objects or use as metafiles
+(load "scgameutil.scm")
+(load "scganaduutil.scm")
 
 (define (make-scganadu)
   (let ((record (delay #f)))
