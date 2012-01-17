@@ -47,7 +47,8 @@
 (load "config.scm")
 (define (display-msg msg)
   (if SCGAMEDEBUG
-      (for-each display (list (aspectmsg) " " msg))))
+      (for-each display (list (aspectmsg) " " msg))
+      (newline)))
 
 ;; override for scx-0.2
 (define (putpixel x y colorname)
@@ -141,7 +142,7 @@
       (xputxpm filename))
 
     (define (load-xpm-image-scx filename)
-      (read-file-to-pixmap win filename '()));;FIXME xpm-attributes == '()
+      (read-file-to-pixmap win filename #()));;FIXME xpm-attributes == '()
 
     (define (load-xpm-image filename)
       (let ((in (open-input-file filename))
@@ -174,12 +175,12 @@
 
     (define (load-image filename)
       ;; FIXME read in xpm or png
-      (display-msg "loading image...")
+      (display-msg "loading image..")
       (cond ((string<=? ".xpm" filename)
              (display-msg "loading xpm suffixed file..")
 	     (load-xpm-image-scx filename)
 	     )
-            (else #f)))
+            (else (display-msg "no supported image format found"))))
 
     (lambda (msg)
       (cond ((eq? msg 'load-image) load-image)

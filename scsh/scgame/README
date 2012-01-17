@@ -1,7 +1,7 @@
 scgame is a drawing package a la Carbon.
 
 It is based on Xlib for scsh and thus needs scx-0.2.
-
+You can tune config.scm before you start.
 
 Another homebrewed library for the linux framebuffer :
 

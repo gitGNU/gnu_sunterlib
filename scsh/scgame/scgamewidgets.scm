@@ -28,18 +28,107 @@
 
 (load "scgame.scm")
 
-(define (make-scgamewidget)
-    (lambda (msg)
-      (display "subclass responsability")))
+;; for inits see scgame.scm
 
-(define (make-button)
-  (let ((*widget (make-scgamewidget))
-	(*image #f)) ;; pixel array
+(define (make-scgame-widget)
+  (define (draw)
+    (display-msg "subclass responsability"))
+
+  (lambda (msg)
+    (cond ((eq? msg 'draw) draw)
+          (else
+           (display-msg "subclass responsability")))))
+
+(define (make-button-widget)
+  (let ((widget (make-scgame-widget))
+	(image #f) ;; pixel array
+        (pressed-image #f) ;; pixel array
+        (pressed #f)
+        (width 0)
+        (height 0))
 
     (define (set-image filename)
-      (((make-scimage2)'load-image) filename))
+      (set! image (((make-scimage2)'load-image) filename))
+      (let ((wh (vector-ref (list->vector image) 1)))
+        (set! width (car wh))
+        (set! height (cadr wh))
+        ))
+
+    (define (set-pressed-image filename)
+      (set! pressed-image (((make-scimage2)'load-image) filename))
+      (let ((wh (vector-ref (list->vector image) 1)))
+        (set! width (car wh))
+        (set! height (cadr wh))
+        ))
+
+    (define (draw-pressed-image dpy win gc)
+      (init-sync-x-events dpy)
+      (map-window dpy win)
+      (call-with-event-channel
+       dpy win (event-mask exposure button-press)
+       (lambda (channel)
+         (let loop ()
+           (if
+            (let ((e (receive channel)))
+              (cond
+               ((expose-event? e)
+                (clear-window dpy win)
+                (draw-points dpy win gc (* width height) 0 0
+                             (/ width 2) (/ height 2))
+                )
+
+               (else #f)))
+            (loop))))))
+
+    (define (draw-image dpy win gc)
+      (init-sync-x-events dpy)
+      (map-window dpy win)
+      (call-with-event-channel
+       dpy win (event-mask exposure button-press)
+       (lambda (channel)
+         (let loop ()
+           (if
+            (let ((e (receive channel)))
+              (cond
+               ((expose-event? e)
+                (clear-window dpy win)
+                (draw-points dpy win gc (* width height) 0 0
+                             (/ width 2) (/ height 2))
+                )
+
+               (else #f)))
+            (loop))))))
+
+    (define (draw-points dpy win gc count x y)
+      (if (zero? (modulo count 100))
+          (display-flush dpy))
+      (if (not (zero? count))
+          (let ((xf (floor (* (+ 1.2 x) width))) ; These lines center the picture
+                (yf (floor (* (+ 0.5 y) height))))
+            (draw-point dpy win gc (inexact->exact xf) (inexact->exact yf))
+            (draw-points dpy win gc ;; FIXME1
+                         (- count 1)
+                         (- (* y (+ 1 (sin (* 0.7 x))))
+                            (* 1.2 (sqrt (abs x))))
+                         (- 0.21 x)
+                         width height))))
+
+    (define (draw)
+      (if pressed
+          (draw-image)
+          (draw-pressed-image))
+      (map-window dpy win))
+
+    (define (press!)
+      (set! pressed #t))
+
+    (define (release!)
+      (set! pressed #f))
 
     (lambda (msg)
       (cond ((eq? 'set-image) set-image)
-	    (else (aspecterror)(display "make-button"))
+            ((eq? 'set-pressed-image) set-pressed-image)
+            ((eq? 'press!) press!)
+            ((eq? 'release!) release!)
+	    (widget msg)
 	    ))))
