@@ -39,5 +39,3 @@
       ;;FIXME(close-input-port in)
       ;;answer)
        )))
-
-
