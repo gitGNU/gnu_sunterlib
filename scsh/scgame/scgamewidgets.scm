@@ -49,15 +49,15 @@
         (width 0)
         (height 0))
 
-    (define (set-image filename)
-      (set! image (((make-scimage2)'load-image) filename))
+    (define (set-image win filename)
+      (set! image (((make-scimage2)'load-image) win filename))
       (let ((wh (vector-ref (list->vector image) 1)))
         (set! width (car wh))
         (set! height (cadr wh))
         ))
 
-    (define (set-pressed-image filename)
-      (set! pressed-image (((make-scimage2)'load-image) filename))
+    (define (set-pressed-image win filename)
+      (set! pressed-image (((make-scimage2)'load-image) win filename))
       (let ((wh (vector-ref (list->vector image) 1)))
         (set! width (car wh))
         (set! height (cadr wh))
@@ -84,11 +84,14 @@
                (else #f)))
             (loop))))))
 
+    (define (release-button dpy win gc)
+      (press-button dpy win gc))
+
     (define (draw-pressed-image dpy win gc)
       (init-sync-x-events dpy)
       (map-window dpy win)
       (call-with-event-channel
-       dpy win (event-mask exposure)
+       dpy win (event-mask exposure map)
        (lambda (channel)
          (let loop ()
            (if
@@ -143,9 +146,11 @@
       (map-window dpy win))
 
     (define (press!)
+      (press-button dpy win gc)
       (set! pressed #t))
 
     (define (release!)
+      (release-button dpy win gc)
       (set! pressed #f))
 
     (lambda (msg)

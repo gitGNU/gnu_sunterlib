@@ -141,7 +141,7 @@
     (define (load-xpm-image-native filename)
       (xputxpm filename))
 
-    (define (load-xpm-image-scx filename)
+    (define (load-xpm-image-scx win filename)
       (read-file-to-pixmap win filename #()));;FIXME xpm-attributes == '()
 
     (define (load-xpm-image filename)
@@ -173,12 +173,12 @@
 
     ;; public methods
 
-    (define (load-image filename)
+    (define (load-image win filename)
       ;; FIXME read in xpm or png
       (display-msg "loading image..")
       (cond ((string<=? ".xpm" filename)
              (display-msg "loading xpm suffixed file..")
-	     (load-xpm-image-scx filename)
+	     (load-xpm-image-scx win filename)
 	     )
             (else (display-msg "no supported image format found"))))
 
