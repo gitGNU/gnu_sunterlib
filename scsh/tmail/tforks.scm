@@ -49,7 +49,7 @@
                         *port
                         (eoln)))
 
-    ((lambda (portnumber)
+    ((lambda ()
        (call-with-values
            (lambda ()
              (socket-accept *socket))
@@ -104,6 +104,4 @@
            (close-socket *socket)
            (close-output-port out)
            (exit)
-           )))
-     *port)
-    ))
+           ))))))
