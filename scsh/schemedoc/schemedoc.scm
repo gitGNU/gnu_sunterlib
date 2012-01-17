@@ -56,3 +56,26 @@
             ((null? e)0)
           (display (car e) out)))
       (display-rec l))))
+
+;;
+;; make a list of chars from filename contents
+;;
+(define (schemedoc-explode-doc filename)
+  (define (explode in)
+    (let ((c (read-char in)))
+      (if (eof-object? c)
+          c
+          (append (list c) (explode in)))))
+
+  (define (read-rec in)
+    (call-with-values
+        (lambda ()
+          (explode in)
+          )
+      (lambda (l)
+        (display l)
+        l)))
+
+  (let ((in (open-input-file filename)))
+    (read-rec in)
+    ))
