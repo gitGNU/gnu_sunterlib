@@ -1,2 +1,3 @@
 version 0.1
 * printing a regexp on a filename 
+* explode (file to list) function for file contents
