@@ -59,6 +59,8 @@
 (define (widget-node-collide? node x y)
   (define (frec l)
     (cond ((null? l) #f)
+          ((list? (car l))
+           (frec (car l)))
           ((and (widget? (car l))
                 (>= x (((car l)'get-x)))
                 (<= x (+ (((car l)'get-x)))(((car l)'get-w)))
