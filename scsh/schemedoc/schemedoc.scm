@@ -76,9 +76,20 @@
           (parse in)
           )
       (lambda (l)
-        (display l)
+        ;;(write l)
         l)))
 
-  (let ((in (open-input-file filename)))
+  (let ((in (open-input-file filename))) ;; FIXME with-
     (read-rec in)))
 
+(define (schemedoc-parser-grep filename)
+  (let ((le (schemedoc-parser-doc filename))
+        (line "")
+        (lines '()))
+    (do ((l le (cdr l)))
+        ((or (eof-object? l)
+             (and (eq? (car l) #\newline)(string<=? "=item" line)))
+         (set! lines (append lines (list line)))
+         (set! line ""))
+      (set! line (string-append line (string (car l))))
+    (for-each display lines))))
