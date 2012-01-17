@@ -31,7 +31,8 @@
 ;; for inits see scgame.scm
 
 ;; FIXME refactor and cleanup
-
+;;
+;; run (widget-tree-eventloop dpy win widget-tree)
 
 ;; widget tree
 
@@ -223,18 +224,22 @@
           (let ((e (receive channel)))
             (cond
              ((motion-event? e)
-              (set! mousex (motion-event-x))
-              (set! mousey (motion-event-y)))
+              (set! mousex motion-event-x)
+              (set! mousey motion-event-y))
              ((map-event? e)
-              (map-window dpy win))
+              (map-window dpy map-event-window))
              ((unmap-event? e)
-              (unmap-window dpy win))
+              (unmap-window dpy unmap-event-window))
              ((button-event? e)
               (let ((state button-event-state))
                 (let ((widget (widget-node-collide? widget-tree mousex mouse)))
                   (if state
                       ((widget 'press!))
                       ((widget 'release!))))))
+             ((expose-event? e)
+              (expose-window dpy expose-event-window))
+             ((destroy-widow-event? e)
+              (expose-window dpy destroy-window-event-window))
              (else #f))))
          (loop))))))
 
