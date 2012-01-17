@@ -56,10 +56,12 @@
             ((null? e)0)
           (display (car e) out)))
       (display-rec l))))
-
+;;
+;; parser :
 ;;
 ;; make a list of chars from filename contents
 ;;
+
 (define (schemedoc-parser-doc filename)
   (define (parse in)
     (let ((c (read-char in)))
@@ -78,3 +80,14 @@
 
   (let ((in (open-input-file filename)))
     (read-rec in)))
+
+;;
+;; main program
+;;
+(define (eoln)(string #\newline))
+(define $SCHEMEDOCDIR (getenv "SCHEMEDOCDIR"))
+(case $SCHEMEDOCDIR
+  ((#f) (for-each display
+                  '("set your SCHEMEDOCDIR env var to the paths where pods and sods reside." (eoln) "exiting" (eoln))
+                  (exit)
+                  )))
