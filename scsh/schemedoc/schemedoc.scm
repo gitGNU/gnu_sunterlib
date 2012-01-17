@@ -60,22 +60,21 @@
 ;;
 ;; make a list of chars from filename contents
 ;;
-(define (schemedoc-explode-doc filename)
-  (define (explode in)
+(define (schemedoc-parser-doc filename)
+  (define (parse in)
     (let ((c (read-char in)))
       (if (eof-object? c)
           c
-          (append (list c) (explode in)))))
+          (append (list c) (parse in)))))
 
   (define (read-rec in)
     (call-with-values
         (lambda ()
-          (explode in)
+          (parse in)
           )
       (lambda (l)
         (display l)
         l)))
 
   (let ((in (open-input-file filename)))
-    (read-rec in)
-    ))
+    (read-rec in)))
