@@ -40,20 +40,17 @@
                (exit) ;; NOTE exit
                )))
 
+(define SCHEMEDOCITEMS '())
+(let ((directoriesl (schemedoc-get-env-list SCHEMEDOCDIR)))
+  (do ((l directoriesl (cdr l)))
+      ((null? l)
+       0)
+    (display (directory-files (car l)) )
+    (do ((l2 (directory-files (car l)) (cdr l2)))
+          ((null? l2)0)
+      (set! SCHEMEDOCITEMS (append SCHEMEDOCITEMS (list (schemedoc-parser-grep (car l2)))))
+      )))
 
-;;(for-each schemedoc-parser-grep SCHEMEDOCDIR)
-(define directoriesl (schemedoc-get-env-list SCHEMEDOCDIR))
-(for-each display directoriesl)
-(display directoriesl)
-(do ((l directoriesl (cdr l)))
-    ((null? l)
-     0)
-  (display (directory-files (car l)) )
-  (do ((l2 (directory-files (car l)) (cdr l2)))
-      ((null? l2)0)
-    (schemedoc-parser-grep (car l2)))
-  )
+(display "Your search is in the variable SCHEMEDOCITEMS list.")(newline)
+(display "You can regexp it if you want.")(newline)
 
-
-
-;;(for-each directory-files directoriesl)
