@@ -231,20 +231,6 @@ Enter 'h' for help.")
 (table-set! questions 21 SPAN-shell-droptext-21)
 (table-set! questions 22 SPAN-shell-droptext-22)
 
-(define table-range
-  (lambda (x y)
-    (let ((l '()))
-      (cond ((< x y)
-             (do ((i x (+ i 1)))
-                 ((= x y) l)
-               (set! l (append l (table-ref questions i)))))
-            ((< y x)
-             (do ((i y (+ i 1)))
-                 ((= y x) l)
-               (set! l (append l (table-ref questions i)))))
-            (else (display-msg "range : x == y")
-                  x)))))
-
 (define question?
   (lambda (n)
     (case ((n) (string-match (table-ref n) (rx (| ((string n)))))
