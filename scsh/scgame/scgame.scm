@@ -45,9 +45,9 @@
 ;; debugging vars
 
 (load "config.scm")
-(define (display-msg msg)
+(define (display-msg . msg)
   (if SCGAMEDEBUG
-      (for-each display (list (aspectmsg) " " msg))
+      (for-each display (append (list (aspectmsg) " ") msg))
       (newline)))
 
 ;; override for scx-0.2
