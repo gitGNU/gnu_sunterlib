@@ -238,6 +238,7 @@ Enter 'h' for help.")
 
 (define questionaire
   (lambda (SPAN-dir)
+    ;; (fork-and-forget
     (define answer "")
     (define SPAN-build-and-cache-dir SPAN-dir)
     (define SPAN-download-target-dir SPAN-dir)
