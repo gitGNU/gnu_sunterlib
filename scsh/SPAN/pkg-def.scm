@@ -11,6 +11,8 @@
   (install-file "packages.scm" 'scheme)
   (install-file "SPAN-client.scm" 'scheme)
   (install-file "SPAN-server.scm" 'scheme)
+  (install-file "SPAN-server-daemon.scm" 'scheme)
+  (install-file "SPAN-server-daemon-record.scm" 'scheme)
   (install-file "SPAN-util.scm" 'scheme)
   (install-file "load.scm" 'scheme)
   (install-file "SPAN.scm" 'scheme))

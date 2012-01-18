@@ -26,6 +26,7 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+;; FXIME refactor
 
 (define (SPAN-question~ droptext question answer defaultchoice procedure)
   (let ((s ""))
@@ -47,7 +48,7 @@
           ((and (number? s)(string? (number->string s)))
            (set! answer (number->string s)))
           (else (SPAN-question~ droptext question answer defaultchoice)))
-    (procedure answer)))
+    procedure))
 
 (define SPAN-shell-droptext-1
   "The following questions are intended to help you with the
@@ -215,4 +216,137 @@ a valid CPAN URL now.
 
 cpan shell -- CPAN exploration and modules installation (v1.9402)
 Enter 'h' for help.")
+
+
+(define questionaire
+  (lambda ()
+    (define answer "")
+    (define SPAN-build-and-cache-dir (string-append (getenv "HOME") "/.span"))
+    (define SPAN-download-target-dir (string-append (getenv "HOME") "/.span"))
+    (define SPAN-mirror-url "localhost")
+    ;; question 1
+    (cond
+     ((and (file-exists? SPAN-build-and-cache-dir)
+           (file-exists? (string-append SPAN-build-and-cache-dir "/mirror")))
+      (let ((SPAN-mirror-url (make-string-input-port
+                              (open-input-file (string-append SPAN-build-and-cache-dir "/mirror")))))
+        (SPAN-shell-spawn SPAN-mirror-url)))
+     (else
+      ;;prototype (define (SPAN-question~ droptext question answer defaultchoice)
+      ((SPAN-question~ SPAN-shell-droptext-1
+                       "SPAN build and cache directory"
+                       ""
+                       SPAN-build-and-cache-dir
+                       (lambda (answer)
+                         (let ((dir (create-directory answer)))
+                           (if (file-directory? dir)
+                               (set! SPAN-build-and-cache-dir answer)
+                               #f)))) answer)
+
+      (define SPAN-download-target-dir (string-append SPAN-build-and-cache-dir "/" "sources"))
+      ((SPAN-question~ SPAN-shell-droptext-2
+                       "Download target directory"
+                       ""
+                       SPAN-download-target-dir
+                       (lambda (answer)
+                         (let ((dir (create-directory answer)))
+                           (if (file-directory? answer)
+                               (set! SPAN-download-target-dir answer)
+                               #f)))) answer)
+
+      (define SPAN-build-dir (string-append SPAN-build-and-cache-dir "/" "build"))
+      ((SPAN-question~ SPAN-shell-droptext-3
+                       "Directory where the build process takes place?"
+                       ""
+                       SPAN-download-target-dir
+                       (lambda (answer)
+                         (let ((dir (create-directory answer)))
+                           (if (file-directory? answer)
+                               (set! SPAN-build-dir answer)
+                               #f)))) answer)
+
+      (define SPAN-config "no")
+      ((SPAN-question~ SPAN-shell-droptext-4
+                       "Always commit changes to config variables to disk?"
+                       ""
+                       SPAN-config
+                       (lambda (answer)
+                         (set! SPAN-config answer)
+                         #f)) answer)
+
+      (define SPAN-build-Mb 100)
+      ((SPAN-question~ SPAN-shell-droptext-5
+                       "Cache size for build directory (in MB)?"
+                       ""
+                       SPAN-build-Mb
+                       (lambda (answer)
+                         (set! SPAN-build-Mb answer)
+                         #f)) answer)
+
+      (define SPAN-expire 1)
+      ((SPAN-question~ SPAN-shell-droptext-6
+                       "Let the index expire after how many days?"
+                       ""
+                       SPAN-expire
+                       (lambda (answer)
+                         (set! SPAN-expire answer)
+                         #f)) answer)
+
+      (define SPAN-scan-cache "atstart")
+      ((SPAN-question~ SPAN-shell-droptext-7
+                       "Perform cache scanning (atstart or never)?"
+                       ""
+                       SPAN-scan-cache
+                       (lambda (answer)
+                         (set! SPAN-scan-cache answer)
+                         #f)) answer)
+
+      (define SPAN-cache-metadata "yes")
+      ((SPAN-question~ SPAN-shell-droptext-8
+                       "Cache metadata (yes/no)?"
+                       ""
+                       SPAN-cache-metadata
+                       (lambda (answer)
+                         (set! SPAN-cache-metadata answer)
+                         #f)) answer)
+
+      (define SPAN-policy-building "ask")
+      ((SPAN-question~ SPAN-shell-droptext-9
+                       "Policy on building prerequisites (follow, ask or ignore)? [ask]"
+                       ""
+                       SPAN-policy-building
+                       (lambda (answer)
+                         (set! SPAN-policy-building answer)
+                         #f)) answer)
+
+      ;; question 10 is under dev
+      ;; question 11 is under dev
+      ;; question 12 is under dev
+      ;; question 13 is under dev
+
+      ;; ... until 20
+
+
+      ((SPAN-question~ SPAN-shell-droptext-20
+                       "Please enter the URL of your CPAN mirror "
+                       ""
+                       SPAN-mirror-url
+                       (lambda (answer)
+                         (set! SPAN-mirror-url answer)
+                         (let ((out (open-output-file (string-append SPAN-build-and-cache-dir "/mirror"))))
+                           (write answer out))
+                         #f)) answer)
+
+      (define SPAN-mirror-url-2 "")
+      ((SPAN-question~ SPAN-shell-droptext-21
+                       "Enter another URL or RETURN to quit: [] "
+                       ""
+                       SPAN-mirror-url-2
+                       (lambda (answer)
+                         (set! SPAN-mirror-url-2 answer)
+                         #f)) answer)
+
+      (display SPAN-shell-droptext-22)
+      (SPAN-shell-spawn SPAN-mirror-url))
+     )))
 
