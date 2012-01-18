@@ -361,7 +361,7 @@ Enter 'h' for help.")
                        (lambda (answer)
                          (set! SPAN-mirror-url answer)
                          (run (touch (string-append SPAN-dir "/mirror")))
-                         (let ((out (open-output-file (string-append SPAN-build-and-cache-dir "/mirror"))))
+                         (let ((out (open-output-file (string-append SPAN-dir "/mirror"))))
                            (write answer out))
                          #f)) answer)
 
