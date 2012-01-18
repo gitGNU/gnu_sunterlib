@@ -241,7 +241,10 @@ Enter 'h' for help.")
     (define answer "")
     (define SPAN-build-and-cache-dir SPAN-dir)
     (define SPAN-download-target-dir SPAN-dir)
-    (define SPAN-mirror-url "localhost")
+    (define SPAN-mirror-url (if (file-exists? (string-append SPAN-dir "/mirror"))
+
+                                (read (string-append SPAN-dir "/mirror"))
+                                "localhost"))
     ;; question 1
     ;;((lambda ()
        (cond
