@@ -252,7 +252,7 @@ Enter 'h' for help.")
               (file-exists? (string-append SPAN-dir "/mirror")))
          (let ((SPAN-mirror-url (make-string-input-port
                                  (open-input-file (string-append SPAN-build-and-cache-dir "/mirror")))))
-        (SPAN-shell-spawn SPAN-mirror-url)))
+        (SPAN-shell-spawn SPAN-dir SPAN-mirror-url)))
      (else
 ;;;;;;;;prototype (define (SPAN-question~ droptext question answer defaultchoice)
       ((SPAN-question~ (question? 1)
@@ -370,6 +370,6 @@ Enter 'h' for help.")
                          #f)) answer)
 
       (display (question? 22))
-      (SPAN-shell-spawn SPAN-mirror-url))
+      (SPAN-shell-spawn SPAN-dir SPAN-mirror-url))
      )))
 

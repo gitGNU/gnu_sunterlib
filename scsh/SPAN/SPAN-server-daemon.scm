@@ -26,6 +26,8 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+;; NOTE : files stored on this server are retrieved from its runtime directory
+
 (load "SPAN-server-daemon-record.scm")
 
 (define (errormsg) (display " message not understood. "))
@@ -72,7 +74,7 @@
                  (cond ((eq? 'get answer)
                         (let ((answer2 (read (make-string-input-port in))))
                           (write (get-package answer2) out)))
-                       ((eq? 'QUIT answer)
+                       ((or (eq? 'QUIT answer)(eq? 'quit answer))
                         (write *bye out)
                         (close-input-port in)
                         (close-socket *socket)
