@@ -35,5 +35,7 @@
 ;; Commands:
 ;; h : display help
 ;; get : fetch file
-
-(questionaire)
+(define SPAN-dir (string-append (getenv "HOME") "/.span"))
+(questionaire SPAN-dir) ;; this changes the SPAN-dir
+;; NOTE : after init of questionaire, you can spawn a shell:
+;; (SPAN-shell-spawn (string-append SPAN-dir "/mirror"))

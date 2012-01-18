@@ -38,8 +38,12 @@
             (set! s "")))))
 
 (define (SPAN-shell-spawn mirror)
+  (newline)
+  (display "span> ")
   (do ((s (read)(read)))
       ((null? s)0)
+    (newline)
+    (display "span> ")
     (cond ((symbol? s)
            (cond ((string<=? (symbol->string s)(string #\return))
                   0)
@@ -52,4 +56,4 @@
                                    (url-bite-off mirror) 6969))
                  ))
           ))
-  (display "Signing off."))
+  (display "span> signing off."))

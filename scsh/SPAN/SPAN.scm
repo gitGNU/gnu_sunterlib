@@ -218,16 +218,17 @@ cpan shell -- CPAN exploration and modules installation (v1.9402)
 Enter 'h' for help.")
 
 
+
 (define questionaire
-  (lambda ()
+  (lambda (SPAN-dir)
     (define answer "")
-    (define SPAN-build-and-cache-dir (string-append (getenv "HOME") "/.span"))
-    (define SPAN-download-target-dir (string-append (getenv "HOME") "/.span"))
+    (define SPAN-build-and-cache-dir SPAN-dir)
+    (define SPAN-download-target-dir SPAN-dir)
     (define SPAN-mirror-url "localhost")
     ;; question 1
     (cond
      ((and (file-exists? SPAN-build-and-cache-dir)
-           (file-exists? (string-append SPAN-build-and-cache-dir "/mirror")))
+           (file-exists? (string-append SPAN-dir "/mirror")))
       (let ((SPAN-mirror-url (make-string-input-port
                               (open-input-file (string-append SPAN-build-and-cache-dir "/mirror")))))
         (SPAN-shell-spawn SPAN-mirror-url)))
@@ -240,6 +241,7 @@ Enter 'h' for help.")
                        (lambda (answer)
                          (let ((dir (create-directory answer)))
                            (if (file-directory? dir)
+                               (set! SPAN-dir answer)
                                (set! SPAN-build-and-cache-dir answer)
                                #f)))) answer)
 
