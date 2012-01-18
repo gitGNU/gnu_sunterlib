@@ -51,31 +51,31 @@
     procedure))
 
 (define SPAN-shell-droptext-1
-  "The following questions are intended to help you with the
+  "1. The following questions are intended to help you with the
 configuration. The SPAN module needs a directory of its own to cache
 important index files and maybe keep a temporary mirror of SPAN files.
 This may be a site-wide or a personal directory.")
 
 (define SPAN-shell-droptext-2
-  "Unless you are accessing the CPAN on your filesystem via a file: URL,
+  "2. Unless you are accessing the CPAN on your filesystem via a file: URL,
 CPAN.pm needs to keep the source files it downloads somewhere. Please
 supply a directory where the downloaded files are to be kept.")
 
 (define SPAN-shell-droptext-3
-  "")
+  "3. ")
 
 (define SPAN-shell-droptext-4
-  "Normally CPAN.pm keeps config variables in memory and changes need to
+  "4. Normally CPAN.pm keeps config variables in memory and changes need to
 be saved in a separate 'o conf commit' command to make them permanent
 between sessions. If you set the 'auto_commit' option to true, changes
 to a config variable are always automatically committed to disk.")
 
 (define SPAN-shell-droptext-5
-"CPAN.pm can limit the size of the disk area for keeping the build
+"5. CPAN.pm can limit the size of the disk area for keeping the build
 directories with all the intermediate files.")
 
 (define SPAN-shell-droptext-6
-  "The CPAN indexes are usually rebuilt once or twice per hour, but the
+  "6. The CPAN indexes are usually rebuilt once or twice per hour, but the
 typical CPAN mirror mirrors only once or twice per day. Depending on
 the quality of your mirror and your desire to be on the bleeding edge,
 you may want to set the following value to more or less than one day
@@ -83,12 +83,12 @@ you may want to set the following value to more or less than one day
 downloads new indexes.")
 
 (define SPAN-shell-droptext-7
-  "By default, each time the CPAN module is started, cache scanning is
+  "7. By default, each time the CPAN module is started, cache scanning is
 performed to keep the cache size in sync. To prevent this, answer
 'never'.")
 
 (define SPAN-shell-droptext-8
-  "To considerably speed up the initial CPAN shell startup, it is
+  "8. To considerably speed up the initial CPAN shell startup, it is
 possible to use Storable to create a cache of metadata. If Storable is
 not available, the normal index mechanism will be used.
 
@@ -96,7 +96,7 @@ Note: this mechanism is not used when use_sqlite is on and SQLLite is
 running.")
 
 (define SPAN-shell-droptext-9
-  "The CPAN module can detect when a module which you are trying to build
+  "9. The CPAN module can detect when a module which you are trying to build
 depends on prerequisites. If this happens, it can build the
 prerequisites for you automatically ('follow'), ask you for
 confirmation ('ask'), or just ignore them ('ignore'). Please set your
@@ -201,35 +201,54 @@ policy to one of the three values.")
 ;; Your no_proxy? []")
 
 (define SPAN-shell-droptext-20
-"CPAN needs access to at least one CPAN mirror.
+"20. CPAN needs access to at least one CPAN mirror.
 
 As you did not allow me to connect to the internet you need to supply
 a valid CPAN URL now.
 ")
 
 (define SPAN-shell-droptext-21
-  "Enter another URL or RETURN to quit: []")
+  "21. Enter another URL or RETURN to quit: []")
 
 (define SPAN-shell-droptext-22
-  "Please remember to call 'o conf commit' to make the config permanent!
+  "22. Please remember to call 'o conf commit' to make the config permanent!
 
 
 cpan shell -- CPAN exploration and modules installation (v1.9402)
 Enter 'h' for help.")
 
 (define questions (make-table))
-(table-set! questions SPAN-shell-droptext-1)
-(table-set! questions SPAN-shell-droptext-2)
-(table-set! questions SPAN-shell-droptext-3)
-(table-set! questions SPAN-shell-droptext-4)
-(table-set! questions SPAN-shell-droptext-5)
-(table-set! questions SPAN-shell-droptext-6)
-(table-set! questions SPAN-shell-droptext-7)
-(table-set! questions SPAN-shell-droptext-8)
-(table-set! questions SPAN-shell-droptext-9)
-(table-set! questions SPAN-shell-droptext-20)
-(table-set! questions SPAN-shell-droptext-21)
-(table-set! questions SPAN-shell-droptext-22)
+(table-set! questions 1 SPAN-shell-droptext-1)
+(table-set! questions 2 SPAN-shell-droptext-2)
+(table-set! questions 3 SPAN-shell-droptext-3)
+(table-set! questions 4 SPAN-shell-droptext-4)
+(table-set! questions 5 SPAN-shell-droptext-5)
+(table-set! questions 6 SPAN-shell-droptext-6)
+(table-set! questions 7 SPAN-shell-droptext-7)
+(table-set! questions 8 SPAN-shell-droptext-8)
+(table-set! questions 9 SPAN-shell-droptext-9)
+(table-set! questions 20 SPAN-shell-droptext-20)
+(table-set! questions 21 SPAN-shell-droptext-21)
+(table-set! questions 22 SPAN-shell-droptext-22)
+
+(define table-range
+  (lambda (x y)
+    (let ((l '()))
+      (cond ((< x y)
+             (do ((i x (+ i 1)))
+                 ((= x y) l)
+               (set! l (append l (table-ref questions i)))))
+            ((< y x)
+             (do ((i y (+ i 1)))
+                 ((= y x) l)
+               (set! l (append l (table-ref questions i)))))
+            (else (display-msg "range : x == y")
+                  x)))))
+
+(define question?
+  (lambda (n)
+    (case ((n) (string-match (table-ref n) (rx (| ((string n)))))
+               (table-ref n)))))
 
 (define questionaire
   (lambda (SPAN-dir)
@@ -238,15 +257,16 @@ Enter 'h' for help.")
     (define SPAN-download-target-dir SPAN-dir)
     (define SPAN-mirror-url "localhost")
     ;; question 1
-    (cond
-     ((and (file-exists? SPAN-build-and-cache-dir)
-           (file-exists? (string-append SPAN-dir "/mirror")))
-      (let ((SPAN-mirror-url (make-string-input-port
-                              (open-input-file (string-append SPAN-build-and-cache-dir "/mirror")))))
+    ;;((lambda ()
+       (cond
+        ((and (file-exists? SPAN-build-and-cache-dir)
+              (file-exists? (string-append SPAN-dir "/mirror")))
+         (let ((SPAN-mirror-url (make-string-input-port
+                                 (open-input-file (string-append SPAN-build-and-cache-dir "/mirror")))))
         (SPAN-shell-spawn SPAN-mirror-url)))
      (else
-      ;;prototype (define (SPAN-question~ droptext question answer defaultchoice)
-      ((SPAN-question~ (table-ref questions SPAN-shell-droptext-1)
+;;;;;;;;prototype (define (SPAN-question~ droptext question answer defaultchoice)
+      ((SPAN-question~ (question? 1)
                        "SPAN build and cache directory"
                        ""
                        SPAN-build-and-cache-dir
@@ -258,7 +278,7 @@ Enter 'h' for help.")
                                #f)))) answer)
 
       (define SPAN-download-target-dir (string-append SPAN-build-and-cache-dir "/" "sources"))
-      ((SPAN-question~ (table-ref questions SPAN-shell-droptext-2)
+      ((SPAN-question~ (question? 2)
                        "Download target directory"
                        ""
                        SPAN-download-target-dir
@@ -269,7 +289,7 @@ Enter 'h' for help.")
                                #f)))) answer)
 
       (define SPAN-build-dir (string-append SPAN-build-and-cache-dir "/" "build"))
-      ((SPAN-question~ (table-ref questions SPAN-shell-droptext-3)
+      ((SPAN-question~ (question? 3)
                        "Directory where the build process takes place?"
                        ""
                        SPAN-download-target-dir
@@ -280,7 +300,7 @@ Enter 'h' for help.")
                                #f)))) answer)
 
       (define SPAN-config "no")
-      ((SPAN-question~ (table-ref questions SPAN-shell-droptext-4)
+      ((SPAN-question~ (question? 4)
                        "Always commit changes to config variables to disk?"
                        ""
                        SPAN-config
@@ -289,7 +309,7 @@ Enter 'h' for help.")
                          #f)) answer)
 
       (define SPAN-build-Mb 100)
-      ((SPAN-question~ (table-ref questions SPAN-shell-droptext-5)
+      ((SPAN-question~ (question? 5)
                        "Cache size for build directory (in MB)?"
                        ""
                        SPAN-build-Mb
@@ -298,7 +318,7 @@ Enter 'h' for help.")
                          #f)) answer)
 
       (define SPAN-expire 1)
-      ((SPAN-question~ (table-ref questions SPAN-shell-droptext-6)
+      ((SPAN-question~ (question? 6)
                        "Let the index expire after how many days?"
                        ""
                        SPAN-expire
@@ -307,7 +327,7 @@ Enter 'h' for help.")
                          #f)) answer)
 
       (define SPAN-scan-cache "atstart")
-      ((SPAN-question~ (table-ref questions SPAN-shell-droptext-7)
+      ((SPAN-question~ (question? 7)
                        "Perform cache scanning (atstart or never)?"
                        ""
                        SPAN-scan-cache
@@ -316,7 +336,7 @@ Enter 'h' for help.")
                          #f)) answer)
 
       (define SPAN-cache-metadata "yes")
-      ((SPAN-question~ (table-ref questions SPAN-shell-droptext-8)
+      ((SPAN-question~ (question? 8)
                        "Cache metadata (yes/no)?"
                        ""
                        SPAN-cache-metadata
@@ -325,7 +345,7 @@ Enter 'h' for help.")
                          #f)) answer)
 
       (define SPAN-policy-building "ask")
-      ((SPAN-question~ (table-ref questions SPAN-shell-droptext-9)
+      ((SPAN-question~ (question? 9)
                        "Policy on building prerequisites (follow, ask or ignore)? [ask]"
                        ""
                        SPAN-policy-building
@@ -341,7 +361,7 @@ Enter 'h' for help.")
       ;; ... until 20
 
 
-      ((SPAN-question~ (table-ref questions SPAN-shell-droptext-20)
+      ((SPAN-question~ (question? 20)
                        "Please enter the URL of your CPAN mirror "
                        ""
                        SPAN-mirror-url
@@ -352,7 +372,7 @@ Enter 'h' for help.")
                          #f)) answer)
 
       (define SPAN-mirror-url-2 "")
-      ((SPAN-question~ (table-ref questions SPAN-shell-droptext-21)
+      ((SPAN-question~ (question? 21)
                        "Enter another URL or RETURN to quit: [] "
                        ""
                        SPAN-mirror-url-2
@@ -360,7 +380,7 @@ Enter 'h' for help.")
                          (set! SPAN-mirror-url-2 answer)
                          #f)) answer)
 
-      (display (table-ref questions SPAN-shell-droptext-22))
+      (display (question? 22))
       (SPAN-shell-spawn SPAN-mirror-url))
      )))
 
