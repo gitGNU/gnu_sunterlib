@@ -37,11 +37,14 @@
 	))
 
     (define (ref-with-index i) ;; get key
-      (do ((j 0 (+ j 1))
-           (l *dict (cdr l)))
-          ((= j i)
-           (car l));;returns value
-        ))
+      (if (>= i (length *dict))
+          (begin (display "dictionary - index out of range")
+                 0)
+          (do ((j 0 (+ j 1))
+               (l *dict (cdr l)))
+              ((= j i)
+               (car l));;returns value
+            )))
 
     (define (set-with-index i value) ;; set value
       (do ((j 0 (+ j 1))
