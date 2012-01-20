@@ -1370,10 +1370,15 @@
         (plain3 (vector 'FE 'DC 'BA '98 '76 '54 '32 '10))
         (key3 (vector '41 '79' '6E 'A0 '52 '62 '6E 'E4))
         (cipher3 (vector 'E1 '13 'F4 '10 '2C 'FC 'CE '43)))
-
     (let ((bc blowfish-context))
+
+      (define (char->integer-vector vec)
+        (do ((i 0 (+ i 1)))
+            ((>= i (vector-length vec))0)
+          (vector-set! vec i (char->integer (vector-ref vec i)))))
       (display "starting test...")(newline)
-      (blowfish-set-key bc (list->vector (string->list "abcdefghijklmnopqrstuvwxyz")) 26)
+      (blowfish-set-key bc (char->integer-vector
+                            (list->vector (string->list "abcdefghijklmnopqrstuvwxyz")) 26))
       (display "pass 1")(newline)
       (blowfish-encrypt-block bc buffer plain) ;; should give \x32\x4e\xd0\xfe\xf4\x13\xa2\x03
       (display "pass 2")(newline)
