@@ -1211,19 +1211,19 @@
       (set! ret_xr xl)
       )))
 
-(define (blowfish-set-key bc key keylen) ;; NOTE key is a table
-  (let ((data (make-table)))
+(define (blowfish-set-key bc keyvec keylen) ;; NOTE key is a table
+  (let ((data (make-dictionary)))
 
     (do ((i 0 (+ i 1)))
         ((>= i (+ blowfish-rounds 2))0)
-      (dictionary-set! (blowfish-p bc) i (table-ref blowfish-ps i)))
+      (dictionary-set! (blowfish-p bc) i (dictionary-ref blowfish-ps i)))
 
     (do ((i 0 (+ i 1)))
         ((>= i 256)0)
-      (((blowfish-s0 bc) 'set-with-index) i (((blowfish-ks0 'ref-with-index) i)))
-      (((blowfish-s1 bc) 'set-with-index) i (((blowfish-ks1 'ref-with-index) i)))
-      (((blowfish-s2 bc) 'set-with-index) i (((blowfish-ks2 'ref-with-index) i)))
-      (((blowfish-s3 bc) 'set-with-index) i (((blowfish-ks3 'ref-with-index) i)))
+      (dictionary-set-with-index! blowfish-ks0 i (dictionary-ref-with-index blowfish-ks0 i))
+      (dictionary-set-with-index! blowfish-ks1 i (dictionary-ref-with-index blowfish-ks1 i))
+      (dictionary-set-with-index! blowfish-ks2 i (dictionary-ref-with-index blowfish-ks2 i))
+      (dictionary-set-with-index! blowfish-ks3 i (dictionary-ref-with-index blowfish-ks3 i))
       )
 
     (do ((i 0 (+ i 1))
@@ -1231,23 +1231,23 @@
         ((>= i (+ blowfish-rounds 2))0)
       (if BIG-ENDIAN-HOST
           (begin
-            (table-set! data 0 (table-ref key j))
-            (table-set! data 1 (table-ref key (remainder (+ j 1) keylen)))
-            (table-set! data 2 (table-ref key (remainder (+ j 2) keylen)))
-            (table-set! data 3 (table-ref key (remainder (+ j 3) keylen)))
+            (dictionary-set! data 0 (vector-ref keyvec j))
+            (dictionary-set! data 1 (vector-ref keyvec (remainder (+ j 1) keylen)))
+            (dictionary-set! data 2 (vector-ref keyvec (remainder (+ j 2) keylen)))
+            (dictionary-set! data 3 (vector-ref keyvec (remainder (+ j 3) keylen)))
             )
           (begin
-            (table-set! data 3 (table-ref key j))
-            (table-set! data 2 (table-ref key (remainder (+ j 1) keylen)))
-            (table-set! data 1 (table-ref key (remainder (+ j 2) keylen)))
-            (table-set! data 0 (table-ref key (remainder (+ j 3) keylen)))
+            (dictionary-set! data 3 (vector-ref keyvec j))
+            (dictionary-set! data 2 (vector-ref keyvec (remainder (+ j 1) keylen)))
+            (dictionary-set! data 1 (vector-ref keyvec (remainder (+ j 2) keylen)))
+            (dictionary-set! data 0 (vector-ref keyvec (remainder (+ j 3) keylen)))
             ))
-      (vector-set! (blowfish-p bc) i (bitwise-xor
-                                      (vector-ref (blowfish-p bc) i)
-                                      (+ (table-ref data 0)
-                                         (table-ref data 1)
-                                         (table-ref data 2)
-                                         (table-ref data 3))))
+      (dictionary-set! (blowfish-p bc) i (bitwise-xor
+                                      (dictionary-ref-with-index (blowfish-p bc) i)
+                                      (+ (dictionary-ref-with-index data 0)
+                                         (dictionary-ref-with-index data 1)
+                                         (dictionary-ref-with-index data 2)
+                                         (dictionary-ref-with-index data 3))))
       )
 
     (let ((datal 0)
@@ -1348,7 +1348,7 @@
         (cipher3 (vector 'E1 '13 'F4 '10 '2C 'FC 'CE '43)))
 
     (let ((bc blowfish-context))
-      (blowfish-set-key bc "abcdefghijklmnopqrstuvwxyz" 26)
+      (blowfish-set-key bc (list->vector (string->list "abcdefghijklmnopqrstuvwxyz")) 26)
       (blowfish-encrypt-block bc buffer plain) ;; should give \x32\x4e\xd0\xfe\xf4\x13\xa2\x03
       (blowfish-decrypt bc buffer buffer)
       (if (not (eq? buffer plain))
