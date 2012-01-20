@@ -1202,11 +1202,12 @@
 (define (blowfish-decrypt bc ret_xl ret_xr) ;; NOTE bc = blowfish-context
   (let ((xl ret_xl)
         (xr ret_xr)
-        (p (blowfish-p bc))
-        (s0 (blowfish-s0 bc))
-        (s1 (blowfish-s1 bc))
-        (s2 (blowfish-s2 bc))
-        (s3 (blowfish-s3 bc)))
+;;        (p (blowfish-p bc))
+;;        (s0 (blowfish-s0 bc))
+;;        (s1 (blowfish-s1 bc))
+;;        (s2 (blowfish-s2 bc))
+;;        (s3 (blowfish-s3 bc))
+        )
 
     (blowfish-R xl xr 17)
     (blowfish-R xr xl 16)
@@ -1225,8 +1226,8 @@
     (blowfish-R xl xr 3)
     (blowfish-R xr xl 2)
 
-    (let ((xl (bitwise-xor xl (vector-ref p 1)))
-          (xr (bitwise-xor xr (vector-ref p 0))))
+    (let ((xl (bitwise-xor xl (vector-ref (blowfish-p bc) 1)))
+          (xr (bitwise-xor xr (vector-ref (blowfish-p bc) 0))))
       (set! ret_xl xr)
       (set! ret_xr xl)
       )))
