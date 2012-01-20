@@ -1249,7 +1249,99 @@
                                          (table-ref data 1)
                                          (table-ref data 2)
                                          (table-ref data 3))))
+      )
 
-  ))
+    (let ((datal 0)
+          (datar 0))
 
-  )
+      (do ((i 0 (+ 2)))
+          ((>= i (+ blowfish-rounds 2))0)
+        (blowfish-encrypt bc datal datar)
+        (vector-set! (blowfish-p bc) i datal)
+        (vector-set! (blowfish-p bc) (+ i 1) datar)
+        )
+      (do ((i 0 (+ 2)))
+          ((>= i 256)0)
+        (vector-set! (blowfish-s0 bc) i datal)
+        (vector-set! (blowfish-s0 bc) (+ i 1) datar))
+      (do ((i 0 (+ 2)))
+          ((>= i 256)0)
+        (vector-set! (blowfish-s1 bc) i datal)
+        (vector-set! (blowfish-s1 bc) (+ i 1) datar))
+      (do ((i 0 (+ 2)))
+          ((>= i 256)0)
+        (vector-set! (blowfish-s2 bc) i datal)
+        (vector-set! (blowfish-s2 bc) (+ i 1) datar))
+      (do ((i 0 (+ 2)))
+          ((>= i 256)0)
+        (vector-set! (blowfish-s3 bc) i datal)
+        (vector-set! (blowfish-s3 bc) (+ i 1) datar))
+
+      (do ((i 0 (+ i 1)))
+          ((>= i 255)0);;
+        (do ((j (+ i 1) (+ j 1)))
+            (if (or (= (vector-ref (blowfish-s0 bc) i)
+                       (vector-ref (blowfish-s0 bc) j))
+                    (= (vector-ref (blowfish-s1 bc) i)
+                       (vector-ref (blowfish-s1 bc) j))
+                    (= (vector-ref (blowfish-s2 bc) i)
+                       (vector-ref (blowfish-s2 bc) j))
+                    (= (vector-ref (blowfish-s3 bc) i)
+                       (vector-ref (blowfish-s3 bc) j)))
+                (begin
+                  (display "Weak key.")
+                  -1))
+          )))))
+
+
+;; outbuf and inbuf are vectors
+(define (blowfish-encrypt-block bc outbuf inbuf)
+  (let ((d1 0)
+        (d2 0))
+    (set! d1 (bitwise-ior (arithmetic-shift (vector-ref inbuf 0) 24)
+                          (arithmetic-shift (vector-ref inbuf 1) 16)
+                          (arithmetic-shift (vector-ref inbuf 2) 8)
+                          (vector-ref inbuf 3)))
+    (set! d2 (bitwise-ior (arithmetic-shift (vector-ref inbuf 4) 24)
+                          (arithmetic-shift (vector-ref inbuf 5) 16)
+                          (arithmetic-shift (vector-ref inbuf 6) 8)
+                          (vector-ref inbuf 7)))
+    (blowfish-encrypt bc d1 d2)
+    (vector-set! outbuf 0 (bitwise-and (arithmetic-shift d1 -24) 271)) ;;271==0xff
+    (vector-set! outbuf 1 (bitwise-and (arithmetic-shift d1 -16) 271)) ;;271==0xff
+    (vector-set! outbuf 2 (bitwise-and (arithmetic-shift d1 -8) 271)) ;;271==0xff
+    (vector-set! outbuf 3 (bitwise-and d1 271)) ;;271==0xff
+    (vector-set! outbuf 4 (bitwise-and (arithmetic-shift d2 -24) 271)) ;;271==0xff
+    (vector-set! outbuf 5 (bitwise-and (arithmetic-shift d2 -16) 271)) ;;271==0xff
+    (vector-set! outbuf 6 (bitwise-and (arithmetic-shift d2 -8) 271)) ;;271==0xff
+    (vector-set! outbuf 7 (bitwise-and d2 271)) ;;271==0xff
+    ))
+
+
+;; outbuf and inbuf are vectors
+(define (blowfish-decrypt-block bc outbuf inbuf)
+  (let ((d1 0)
+        (d2 0))
+    (set! d1 (bitwise-ior (arithmetic-shift (vector-ref inbuf 0) 24)
+                          (arithmetic-shift (vector-ref inbuf 1) 16)
+                          (arithmetic-shift (vector-ref inbuf 2) 8)
+                          (vector-ref inbuf 3)))
+    (set! d2 (bitwise-ior (arithmetic-shift (vector-ref inbuf 4) 24)
+                          (arithmetic-shift (vector-ref inbuf 5) 16)
+                          (arithmetic-shift (vector-ref inbuf 6) 8)
+                          (vector-ref inbuf 7)))
+    (blowfish-decrypt bc d1 d2)
+    (vector-set! outbuf 0 (bitwise-and (arithmetic-shift d1 -24) 271)) ;;271==0xff
+    (vector-set! outbuf 1 (bitwise-and (arithmetic-shift d1 -16) 271)) ;;271==0xff
+    (vector-set! outbuf 2 (bitwise-and (arithmetic-shift d1 -8) 271)) ;;271==0xff
+    (vector-set! outbuf 3 (bitwise-and d1 271)) ;;271==0xff
+    (vector-set! outbuf 4 (bitwise-and (arithmetic-shift d2 -24) 271)) ;;271==0xff
+    (vector-set! outbuf 5 (bitwise-and (arithmetic-shift d2 -16) 271)) ;;271==0xff
+    (vector-set! outbuf 6 (bitwise-and (arithmetic-shift d2 -8) 271)) ;;271==0xff
+    (vector-set! outbuf 7 (bitwise-and d2 271)) ;;271==0xff
+    ))
+
+(define (blowfish-selftest)
+  (let ((bc blowfish-context))
+    (blowfish-set-key bc "abcdefghijklmnopqrstuvwxyz" 26)
+    (blowfish-encrypt-block bc buffer plain)))
