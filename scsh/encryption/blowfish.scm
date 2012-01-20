@@ -1160,7 +1160,7 @@
 
 (define (blowfish-R bc l r i)
   (set! l (bitwise-xor l (dictionary-ref (blowfish-p bc) i)))
-  (set! r (bitwise-xor r (dictionary-ref (blowfish-p bc) (blowfish-F l)))))
+  (set! r (bitwise-xor r (blowfish-F l))))
 
 ;; blowfish-rounds == 16 ->
 (define (blowfish-encrypt bc ret_xl ret_xr) ;; NOTE bc = blowfish-context
