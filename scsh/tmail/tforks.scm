@@ -33,7 +33,7 @@
 (define (run-daemon-child-mail rec)
   (let ((*hostname (hostname rec))
         (*port (port rec))
-        (*socket (socket rec))
+        (*socket (sock rec))
         (*motd (motd rec))
         (*ack (ack rec))
         (*apop (apop rec))

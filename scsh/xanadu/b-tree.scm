@@ -26,3 +26,31 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+(define (make-b-tree)
+  (let ((*tree (make-vector 0)))
+
+    (define (goto-left-node str i tree)
+      (cond ((= (vector-length tree) i) (display "null node") (vector-set! tree i str))
+            (else #f))) 
+
+    (define (add-rec str tree)
+      (do ((i 0 (+ i 1)))
+	  ((eq? i (vector-length tree))
+           (grow-up) 
+        (let ((vi (vector-ref tree i)))
+          (cond ((string<=? str vi)
+                 0)
+                ((string>=? str vi)
+                 (grow-down))
+               ((string=? str vi)
+                (set! i (vector-length tree)))
+               (else (display "never reached."))))
+      ))
+        
+    (define (add str)
+      (add-rec *tree))
+
+    (define (dispatch msg)
+      (cond ((eq? msg 'add) add)
+            (else (display "b-tree : message not understood."))))
+	dispatch))
