@@ -1220,10 +1220,10 @@
 
     (do ((i 0 (+ i 1)))
         ((>= i 256)0)
-      (dictionary-set-with-index! blowfish-ks0 i (dictionary-ref-with-index blowfish-ks0 i))
-      (dictionary-set-with-index! blowfish-ks1 i (dictionary-ref-with-index blowfish-ks1 i))
-      (dictionary-set-with-index! blowfish-ks2 i (dictionary-ref-with-index blowfish-ks2 i))
-      (dictionary-set-with-index! blowfish-ks3 i (dictionary-ref-with-index blowfish-ks3 i))
+      (dictionary-set-with-index! (blowfish-s0 bc) i (dictionary-ref-with-index blowfish-ks0 i))
+      (dictionary-set-with-index! (blowfish-s1 bc) i (dictionary-ref-with-index blowfish-ks1 i))
+      (dictionary-set-with-index! (blowfish-s2 bc) i (dictionary-ref-with-index blowfish-ks2 i))
+      (dictionary-set-with-index! (blowfish-s3 bc) i (dictionary-ref-with-index blowfish-ks3 i))
       )
 
     (do ((i 0 (+ i 1))
