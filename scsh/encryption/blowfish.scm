@@ -32,7 +32,7 @@
                             (getenv "BIG_ENDIAN_HOST")
                             #t)) ;; NOTE : Do not forget to set this !
 
-(define blowfish-ks0 (make-dictionary))
+(define blowfish-ks0 (make-dictionary 256))
 (dictionary-add! blowfish-ks0 0 '0xD1310BA6)
 (dictionary-add! blowfish-ks0 1 '0x98DFB5AC)
 (dictionary-add! blowfish-ks0 2 '0x2FFD72DB)
@@ -290,7 +290,7 @@
 (dictionary-add! blowfish-ks0 254 '0x08BA4799)
 (dictionary-add! blowfish-ks0 255 '0x6E85076A)
 
-(define blowfish-ks1 (make-dictionary))
+(define blowfish-ks1 (make-dictionary 256))
 (dictionary-add! blowfish-ks1 0 '0x4B7A70E9)
 (dictionary-add! blowfish-ks1 1 '0xB5B32944)
 (dictionary-add! blowfish-ks1 2 '0xDB75092E)
@@ -549,7 +549,7 @@
 (dictionary-add! blowfish-ks1 255 '0xDB83ADF7)
 
 
-(define blowfish-ks2 (make-dictionary))
+(define blowfish-ks2 (make-dictionary 256))
 (dictionary-add! blowfish-ks2 0 '0xE93D5A68)
 (dictionary-add! blowfish-ks2 1 '0x948140F7)
 (dictionary-add! blowfish-ks2 2 '0xF64C261C)
@@ -807,7 +807,7 @@
 (dictionary-add! blowfish-ks2 254 '0x670EFA8E)
 (dictionary-add! blowfish-ks2 255 '0x406000E0)
 
-(define blowfish-ks3 (make-dictionary))
+(define blowfish-ks3 (make-dictionary 256))
 (dictionary-add! blowfish-ks3 0 '0x3A39CE37)
 (dictionary-add! blowfish-ks3 1 '0xD3FAF5CF)
 (dictionary-add! blowfish-ks3 2 '0xABC27737)
@@ -1103,13 +1103,13 @@
 
 (define blowfish-rounds 16) ;;
 (define blowfish-context (make-blowfish-record
-                          (make-dictionary) ;; (make-vector 256)
-                          (make-dictionary)
-                          (make-dictionary)
-                          (make-dictionary)
-                          (make-dictionary)))
+                          (make-dictionary 256) ;; (make-vector 256)
+                          (make-dictionary 256)
+                          (make-dictionary 256)
+                          (make-dictionary 256)
+                          (make-dictionary 256)))
 
-(define blowfish-ps (make-dictionary))
+(define blowfish-ps (make-dictionary 256));;FIXME2
 (dictionary-add! blowfish-ps 0  '243F6A88)
 (dictionary-add! blowfish-ps 1  '85A308D3)
 (dictionary-add! blowfish-ps 2  '13198A2E)
@@ -1212,7 +1212,7 @@
       )))
 
 (define (blowfish-set-key bc keyvec keylen) ;; NOTE key is a table
-  (let ((data (make-dictionary)))
+  (let ((data (make-dictionary 256)))
 
     (do ((i 0 (+ i 1)))
         ((>= i (+ blowfish-rounds 2))0)

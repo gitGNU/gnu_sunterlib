@@ -26,9 +26,9 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define (make-dictionary1)
+(define (make-dictionary1 n)
   ;; methods are FIFO (first fixed first out)
-  (let ((*dict '()))
+  (let ((*dict (make-list n)))
 
     (define (get key) ;; get key
       (do ((l *dict (cdr l)))
@@ -38,7 +38,7 @@
 
     (define (ref-with-index i) ;; get key
       (if (>= i (length *dict))
-          (begin (display "dictionary - index out of range")
+          (begin (display "dictionary - get - index out of range")
                  0)
           (do ((j 0 (+ j 1))
                (l *dict (cdr l)))
@@ -47,11 +47,15 @@
             )))
 
     (define (set-with-index i value) ;; set value
-      (do ((j 0 (+ j 1))
-           (l *dict (cdr l)))
-          ((= j i)
-           (set-car! (list-ref *dict j) value));;sets value FIXME
-        ))
+      (if (>= i (length *dict))
+          (begin (display "dictionary - set - index out of range")
+                 0)
+          (do ((j 0 (+ j 1))
+               (l *dict (cdr l)))
+              ((= j i)
+               (display "FOO!")
+               (set-car! l value));;sets value FIXME
+            )))
 
     (define (get-substring key) ;; get key
       (do ((l *dict (cdr l)))
