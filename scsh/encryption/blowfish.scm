@@ -1142,9 +1142,8 @@
 (define blowfish-F (if BIG-ENDIAN-HOST blowfish-F-be blowfish-F-le)) ;; FIXME default is big endian
 
 (define (blowfish-R l r i)
-  (let ((l (bitwise-xor l (dictionary-ref (blowfish-p blowfish-context) i)))
-        (r (bitwise-xor r ((dictionary-ref (blowfish-p blowfish-context) blowfish_F l)))))
-    ))
+  (set! l (bitwise-xor l (dictionary-ref (blowfish-p blowfish-context) i)))
+  (set! r (bitwise-xor r ((dictionary-ref (blowfish-p blowfish-context) blowfish_F l)))))
 
 ;; blowfish-rounds == 16 ->
 (define (blowfish-encrypt bc ret_xl ret_xr) ;; NOTE bc = blowfish-context
@@ -1361,4 +1360,4 @@
       (if (not (eq? buffer plain3))
           (display "Blowfish selftest failed - 2."))
 
-      ))
+      )))
