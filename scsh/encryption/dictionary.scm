@@ -36,6 +36,20 @@
 	   (cadar l));;returns value
 	))
 
+    (define (get-with-index i) ;; get key
+      (do ((j 0 (+ j 1))
+           (l *dict (cdr l)))
+          ((= j i)
+           (cadar l));;returns value
+        ))
+
+    (define (set-with-index i value) ;; set value
+      (do ((j 0 (+ j 1))
+           (l *dict (cdr l)))
+          ((= j i)
+           (set-car! (list-ref *dict j) value));;sets value FIXME
+        ))
+
     (define (get-substring key) ;; get key
       (do ((l *dict (cdr l)))
 	  ((string<=? (if (symbol? key)
@@ -61,6 +75,8 @@
 
     (lambda (msg)
       (cond ((eq? msg 'get) get)
+            ((eq? msg 'get-with-index) get-with-index)
+            ((eq? msg 'set-with-index) set-with-index)
             ((eq? msg 'get-substring) get-substring)
 	    ((eq? msg 'set) set)
 	    ((eq? msg 'add) add)

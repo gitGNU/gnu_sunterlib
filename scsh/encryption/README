@@ -1,1 +1,2 @@
 Encryption done in scheme.
+;; NOTE : Do not forget to set the endianess !
