@@ -1353,9 +1353,13 @@
         (cipher3 (vector 'E1 '13 'F4 '10 '2C 'FC 'CE '43)))
 
     (let ((bc blowfish-context))
+      (display "starting test...")(newline)
       (blowfish-set-key bc (list->vector (string->list "abcdefghijklmnopqrstuvwxyz")) 26)
+      (display "pass 1")(newline)
       (blowfish-encrypt-block bc buffer plain) ;; should give \x32\x4e\xd0\xfe\xf4\x13\xa2\x03
+      (display "pass 2")(newline)
       (blowfish-decrypt bc buffer buffer)
+      (display "pass 3")(newline)
       (if (not (eq? buffer plain))
           (display "Blowfish selftest failed - 1."))
 

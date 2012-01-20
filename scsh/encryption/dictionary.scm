@@ -85,7 +85,7 @@
 
 (define make-dictionary make-dictionary1)
 (define (dictionary-ref dict key) ((dict 'get) key))
-(define (dictionary-ref-with-index dict i value) ((dict 'get-with-index) i))
+(define (dictionary-ref-with-index dict i) ((dict 'ref-with-index) i))
 ;; NOTE: dictionary-ref-substring:  match key part with keys in dict
 (define (dictionary-ref-substring dict key) ((dict 'get-substring) key))
 (define (dictionary-set! dict key value) ((dict 'set) key value))
