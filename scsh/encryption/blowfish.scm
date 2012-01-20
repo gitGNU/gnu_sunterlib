@@ -1191,7 +1191,7 @@
     (blowfish-R xr xl 15)
 
     (let ((xl (bitwise-xor xl (dictionary-ref-with-index (blowfish-p bc) blowfish-rounds)))
-          (xr (bitwise-xor xr (dictionary-ref-with-index p (+ blowfish-rounds 1)))))
+          (xr (bitwise-xor xr (dictionary-ref-with-index (blowfish-p bc) (+ blowfish-rounds 1)))))
       (set! ret_xl xr)
       (set! ret_xr xl)
 
@@ -1260,21 +1260,21 @@
             (dictionary-set-with-index! data 1 (vector-ref keyvec (remainder (+ j 2) keylen)))
             (dictionary-set-with-index! data 0 (vector-ref keyvec (remainder (+ j 3) keylen)))
             ))
-
+      (display "FOO!")
       (dictionary-set-with-index! (blowfish-p bc) i
                                   (bitwise-xor
                                    (dictionary-ref-with-index (blowfish-p bc) i)
-                                   (+ (blowfish-hex-char->number (dictionary-ref-with-index data 0))
-                                      (blowfish-hex-char->number (dictionary-ref-with-index data 1))
-                                      (blowfish-hex-char->number (dictionary-ref-with-index data 2))
-                                      (blowfish-hex-char->number (dictionary-ref-with-index data 3)))))
+                                   (+ (dictionary-ref-with-index data 0)
+                                      (dictionary-ref-with-index data 1)
+                                      (dictionary-ref-with-index data 2)
+                                      (dictionary-ref-with-index data 3))))
       (set! j (remainder (+ j 4) keylen))
       )
-    (display "FOO!")
+    (display "FOO2!")
     (let ((datal 0)
           (datar 0))
 
-      (do ((i 0 (+ 2)))
+      (do ((i 0 (+ i 2)))
           ((>= i (+ blowfish-rounds 2))0)
         (blowfish-encrypt bc datal datar)
         (dictionary-set-with-index! (blowfish-p bc) i datal)
@@ -1376,7 +1376,8 @@
       (define (char->integer-vector vec)
         (do ((i 0 (+ i 1)))
             ((>= i (vector-length vec))0)
-          (vector-set! vec i (char->integer (vector-ref vec i)))))
+          (vector-set! vec i (char->integer (vector-ref vec i))))
+        vec)
       (display "starting test...")(newline)
       (blowfish-set-key bc (char->integer-vector
                             (list->vector (string->list "abcdefghijklmnopqrstuvwxyz"))) 26)
