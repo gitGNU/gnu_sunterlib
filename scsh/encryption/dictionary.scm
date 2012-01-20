@@ -40,7 +40,7 @@
       (do ((j 0 (+ j 1))
            (l *dict (cdr l)))
           ((= j i)
-           (cadar l));;returns value
+           (car l));;returns value
         ))
 
     (define (set-with-index i value) ;; set value
