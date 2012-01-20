@@ -1166,11 +1166,12 @@
 (define (blowfish-encrypt bc ret_xl ret_xr) ;; NOTE bc = blowfish-context
   (let ((xl ret_xl)
         (xr ret_xr)
-        (p (blowfish-p bc))
-        (s0 (blowfish-s0 bc))
-        (s1 (blowfish-s1 bc))
-        (s2 (blowfish-s2 bc))
-        (s3 (blowfish-s3 bc)))
+        ;;(p (blowfish-p bc))
+        ;;(s0 (blowfish-s0 bc))
+        ;;(s1 (blowfish-s1 bc))
+        ;;(s2 (blowfish-s2 bc))
+        ;;(s3 (blowfish-s3 bc))
+        )
 
     (blowfish-R xl xr 0)
     (blowfish-R xr xl 1)
@@ -1189,10 +1190,12 @@
     (blowfish-R xl xr 14)
     (blowfish-R xr xl 15)
 
-    (let ((xl (bitwise-xor xl (vector-ref p blowfish-rounds)))
-          (xr (bitwise-xor xr (vector-ref p (+ blowfish-rounds)))))
+    (let ((xl (bitwise-xor xl (dictionary-ref-with-index (blowfish-p bc) blowfish-rounds)))
+          (xr (bitwise-xor xr (dictionary-ref-with-index p (+ blowfish-rounds 1)))))
       (set! ret_xl xr)
       (set! ret_xr xl)
+
+      (display "ENCRYPT done!")
       )))
 
 
@@ -1256,7 +1259,7 @@
             (dictionary-set-with-index! data 1 (vector-ref keyvec (remainder (+ j 2) keylen)))
             (dictionary-set-with-index! data 0 (vector-ref keyvec (remainder (+ j 3) keylen)))
             ))
-      (display "FOO!")(display (dictionary-ref-with-index (blowfish-p bc) i))
+
       (dictionary-set-with-index! (blowfish-p bc) i
                                   (bitwise-xor
                                    (dictionary-ref-with-index (blowfish-p bc) i)
@@ -1266,7 +1269,7 @@
                                       (blowfish-hex-char->number (dictionary-ref-with-index data 3)))))
       (set! j (remainder (+ j 4) keylen))
       )
-    (display "BAR!")
+    (display "FOO!")
     (let ((datal 0)
           (datar 0))
 
@@ -1296,7 +1299,7 @@
         (blowfish-encrypt bc datal datar)
         (dictionary-set-with-index! (blowfish-s3 bc) i datal)
         (dictionary-set-with-index! (blowfish-s3 bc) (+ i 1) datar))
-
+      (display "BAR!")
       (do ((i 0 (+ i 1)))
           ((>= i 255)0);;
         (do ((j (+ i 1) (+ j 1)))
