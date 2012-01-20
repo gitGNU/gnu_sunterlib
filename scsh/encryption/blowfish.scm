@@ -1215,8 +1215,8 @@
   (let ((data (make-table)))
 
     (do ((i 0 (+ i 1)))
-        ((=> i (+ blowfish-rounds 2))0)
-      (set! (vector-ref (blowfish-p bc) i) (table-ref blowfish-ps i)))
+        ((>= i (+ blowfish-rounds 2))0)
+      (vector-set! (blowfish-p bc) i (table-ref blowfish-ps i)))
 
     (do ((i 0 (+ i 1)))
         ((>= i 256)0)
