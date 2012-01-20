@@ -13,6 +13,4 @@
   (install-file "scgamedictionaries.scm" 'scheme)
   (install-file "scgameutil.scm" 'scheme)
   (install-file "scgamewidgets.scm" 'scheme)
-  (install-file "scganadu.scm" 'scheme)
-  (install-file "scganaduutil.scm" 'scheme)
   (install-file "scgame.scm" 'scheme))
