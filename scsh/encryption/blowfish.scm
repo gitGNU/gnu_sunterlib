@@ -1152,7 +1152,6 @@
                (+ (vector-ref (blowfish-s2 blowfish-context) 2)
                   (vector-ref (blowfish-s3 blowfish-context) 3))))
 (define (blowfish-F-le x)
-  (display "F!")
   (bitwise-xor (+ (dictionary-ref-with-index (blowfish-s0 blowfish-context) 3)
                   (dictionary-ref-with-index (blowfish-s1 blowfish-context) 2))
                (+ (dictionary-ref-with-index (blowfish-s2 blowfish-context) 1)
@@ -1173,7 +1172,6 @@
         ;;(s2 (blowfish-s2 bc))
         ;;(s3 (blowfish-s3 bc))
         )
-    (display "almost...")
     (blowfish-R bc xl xr 0)
     (blowfish-R bc xr xl 1)
     (blowfish-R bc xl xr 2)
@@ -1190,13 +1188,11 @@
     (blowfish-R bc xr xl 13)
     (blowfish-R bc xl xr 14)
     (blowfish-R bc xr xl 15)
-    (display "almost...")
     (let ((xl (bitwise-xor xl (dictionary-ref-with-index (blowfish-p bc) blowfish-rounds)))
           (xr (bitwise-xor xr (dictionary-ref-with-index (blowfish-p bc) (+ blowfish-rounds 1)))))
       (set! ret_xl xr)
       (set! ret_xr xl)
 
-      (display "ENCRYPT done!")
       )))
 
 
@@ -1261,7 +1257,6 @@
             (dictionary-set-with-index! data 1 (vector-ref keyvec (remainder (+ j 2) keylen)))
             (dictionary-set-with-index! data 0 (vector-ref keyvec (remainder (+ j 3) keylen)))
             ))
-      ;;(display "FOO")
       (dictionary-set-with-index! (blowfish-p bc) i
                                   (bitwise-xor
                                    (dictionary-ref-with-index (blowfish-p bc) i)
@@ -1271,7 +1266,7 @@
                                       (dictionary-ref-with-index data 3))))
       (set! j (remainder (+ j 4) keylen))
       )
-    (display "FOO2!")
+
     (let ((datal 0)
           (datar 0))
 
@@ -1281,7 +1276,7 @@
         (dictionary-set-with-index! (blowfish-p bc) i datal)
         (dictionary-set-with-index! (blowfish-p bc) (+ i 1) datar)
         )
-    (display "FOO3!")
+
       (do ((i 0 (+ 2)))
           ((>= i 256)0)
         (blowfish-encrypt bc datal datar)
@@ -1302,7 +1297,7 @@
         (blowfish-encrypt bc datal datar)
         (dictionary-set-with-index! (blowfish-s3 bc) i datal)
         (dictionary-set-with-index! (blowfish-s3 bc) (+ i 1) datar))
-      (display "BAR!")
+
       (do ((i 0 (+ i 1)))
           ((>= i 255)0);;
         (do ((j (+ i 1) (+ j 1)))
