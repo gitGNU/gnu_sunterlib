@@ -1107,7 +1107,7 @@
                           (make-dictionary)
                           (make-dictionary)
                           (make-dictionary)
-                          (make-dictionary))
+                          (make-dictionary)))
 
 (define blowfish-ps (make-dictionary))
 (dictionary-add! blowfish-ps 0  '243F6A88)
