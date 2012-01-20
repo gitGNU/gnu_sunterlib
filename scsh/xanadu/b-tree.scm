@@ -33,8 +33,8 @@
       (do ((i 0 (+ i 1)))
         ((= i len) (list retl retr))
         (vector-set! retl i (vector-ref v i))
-	(vector-set! retr i (vector-ref v (- len (+ i 1))))
-        )))
+	(vector-set! retr i (vector-ref v (- len i)))
+        ))))
 
 (define (make-b-tree)
   (let ((*tree (make-vector 0)))
