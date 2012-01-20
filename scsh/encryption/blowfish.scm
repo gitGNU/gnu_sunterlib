@@ -1152,14 +1152,15 @@
                (+ (vector-ref (blowfish-s2 blowfish-context) 2)
                   (vector-ref (blowfish-s3 blowfish-context) 3))))
 (define (blowfish-F-le x)
+  (display "F!")
   (bitwise-xor (+ (dictionary-ref-with-index (blowfish-s0 blowfish-context) 3)
                   (dictionary-ref-with-index (blowfish-s1 blowfish-context) 2))
-               (+ (dictionary-ref (blowfish-s2 blowfish-context) 1)
-                  (dictionary-ref (blowfish-s3 blowfish-context) 0))))
+               (+ (dictionary-ref-with-index (blowfish-s2 blowfish-context) 1)
+                  (dictionary-ref-with-index (blowfish-s3 blowfish-context) 0))))
 (define blowfish-F (if BIG-ENDIAN-HOST blowfish-F-le blowfish-F-be)) ;; FIXME2 default is big endian
 
 (define (blowfish-R bc l r i)
-  (set! l (bitwise-xor l (dictionary-ref (blowfish-p bc) i)))
+  (set! l (bitwise-xor l (dictionary-ref-with-index (blowfish-p bc) i)))
   (set! r (bitwise-xor r (blowfish-F l))))
 
 ;; blowfish-rounds == 16 ->
@@ -1172,7 +1173,7 @@
         ;;(s2 (blowfish-s2 bc))
         ;;(s3 (blowfish-s3 bc))
         )
-
+    (display "almost...")
     (blowfish-R bc xl xr 0)
     (blowfish-R bc xr xl 1)
     (blowfish-R bc xl xr 2)
@@ -1189,7 +1190,7 @@
     (blowfish-R bc xr xl 13)
     (blowfish-R bc xl xr 14)
     (blowfish-R bc xr xl 15)
-
+    (display "almost...")
     (let ((xl (bitwise-xor xl (dictionary-ref-with-index (blowfish-p bc) blowfish-rounds)))
           (xr (bitwise-xor xr (dictionary-ref-with-index (blowfish-p bc) (+ blowfish-rounds 1)))))
       (set! ret_xl xr)
