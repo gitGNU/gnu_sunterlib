@@ -1084,6 +1084,49 @@
 	(set! colornumber (+ (* (+ n 1) 16 i) colornumber)))))))
 
 
+(define :blowfish-record
+  (make-record-type 'blowfish-record
+		    '(blowfish-s0 blowfish-s1 blowfish-s2 blowfish-s3 blowfish-p)))
+(define blowfish-record
+  (record-constructor :blowfish-record
+		      '(blowfish-s0 blowfish-s1 blowfish-s2 blowfish-s3 blowfish-p)))
+
+(define blowfish-record:s0 (record-accessor :blowfish-record 'blowfish-s0))
+(define blowfish-record:s1 (record-accessor :blowfish-record 'blowfish-s1))
+(define blowfish-record:s2 (record-accessor :blowfish-record 'blowfish-s2))
+(define blowfish-record:s3 (record-accessor :blowfish-record 'blowfish-s3))
+(define blowfish-record:p (record-accessor :blowfish-record 'blowfish-p))
+
+(define blowfish-rounds 16) ;;
+(define blowfish-context (make-blowfish-record
+                          (make-vector 256)
+                          (make-vector 256)
+                          (make-vector 256)
+                          (make-vector 256)
+                          (make-vector (+ blowfish-rounds) 2)))
+
+(define blowfish-ps (make-dictionary))
+(dictionary-add! blowfish-ps '0x243F6A88)
+(dictionary-add! blowfish-ps '0x85A308D3)
+(dictionary-add! blowfish-ps '0x13198A2E)
+(dictionary-add! blowfish-ps '0x03707344)
+(dictionary-add! blowfish-ps '0xA4093822)
+(dictionary-add! blowfish-ps '0x299F31D0)
+(dictionary-add! blowfish-ps '0x082EFA98)
+(dictionary-add! blowfish-ps '0xEC4E6C89)
+(dictionary-add! blowfish-ps '0x452821E6)
+(dictionary-add! blowfish-ps '0x38D01377)
+(dictionary-add! blowfish-ps '0xBE5466CF)
+(dictionary-add! blowfish-ps '0x34E90C6C)
+(dictionary-add! blowfish-ps '0xC0AC29B7)
+(dictionary-add! blowfish-ps '0xC97C50DD)
+(dictionary-add! blowfish-ps '0x3F84D5B5)
+(dictionary-add! blowfish-ps '0xB5470917)
+(dictionary-add! blowfish-ps '0x9216D5D9)
+(dictionary-add! blowfish-ps '0x8979FB1B)
+
+(define blowfish_R(l r i)
+  (let ((l (bitwise-not (dictionary-ref blowfish-p i))))
 
 (define (blowfish-encrypt)
   )
