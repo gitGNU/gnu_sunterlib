@@ -1365,6 +1365,7 @@
 (define (blowfish-selftest)
   (let ((plain (list->vector (string->list "BLOWFISH")))
         (buffer (make-vector 8))
+        (bufferanswer (vector 50 78 208 254 248 19 162 3));; buffer encrypted should give bufferwnswer : \x32\x4e\xd0\xfe\xf4\x13\xa2\x03
         (plain3 (vector 'FE 'DC 'BA '98 '76 '54 '32 '10))
         (key3 (vector '41 '79' '6E 'A0 '52 '62 '6E 'E4))
         (cipher3 (vector 'E1 '13 'F4 '10 '2C 'FC 'CE '43)))
