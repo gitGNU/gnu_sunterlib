@@ -1212,22 +1212,44 @@
       (set! ret_xr xl)
       )))
 
-(define (blowfish-set-key bc key keylen)
+(define (blowfish-set-key bc key keylen) ;; NOTE key is a table
+  (let ((data (make-table)))
 
-  (do ((i 0 (+ i 1)))
-      ((=> i (+ blowfish-rounds 2))0)
-        (set! (vector-ref (blowfish-p bc) i) (table-ref blowfish-ps i)))
+    (do ((i 0 (+ i 1)))
+        ((=> i (+ blowfish-rounds 2))0)
+      (set! (vector-ref (blowfish-p bc) i) (table-ref blowfish-ps i)))
 
-  (do ((i 0 (+ i 1)))
-      ((>= i 256)0)
-    (((blowfish-s0 bc) 'set-with-index) i (((blowfish-ks0 'get-with-index) i)))
-    (((blowfish-s1 bc) 'set-with-index) i (((blowfish-ks1 'get-with-index) i)))
-    (((blowfish-s2 bc) 'set-with-index) i (((blowfish-ks2 'get-with-index) i)))
-    (((blowfish-s3 bc) 'set-with-index) i (((blowfish-ks3 'get-with-index) i)))
-    )
+    (do ((i 0 (+ i 1)))
+        ((>= i 256)0)
+      (((blowfish-s0 bc) 'set-with-index) i (((blowfish-ks0 'get-with-index) i)))
+      (((blowfish-s1 bc) 'set-with-index) i (((blowfish-ks1 'get-with-index) i)))
+      (((blowfish-s2 bc) 'set-with-index) i (((blowfish-ks2 'get-with-index) i)))
+      (((blowfish-s3 bc) 'set-with-index) i (((blowfish-ks3 'get-with-index) i)))
+      )
 
-  (do ((i 0 (+ i 1))
-       (j 0 (+ j 1)))
-      ((>= i (+ blowfish-rounds 2))0)
-    )
+    (do ((i 0 (+ i 1))
+         (j 0 (+ j 1)))
+        ((>= i (+ blowfish-rounds 2))0)
+      (if BIG-ENDIAN-HOST
+          (begin
+            (table-set! data 0 (table-ref key j))
+            (table-set! data 1 (table-ref key (remainder (+ j 1) keylen)))
+            (table-set! data 2 (table-ref key (remainder (+ j 2) keylen)))
+            (table-set! data 3 (table-ref key (remainder (+ j 3) keylen)))
+            )
+          (begin
+            (table-set! data 3 (table-ref key j))
+            (table-set! data 2 (table-ref key (remainder (+ j 1) keylen)))
+            (table-set! data 1 (table-ref key (remainder (+ j 2) keylen)))
+            (table-set! data 0 (table-ref key (remainder (+ j 3) keylen)))
+            ))
+      (vector-set! (blowfish-p bc) i (bitwise-xor
+                                      (vector-ref (blowfish-p bc) i)
+                                      (+ (table-ref data 0)
+                                         (table-ref data 1)
+                                         (table-ref data 2)
+                                         (table-ref data 3))))
+
+  ))
+
   )
