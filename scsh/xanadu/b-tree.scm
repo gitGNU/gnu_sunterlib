@@ -27,11 +27,14 @@
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define (vector-median v)
-  (let ((retv (make-vector (inexact->exact (/ (vector-length v) 2)))))
-    (do ((i 0 (+ i 1)))
-      ((= i (/ (vector-length v) 2)) retv)
-      (vector-set! retv i (vector-ref v i))
-      )))
+  (let ((len (ceiling (/ (vector-length v) 2))))
+    (let ((retl (make-vector len))
+          (retr (make-vector len))) 
+      (do ((i 0 (+ i 1)))
+        ((= i len) (list retl retr))
+        (vector-set! retl i (vector-ref v i))
+	(vector-set! retr i (vector-ref v (- len (+ i 1))))
+        )))
 
 (define (make-b-tree)
   (let ((*tree (make-vector 0)))
