@@ -1223,8 +1223,8 @@
     (blowfish-R bc xl xr 3)
     (blowfish-R bc xr xl 2)
 
-    (let ((xl (bitwise-xor xl (vector-ref (blowfish-p bc) 1)))
-          (xr (bitwise-xor xr (vector-ref (blowfish-p bc) 0))))
+    (let ((xl (bitwise-xor xl (dictionary-ref-with-index (blowfish-p bc) 1)))
+          (xr (bitwise-xor xr (dictionary-ref-with-index (blowfish-p bc) 0))))
       (set! ret_xl xr)
       (set! ret_xr xl)
       )))
