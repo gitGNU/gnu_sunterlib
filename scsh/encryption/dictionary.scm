@@ -28,7 +28,7 @@
 
 (define (make-dictionary1 n)
   ;; methods are FIFO (first fixed first out)
-  (let ((*dict (make-list n)))
+  (let ((*dict (make-list n 0)))
 
     (define (get key) ;; get key
       (do ((l *dict (cdr l)))
