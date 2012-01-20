@@ -36,7 +36,7 @@
 	   (cadar l));;returns value
 	))
 
-    (define (get-with-index i) ;; get key
+    (define (ref-with-index i) ;; get key
       (do ((j 0 (+ j 1))
            (l *dict (cdr l)))
           ((= j i)
@@ -75,7 +75,7 @@
 
     (lambda (msg)
       (cond ((eq? msg 'get) get)
-            ((eq? msg 'get-with-index) get-with-index)
+            ((eq? msg 'ref-with-index) ref-with-index)
             ((eq? msg 'set-with-index) set-with-index)
             ((eq? msg 'get-substring) get-substring)
 	    ((eq? msg 'set) set)
@@ -85,8 +85,9 @@
 
 (define make-dictionary make-dictionary1)
 (define (dictionary-ref dict key) ((dict 'get) key))
+(define (dictionary-ref-with-index dict i value) ((dict 'get-with-index) i))
 ;; NOTE: dictionary-ref-substring:  match key part with keys in dict
 (define (dictionary-ref-substring dict key) ((dict 'get-substring) key))
 (define (dictionary-set! dict key value) ((dict 'set) key value))
 (define (dictionary-add! dict key value) ((dict 'add) key value))
-
+(define (dictionary-set-with-index! dict i value) ((dict 'set-with-index) i value))
