@@ -26,51 +26,11 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-;; This code fabricates xanadu hypertext files to attach
-;; to xanandu objects or use as metafiles
+(load "scganadu.scm")
 
-(load "scganaduutil.scm")
+;; interface
 
-(define (make-scganadu)
-  (let ((record (delay #f)))
-
-    (define (add-file filename)
-      (let ((displayproc (write (((FILE-MAKER-unit (force record)) 'get-post-html)
-				 (string-append "<filename>"
-						filename
-						"</filename>"))))
-
-	    (with-output-to-file (string-append "." filename ".scganadu") displayproc)
-	    )))
-
-    (define (attach-to-file! filename)
-      (let ((displayproc (write (((FILE-MAKER-unit (force record)) 'get-post-html)
-				 (string-append "<filename>"
-						filename
-						"</filename>")))))
-
-	(with-output-to-file filename displayproc)
-	))
-
-    (define (dispatch msg)
-      (lambda (msg)
-	(cond ((eq? msg 'add-file)add-file)
-	      ((eq? msg 'attach-to-file!)attach-to-file!)
-	      (else (aspecterror) (display "make-scganadu")))))
-
-
-  (define :scganadu-record
-    (make-record-type 'scganadu-record
-		      '(FILE-MAKER make-scganadu)))
-  (define make-scganadu-record
-    (record-constructor :scganadu-record
-			'(FILE-MAKER make-scganadu)))
-  (define FILE-MAKER-unit (record-accessor :scganadu-record 'FILE-MAKER))
-  (define make-scganadu-unit (record-accessor :scganadu-record 'make-scganadu))
-  (define make-scganadu-record
-    (delay (make-copy-of-document))
-    (delay (make-cell dispatch)))
-  (set! record make-scganadu-record)
-  dispatch))
-
+(define X (make-scganadu))
+(define (scganadu-add-file X filename) ((X 'add-file) filename))
+(define (scganadu-attach-to-file! X filename) ((X 'attach-to-file! filename)))
 
