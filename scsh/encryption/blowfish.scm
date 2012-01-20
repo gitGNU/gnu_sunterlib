@@ -32,6 +32,17 @@
                             (getenv "BIG_ENDIAN_HOST")
                             #t)) ;; NOTE : Do not forget to set this !
 
+
+(display "If you're using guile, load this first :")(newline)
+(display "(define bitwise-and logand)
+(define bitwise-ior logior)
+(define bitwise-xor logxor)
+(define arithmetic-shift ash)")(newline)
+;;(define bitwise-and logand)
+;;(define bitwise-ior logior)
+;;(define bitwise-xor logxor)
+;;(define arithmetic-shift ash)
+
 (define blowfish-ks0 (make-dictionary 256))
 (dictionary-add! blowfish-ks0 0 '0xD1310BA6)
 (dictionary-add! blowfish-ks0 1 '0x98DFB5AC)
@@ -1137,6 +1148,7 @@
 (dictionary-add! blowfish-ps 7  'EC4E6C89)
 (dictionary-add! blowfish-ps 8  '452821E6)
 (dictionary-add! blowfish-ps 9  '38D01377)
+;;FIXME1 (dictionary-add! blowfish-ps 9  '38D01377)
 (dictionary-add! blowfish-ps 10 'BE5466CF)
 (dictionary-add! blowfish-ps 11 '34E90C6C)
 (dictionary-add! blowfish-ps 12 'C0AC29B7)
