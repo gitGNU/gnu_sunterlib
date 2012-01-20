@@ -1386,6 +1386,8 @@
       (display "pass 3")(newline)
       (if (not (eq? buffer plain))
           (display "Blowfish selftest failed - 1."))
+      (display "pass 4")(newline)
+      (blowfish-decrypt bc bufferanswer buffer)
 
       (blowfish-set-key bc key3)
       (blowfish-encrypt-block bc buffer plain3) ;; should give
