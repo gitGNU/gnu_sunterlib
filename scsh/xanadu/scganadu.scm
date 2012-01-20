@@ -28,7 +28,7 @@
 
 ;; This code fabricates xanadu hypertext files to attach
 ;; to xanandu objects or use as metafiles
-(load "scgameutil.scm")
+
 (load "scganaduutil.scm")
 
 (define (make-scganadu)
