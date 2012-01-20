@@ -1087,6 +1087,23 @@
                        (else (string->number (string c))))))
           (set! colornumber (+ (* (+ n 1) 16 i) colornumber)))))))
 
+(define (blowfish-hex-char->number c) ;; FIXME refactor
+  (let ((n (cond ((or (eq? c #\a)(eq? c #\A))
+                  10)
+                 ((or (eq? c #\b)(eq? c #\B))
+                  11)
+                 ((or (eq? c #\c)(eq? c #\C))
+                  12)
+                 ((or (eq? c #\d)(eq? c #\D))
+                  13)
+                 ((or (eq? c #\e)(eq? c #\E))
+                  14)
+                 ((or (eq? c #\f)(eq? c #\F))
+                  15)
+                 (else (char->integer c)))))
+    n))
+
+
 
 (define :blowfish-record
   (make-record-type 'blowfish-record
@@ -1216,7 +1233,6 @@
     (do ((i 0 (+ i 1)))
         ((>= i (+ blowfish-rounds 2))0)
       (dictionary-set-with-index! (blowfish-p bc) i (dictionary-ref-with-index blowfish-ps i)))
-      (display "FOO")
     (do ((i 0 (+ i 1)))
         ((>= i 256)0)
       (dictionary-set-with-index! (blowfish-s0 bc) i (dictionary-ref-with-index blowfish-ks0 i))
@@ -1224,7 +1240,6 @@
       (dictionary-set-with-index! (blowfish-s2 bc) i (dictionary-ref-with-index blowfish-ks2 i))
       (dictionary-set-with-index! (blowfish-s3 bc) i (dictionary-ref-with-index blowfish-ks3 i))
       )
-    (display "FOO2")
     (do ((i 0 (+ i 1))
          (j 0 (+ j 1)))
         ((>= i (+ blowfish-rounds 2))0)
@@ -1241,14 +1256,15 @@
             (dictionary-set-with-index! data 1 (vector-ref keyvec (remainder (+ j 2) keylen)))
             (dictionary-set-with-index! data 0 (vector-ref keyvec (remainder (+ j 3) keylen)))
             ))
-      (display "FOO3")
+      (display "FOO!")(display (dictionary-ref-with-index (blowfish-p bc) i))
       (dictionary-set-with-index! (blowfish-p bc) i
                                   (bitwise-xor
                                    (dictionary-ref-with-index (blowfish-p bc) i)
-                                   (+ (dictionary-ref-with-index data 0)
-                                      (dictionary-ref-with-index data 1)
-                                      (dictionary-ref-with-index data 2)
-                                      (dictionary-ref-with-index data 3))))
+                                   (+ (blowfish-hex-char->number (dictionary-ref-with-index data 0))
+                                      (blowfish-hex-char->number (dictionary-ref-with-index data 1))
+                                      (blowfish-hex-char->number (dictionary-ref-with-index data 2))
+                                      (blowfish-hex-char->number (dictionary-ref-with-index data 3)))))
+      (set! j (remainder (+ j 4) keylen))
       )
     (display "BAR!")
     (let ((datal 0)
