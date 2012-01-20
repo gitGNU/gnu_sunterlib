@@ -1213,11 +1213,9 @@
 
 (define (blowfish-set-key bc keyvec keylen) ;; NOTE key is a table
   (let ((data (make-dictionary 256)))
-
     (do ((i 0 (+ i 1)))
         ((>= i (+ blowfish-rounds 2))0)
-      (dictionary-set! (blowfish-p bc) i (dictionary-ref blowfish-ps i)))
-
+      (dictionary-set-with-index! (blowfish-p bc) i (dictionary-ref-with-index blowfish-ps i)))
     (do ((i 0 (+ i 1)))
         ((>= i 256)0)
       (dictionary-set-with-index! (blowfish-s0 bc) i (dictionary-ref-with-index blowfish-ks0 i))
@@ -1225,7 +1223,6 @@
       (dictionary-set-with-index! (blowfish-s2 bc) i (dictionary-ref-with-index blowfish-ks2 i))
       (dictionary-set-with-index! (blowfish-s3 bc) i (dictionary-ref-with-index blowfish-ks3 i))
       )
-
     (do ((i 0 (+ i 1))
          (j 0 (+ j 1)))
         ((>= i (+ blowfish-rounds 2))0)
@@ -1250,7 +1247,7 @@
                                       (dictionary-ref-with-index data 2)
                                       (dictionary-ref-with-index data 3))))
       )
-
+(display "BAR!")
     (let ((datal 0)
           (datar 0))
 

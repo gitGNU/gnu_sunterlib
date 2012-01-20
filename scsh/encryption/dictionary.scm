@@ -50,12 +50,13 @@
       (if (>= i (length *dict))
           (begin (display "dictionary - set - index out of range")
                  0)
-          (do ((j 0 (+ j 1))
-               (l *dict (cdr l)))
-              ((= j i)
-               (display "FOO!")
-               (set-car! l value));;sets value FIXME
-            )))
+          (let ((lf '()))
+            (do ((j 0 (+ j 1))
+                 (l *dict (cdr l)))
+                ((= j i)
+                 (set! *dict (append lf (list value) (cdr l))));;sets value FIXME
+              (set! lf (append lf (list (car l))))
+              ))))
 
     (define (get-substring key) ;; get key
       (do ((l *dict (cdr l)))
