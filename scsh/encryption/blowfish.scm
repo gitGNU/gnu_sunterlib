@@ -1160,7 +1160,7 @@
 
 (define (blowfish-R bc l r i)
   (set! l (bitwise-xor l (dictionary-ref (blowfish-p bc) i)))
-  (set! r (bitwise-xor r ((dictionary-ref (blowfish-p bc) blowfish-F l)))))
+  (set! r (bitwise-xor r (dictionary-ref (blowfish-p bc) (blowfish-F l)))))
 
 ;; blowfish-rounds == 16 ->
 (define (blowfish-encrypt bc ret_xl ret_xr) ;; NOTE bc = blowfish-context
@@ -1280,6 +1280,7 @@
         (dictionary-set-with-index! (blowfish-p bc) i datal)
         (dictionary-set-with-index! (blowfish-p bc) (+ i 1) datar)
         )
+    (display "FOO3!")
       (do ((i 0 (+ 2)))
           ((>= i 256)0)
         (blowfish-encrypt bc datal datar)
