@@ -27,9 +27,9 @@
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (load "dictionary.scm")
-
-(define BIG-ENDIAN-HOST (if (getenv BIG_ENDIAN_HOST)
-                            (getenv BIG_ENDIAN_HOST)
+;; ,open records
+(define BIG-ENDIAN-HOST (if (getenv "BIG_ENDIAN_HOST")
+                            (getenv "BIG_ENDIAN_HOST")
                             #t)) ;; NOTE : Do not forget to set this !
 
 (define blowfish-ks0 (make-dictionary))
@@ -1091,7 +1091,7 @@
 (define :blowfish-record
   (make-record-type 'blowfish-record
 		    '(blowfish-s0 blowfish-s1 blowfish-s2 blowfish-s3 blowfish-p)))
-(define blowfish-record
+(define make-blowfish-record
   (record-constructor :blowfish-record
 		      '(blowfish-s0 blowfish-s1 blowfish-s2 blowfish-s3 blowfish-p)))
 
