@@ -1,7 +1,9 @@
 (define-interface encryption-interface
   (export
    blowfish-encrypt
-	blowfish-decrypt))
+   blowfish-encrypt
+   blowfish-encrypt-block
+   blowfish-decrypt-block))
 
 (define-structure schemedoc 
   schemedoc-interface
