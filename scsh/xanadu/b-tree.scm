@@ -26,6 +26,13 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+(define (vector-median v)
+  (let ((retv (make-vector (inexact->exact (/ (vector-length v) 2)))))
+    (do ((i 0 (+ i 1)))
+      ((= i (/ (vector-length v) 2)) retv)
+      (vector-set! retv i (vector-ref v i))
+      )))
+
 (define (make-b-tree)
   (let ((*tree (make-vector 0)))
 
@@ -33,10 +40,14 @@
       (cond ((= (vector-length tree) i) (display "null node") (vector-set! tree i str))
             (else #f))) 
 
-    (define (add-rec str tree)
+    (define (grow-up upper-node)
+      (cond ((eq? node *tree)
+             (set! *tree (vector-median *tree 
+
+    (define (add-rec str tree upper-node)
       (do ((i 0 (+ i 1)))
 	  ((eq? i (vector-length tree))
-           (grow-up) 
+           (grow-up upper-node) 
         (let ((vi (vector-ref tree i)))
           (cond ((string<=? str vi)
                  0)
@@ -48,7 +59,7 @@
       ))
         
     (define (add str)
-      (add-rec *tree))
+      (add-rec *tree *tree))
 
     (define (dispatch msg)
       (cond ((eq? msg 'add) add)
