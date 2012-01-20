@@ -27,7 +27,7 @@
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (load "dictionary.scm")
-;; ,open records
+;; ,open records tables ;; NOTE
 (define BIG-ENDIAN-HOST (if (getenv "BIG_ENDIAN_HOST")
                             (getenv "BIG_ENDIAN_HOST")
                             #t)) ;; NOTE : Do not forget to set this !
@@ -1143,7 +1143,7 @@
 
 (define (blowfish-R l r i)
   (set! l (bitwise-xor l (dictionary-ref (blowfish-p blowfish-context) i)))
-  (set! r (bitwise-xor r ((dictionary-ref (blowfish-p blowfish-context) blowfish_F l)))))
+  (set! r (bitwise-xor r ((dictionary-ref (blowfish-p blowfish-context) blowfish-F l)))))
 
 ;; blowfish-rounds == 16 ->
 (define (blowfish-encrypt bc ret_xl ret_xr) ;; NOTE bc = blowfish-context
