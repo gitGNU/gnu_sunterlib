@@ -1378,7 +1378,7 @@
           (vector-set! vec i (char->integer (vector-ref vec i)))))
       (display "starting test...")(newline)
       (blowfish-set-key bc (char->integer-vector
-                            (list->vector (string->list "abcdefghijklmnopqrstuvwxyz")) 26))
+                            (list->vector (string->list "abcdefghijklmnopqrstuvwxyz"))) 26)
       (display "pass 1")(newline)
       (blowfish-encrypt-block bc buffer plain) ;; should give \x32\x4e\xd0\xfe\xf4\x13\xa2\x03
       (display "pass 2")(newline)
