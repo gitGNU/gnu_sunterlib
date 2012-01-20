@@ -80,7 +80,7 @@
             ((eq? msg 'get-substring) get-substring)
 	    ((eq? msg 'set) set)
 	    ((eq? msg 'add) add)
-	    (else (aspecterror)(display "make-dictionary"))))
+	    (else (display "make-dictionary"))))
     ))
 
 (define make-dictionary make-dictionary1)
