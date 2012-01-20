@@ -1152,11 +1152,11 @@
                (+ (vector-ref (blowfish-s2 blowfish-context) 2)
                   (vector-ref (blowfish-s3 blowfish-context) 3))))
 (define (blowfish-F-le x)
-  (bitwise-xor (+ (vector-ref (blowfish-s0 blowfish-context) 3)
-                  (vector-ref (blowfish-s1 blowfish-context) 2))
-               (+ (vector-ref (blowfish-s2 blowfish-context) 1)
-                  (vector-ref (blowfish-s3 blowfish-context) 0))))
-(define blowfish-F (if BIG-ENDIAN-HOST blowfish-F-be blowfish-F-le)) ;; FIXME default is big endian
+  (bitwise-xor (+ (dictionary-ref-with-index (blowfish-s0 blowfish-context) 3)
+                  (dictionary-ref-with-index (blowfish-s1 blowfish-context) 2))
+               (+ (dictionary-ref (blowfish-s2 blowfish-context) 1)
+                  (dictionary-ref (blowfish-s3 blowfish-context) 0))))
+(define blowfish-F (if BIG-ENDIAN-HOST blowfish-F-le blowfish-F-be)) ;; FIXME2 default is big endian
 
 (define (blowfish-R bc l r i)
   (set! l (bitwise-xor l (dictionary-ref (blowfish-p bc) i)))
