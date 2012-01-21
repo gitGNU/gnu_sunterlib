@@ -94,9 +94,9 @@
             ((cond ((>= i (- len 1));;last node
                     (do ((j 0 (+ j 1)))
                         ((= j len) (display "node not found.") 0)
-                      (add-rec str (vector-ref j tree))))
-                   ((and (string<? str (vector-ref tree i))
-                         (string>? str (vector-ref tree (+ i 1))))
+                      (search-rec str (vector-ref j tree))))
+                   ((and (string<? str (((vector-ref tree i)'get-data)))
+                         (string>? str (((vector-ref tree (+ i 1))'get-data))))
                     (display "node not found in tree.") 0)
                    ((string=? str (vector-ref tree i))
                     (display "string found in tree.") str)
@@ -123,9 +123,7 @@
                       )))
                    ((string=? str (vector-ref tree i))
                     (set! i (vector-length tree)))
-                   (else (display "never reached."))))
-          )))
-
+                   (else (display "never reached.")))))
 
     (define (add str)
       (add-rec *tree))
