@@ -55,10 +55,10 @@
               ((eq? msg 'get-right)
                get-right)
               (else (display "b-tree-node : message not understood")))))
-     dispatch)) 
+     dispatch))
 
-(define (make-b-tree)
-  (let ((*tree (make-vector 0)))
+(define (make-b-tree n-ary)
+  (let ((*tree (make-vector n-ary)))
 
     (define (vector-median v)
       (let ((len (ceiling (/ (vector-length v) 2))))
@@ -75,7 +75,7 @@
             (else #f)))
 
     (define (grow-up upper-node)
-             )
+             #t)
 
     (define (add-rec str tree upper-node)
       (let ((len (vector-length tree)))
@@ -84,11 +84,11 @@
                     (grow-up upper-node))
                    ((and (string<? str (vector-ref tree i))
                          (string>? str (vector-ref tree (+ i 1))))
-                    (let ((new-node (make-b-tree-node l r))
-                          (lr (vector-median tree)))
-                      (vector-set! tree i new-node (car lr)(cadr lr))) 
+                    (let ((lr (vector-median tree)))
+                      (let ((new-node (make-b-tree-node (car lr) (cadr lr))))
+                        (vector-set! tree i new-node)
                       ;;(grow-down (vector-ref tree i)
-                      )
+                      )))
                    ((string>=? str (vector-ref tree i))
                     (grow-down))
                    ((string=? str (vector-ref tree i))
