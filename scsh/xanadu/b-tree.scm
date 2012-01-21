@@ -63,6 +63,8 @@
       (lambda (msg)
         (cond ((eq? msg 'get-left)
                get-left)
+              ((eq? msg 'get-right)
+               get-right)
               ((eq? msg 'set-left-with-index!)
                set-left-with-index!)
               ((eq? msg 'set-right-with-index!)
@@ -71,8 +73,6 @@
                get-data)
               ((eq? msg 'set-data!)
                set-data!)
-              ((eq? msg 'get-right)
-               get-right)
               (else (display "b-tree-node : message not understood")(newline)))))
     dispatch))
 
@@ -138,15 +138,17 @@
       (dump-rec *tree))
 
     (define (add-rec str tree) ;; root param in b-treenode ;; refactor call-with-values
+
       (let ((lefttree (tree 'get-left));;FIXME ()
             (righttree (tree 'get-right)))
                ;;len (vector-length ((tree 'get-left)))))
-        (call-with-values
-            (lambda () (values lefttree righttree))
-          (lambda (lefttree righttree)
+        ;;(call-with-values
+        ;;    (lambda () (values lefttree righttree))
+        ;;  (lambda (lefttree righttree)
             (add-rec-side-tree str lefttree)
             (add-rec-side-tree str righttree)
-            ))))
+        ;;    ))
+            ))
 
     (define (add-rec-side-tree str side-tree)
       (do ((i 0 (+ i 1)))
@@ -157,7 +159,7 @@
                          (new-node (make-b-tree-node
                                     (car left-and-right)
                                     (cadr left-and-right))));;FIXME lenght mustbe n-ary
-                    
+
                     (or data (and (string? data)(string=? data "")))
                     ((new-node 'set-data!) str)
                     ;;((side-tree 'set-left-with-index!) i new-node)
@@ -186,7 +188,7 @@
         (let ((side-tree-node (vector-ref i side-tree)))
           (cond ((not (not side-tree-node))
                  #f)
-                (else (add-rec str side-tree-node)))))
+                (else (add-rec str side-tree-node)))));;NOTE add-rec not the other add-rec
       )
 
 
@@ -203,8 +205,8 @@
     dispatch))
 
 ;; test program
-;;(define bt (make-b-tree 2))
-;;((bt 'add)"abc")
+(define bt (make-b-tree 2))
+((bt 'add)"abc")
 ;;((bt 'add)"def")
 ;;((bt 'add)"hij")
 ;;((bt 'search)"abc")
