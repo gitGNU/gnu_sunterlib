@@ -98,13 +98,13 @@
                    ((and (string<? str (((vector-ref tree i)'get-data)))
                          (string>? str (((vector-ref tree (+ i 1))'get-data))))
                     (display "node not found in tree.") 0)
-                   ((string=? str (vector-ref tree i))
+                   ((string=? str (((vector-ref tree i)'get-data)))
                     (display "string found in tree.") str)
                    (else (display "never reached."))))
           )))
 
     (define (search str)
-      (search-rec *tree))
+      (search-rec str *tree))
 
     (define (add-rec str tree) ;; root param in b-treenode
       (let ((len (vector-length tree)))
@@ -121,15 +121,19 @@
                         ((new-node 'set-data!) str)
                         (vector-set! tree i new-node)
                       )))
-                   ((string=? str (vector-ref tree i))
+                   ((string=? str (((vector-ref tree i)'get-data)))
                     (set! i (vector-length tree)))
                    (else (display "never reached.")))))
 
     (define (add str)
-      (add-rec *tree))
+      (add-rec str *tree))
 
     (define (dispatch msg)
       (cond ((eq? msg 'add) add)
             ((eq? msg 'search) search)
             (else (display "b-tree : message not understood."))))
 	dispatch))
+
+
+(define (bt) (make-b-tree 2))
+((bt 'add) "abc")
