@@ -43,14 +43,14 @@
 
     (define (set-left-with-index! i value)
       (cond ((not left)
-             (display "not left") 
+             (display "not left")
              #f)
             (else (vector-set! left i value))))
 
     (define (set-right-with-index! i value)
       (cond ((not right)
              (display "not right")
-             #t)
+             #f)
             (else (vector-set! right i value))))
 
     (define (get-left)
