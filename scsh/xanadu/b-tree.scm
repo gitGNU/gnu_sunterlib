@@ -75,7 +75,7 @@
      dispatch))
 
 (define (make-b-tree n-ary);;NOTE FIXME n-ary and vector-length
-  (let ((*tree (make-vector n-ary (make-b-tree-node (make-vector n-ary) (make-vector n-ary)))))
+  (let ((*tree (make-b-tree-node (make-vector n-ary) (make-vector n-ary))))
 
     (define (vector-median v)
       (let ((len (ceiling (/ (vector-length v) 2))))
@@ -106,24 +106,45 @@
     (define (search str)
       (search-rec str *tree))
 
-    (define (add-rec str tree) ;; root param in b-treenode
-      (let ((len (vector-length tree)))
-        (do ((i 0 (+ i 1)))
-            ((cond ((>= i (- len 1));;last node
-                    (do ((j 0 (+ j 1)))
-                        ((= j len) (display "node not added.") 0)
-                         (add-rec str (vector-ref j tree)))
-                        )))
-                   ((and (string<? str (((vector-ref tree i) 'get-data)))
-                         (string>? str (((vector-ref tree (+ i 1)) 'get-data))))
-                    (let ((lr (vector-median tree)))
-                      (let ((new-node (make-b-tree-node (car lr) (cadr lr))))
-                        ((new-node 'set-data!) str)
-                        (vector-set! tree i new-node)
-                      )))
-                   ((string=? str (((vector-ref tree i)'get-data)))
-                    (set! i (vector-length tree)))
-                   (else (display "never reached.")))))
+    (define (dump-rec tree) ;; root param in b-treenode
+      (if (not (vector? tree))
+          0
+          (let ((len (vector-length tree)))
+            (do ((i 0 (+ i 1)))
+                ((>= i len) 0)
+              (display 'foo)
+              (display (((vector-ref tree i)'get-data)))
+              (display 'foo)
+              (dump-rec (vector-ref tree i))
+              ))))
+
+    (define (dump)
+      (dump-rec *tree))
+
+    (define (add-rec str tree) ;; root param in b-treenode ;; refactor call-with-values
+      (let ((lefttree ((tree 'get-left)))
+            (righttree ((tree 'get-right))))
+               ;;len (vector-length ((tree 'get-left)))))
+        (call-with-values
+            (lambda () (values lefttree righttree))
+          (lambda (lefttree righttree)
+            (do ((i 0 (+ i 1)))
+                ((cond ((>= i (- len 1));;last node
+                        (do ((j 0 (+ j 1)))
+                            ((= j len) (display "node not added.") 0)
+                          (add-rec str (vector-ref j tree)))
+                        )
+                       ((and (string<? str (((vector-ref lefttree i) 'get-data)))
+                             (string>? str (((vector-ref lefttree (+ i 1)) 'get-data))))
+                        (let ((lr (vector-median lefttree)))
+                          (let ((new-node (make-b-tree-node (car lr) (cadr lr))))
+                            ((new-node 'set-data!) str)
+                            (vector-set! tree i new-node)
+                            )))
+                       ((string=? str (((vector-ref lefttree i)'get-data)))
+                        (set! i (vector-length tree)))
+                       (else (display "never reached.")))))
+            ))))
 
     (define (add str)
       (add-rec str *tree))
@@ -131,9 +152,11 @@
     (define (dispatch msg)
       (cond ((eq? msg 'add) add)
             ((eq? msg 'search) search)
+            ((eq? msg 'dump) dump)
             (else (display "b-tree : message not understood."))))
-	dispatch))
+    dispatch))
 
 
-(define (bt) (make-b-tree 2))
+(define bt (make-b-tree 2))
 ((bt 'add) "abc")
+;;((bt 'dump))
