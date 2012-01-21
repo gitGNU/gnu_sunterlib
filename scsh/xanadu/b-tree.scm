@@ -81,13 +81,17 @@
                 (make-vector n-ary (make-b-tree-node #f #f)))))
 
     (define (vector-median v)
+      (display "median:");;(display v)
       (let ((len (ceiling (/ (vector-length v) 2))))
-        (let ((retl (make-vector len))
-              (retr (if (odd? len) (make-vector (- len 1)) (make-vector len))))
+        (let ((retl (make-vector len (make-b-tree-node #f #f)))
+              (retr (if (odd? len)
+                        (make-vector (+ len 1) (make-b-tree-node #f #f))
+                        (make-vector len (make-b-tree-node #f #f)))))
           (do ((i 0 (+ i 1)))
-              ((= i len) (list retl retr))
+              ((= i len) (display "returned")(list retl retr))
+            (display i)
             (vector-set! retl i (vector-ref v i))
-	(vector-set! retr (- len (- i 1)) (vector-ref v (- len (- i 1))))
+            (vector-set! retr (- len (+ i 1)) (vector-ref v (- len (+ i 1))))
         ))))
 
 
@@ -136,14 +140,14 @@
                             (not (((vector-ref lefttree i) 'get-data)))
                             (string=? (((vector-ref lefttree i) 'get-data)) ""))
                         (display 'FOO1)
-                        (let ((lr (vector-median lefttree)))
+                        (let ((lr (vector-median ((lefttree 'get-left)))));;FIXME right also descend
                           (let ((new-node (make-b-tree-node (car lr) (cadr lr))));;FIXME lenght mustbe n-ary
                             ((new-node 'set-data!) str)
                             (vector-set! lefttree i new-node)
                             )))
                        ((and (string<? str (((vector-ref lefttree i) 'get-data)))
                              (string>? str (((vector-ref lefttree (+ i 1)) 'get-data))))
-                        (let ((lr (vector-median lefttree)))
+                        (let ((lr (vector-median ((lefttree 'get-left)))))
                           (let ((new-node (make-b-tree-node (car lr) (cadr lr))))
                             ((new-node 'set-data!) str)
                             (vector-set! lefttree i new-node)
