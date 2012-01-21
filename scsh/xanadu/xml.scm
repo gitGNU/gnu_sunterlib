@@ -31,8 +31,9 @@
         (contents ""))
 
     (define (tagify! c tagged)
-      (cond ((= tagged 0) (string c))
-            ((> tagged 0) "") ;; FIXME make node, descend one level
+      (cond ((> tagged 0) "")
+            ((= tagged 0) (if (eq? c #\>) "" (string c)))
+            ;; FIXME make node, descend one level
             (else "")))
 
     (define (xml-read-in-file contents)
@@ -43,8 +44,8 @@
                  (set! tagged (+ tagged 1)))
                 ((and (> tagged 0)(eq? c #\<))
                  (set! tagged (+ tagged 1)))
-                ((and (= tagged 0)(eq? c #\>))
-                 (set! tagged (- tagged 1)))
+                ;;((and (= tagged 0)(eq? c #\>))
+                ;; (set! tagged (- tagged 1)))
                 ((and (> tagged 0)(eq? c #\>))
                  (set! tagged (- tagged 1)))
                 ((< tagged 0)
