@@ -40,6 +40,16 @@
     (define (set-data! value)
       (set! data value))
 
+    (define (set-left-with-index! i value)
+      (cond ((not left)
+             (display "not left"))
+            (else (vector-set! left i value))))
+
+    (define (set-right-with-index! i value)
+      (cond ((not right)
+             (display "not right"))
+            (else (vector-set! right i value))))
+
     (define (get-left)
       (display "get-left")
       left)
@@ -66,6 +76,10 @@
                get-numnodes)
               ((eq? msg 'get-left)
                get-left)
+              ((eq? msg 'set-left-with-index!)
+               set-left-with-index!)
+              ((eq? msg 'set-right-with-index!)
+               set-right-with-index!)
               ((eq? msg 'get-data)
                get-data)
               ((eq? msg 'set-data!)
@@ -139,11 +153,11 @@
                 ((cond ((or lefttree
                             (not (((vector-ref lefttree i) 'get-data)))
                             (string=? (((vector-ref lefttree i) 'get-data)) ""))
-                        (display 'FOO1)
+                        (display "FOO1")
                         (let ((lr (vector-median ((lefttree 'get-left)))));;FIXME right also descend
                           (let ((new-node (make-b-tree-node (car lr) (cadr lr))));;FIXME lenght mustbe n-ary
                             ((new-node 'set-data!) str)
-                            (vector-set! lefttree i new-node)
+                            ((lefttree 'set-left-with-index!) i new-node)
                             )))
                        ((and (string<? str (((vector-ref lefttree i) 'get-data)))
                              (string>? str (((vector-ref lefttree (+ i 1)) 'get-data))))
