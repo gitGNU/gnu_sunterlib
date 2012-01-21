@@ -160,32 +160,36 @@
         (call-with-values
             (lambda () (values lefttree righttree))
           (lambda (lefttree righttree)
-            (do ((i 0 (+ i 1)))
-                ((cond ((or lefttree
-                            (not (((vector-ref lefttree i) 'get-data)))
-                            (string=? (((vector-ref lefttree i) 'get-data)) ""))
-                        (let ((lr (vector-median ((lefttree 'get-left)))));;FIXME right also descend
-                          (let ((new-node (make-b-tree-node (car lr) (cadr lr))));;FIXME lenght mustbe n-ary
-                            ((new-node 'set-data!) str)
-                            ((lefttree 'set-left-with-index!) i new-node)
-                            )))
-                       ((and (string<? str (((vector-ref lefttree i) 'get-data)))
-                             (string>? str (((vector-ref lefttree (+ i 1)) 'get-data))))
-                        (let ((lr (vector-median ((lefttree 'get-left)))))
-                          (let ((new-node (make-b-tree-node (car lr) (cadr lr))))
-                            ((new-node 'set-data!) str)
-                            (vector-set! lefttree i new-node)
-                            )))
-                       ;;((string=? str (((vector-ref lefttree i)'get-data)))
-                       ;; (set! i (vector-length tree)))
-                       ((>= i (- len 1));;last node
-                        (do ((j 0 (+ j 1)))
-                            ((= j len) (display "node not added.") 0)
-                          (add-rec str (vector-ref lefttree i)))
-                        )
-
-                       (else (display "never reached.")))))
+            (add-rec-side-tree str lefttree)
+            (add-rec-side-tree str righttree)
             ))))
+
+    (define (add-rec-side-tree str side-tree)
+      (do ((i 0 (+ i 1)))
+          ((cond ((or side-tree
+                      (not (((vector-ref side-tree i) 'get-data)))
+                      (string=? (((vector-ref side-tree i) 'get-data)) ""))
+                  (let ((lr (vector-median ((side-tree 'get-left)))));;FIXME right also descend
+                    (let ((new-node (make-b-tree-node (car lr) (cadr lr))));;FIXME lenght mustbe n-ary
+                      ((new-node 'set-data!) str)
+                      ((side-tree 'set-left-with-index!) i new-node)
+                      )))
+                 ((and (string<? str (((vector-ref side-tree i) 'get-data)))
+                       (string>? str (((vector-ref side-tree (+ i 1)) 'get-data))))
+                  (let ((lr (vector-median ((side-tree 'get-left)))))
+                    (let ((new-node (make-b-tree-node (car lr) (cadr lr))))
+                      ((new-node 'set-data!) str)
+                      (vector-set! side-tree i new-node)
+                      )))
+                 ;;((string=? str (((vector-ref side-tree i)'get-data)))
+                       ;; (set! i (vector-length tree)))
+                 ((>= i (- len 1));;last node
+                  (do ((j 0 (+ j 1)))
+                      ((= j len) (display "node not added.") 0)
+                    (add-rec str (vector-ref side-tree i)))
+                  )
+
+                 (else (display "never reached."))))))
 
     (define (add str)
       (add-rec str *tree)
