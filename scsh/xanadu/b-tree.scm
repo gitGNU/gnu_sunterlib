@@ -104,9 +104,9 @@
                           ((= j len) 0)
                         (search-rec str (vector-ref j side-tree))))
                      ((let ((side-tree-el-second ((vector-ref side-tree (+ i 1)))))
-                        (and (string<? str
+                        (and (string>? str
                                        ((side-tree-el-first 'get-data)))
-                             (string>? str
+                             (string<? str
                                        ((side-tree-el-second 'get-data))))
                         (display "node not found in tree.") 0))
                      ((string=? str ((side-tree-el-first 'get-data)))
