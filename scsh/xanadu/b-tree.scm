@@ -26,12 +26,18 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define (make-b-tree-node left right)
+(define (make-b-tree-node l r)
   (let ((numitems 0)
         (numnodes 0)
         (root 'foo)
-        (left left)
-        (right right))
+        (left l)
+        (right r))
+
+    (define (get-left)
+      left)
+
+    (define (get-right)
+      right)
 
     (define (get-root)
       root)
@@ -57,8 +63,8 @@
               (else (display "b-tree-node : message not understood")))))
      dispatch))
 
-(define (make-b-tree n-ary)
-  (let ((*tree (make-vector n-ary)))
+(define (make-b-tree n-ary);;NOTE FIXME n-ary and vector-length
+  (let ((*tree (make-vector n-ary (make-b-tree-node (make-vector n-ary) (make-vector n-ary)))))
 
     (define (vector-median v)
       (let ((len (ceiling (/ (vector-length v) 2))))
@@ -89,8 +95,6 @@
                         (vector-set! tree i new-node)
                       ;;(grow-down (vector-ref tree i)
                       )))
-                   ((string>=? str (vector-ref tree i))
-                    (grow-down))
                    ((string=? str (vector-ref tree i))
                     (set! i (vector-length tree)))
                    (else (display "never reached."))))
