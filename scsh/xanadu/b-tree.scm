@@ -26,8 +26,9 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-;;FIXME
+;; FIXME
 ;; use lets for vectorrefs etc.
+;; copy vector nodes into n-ary vectors (from median splitted vecs)
 
 (define (make-b-tree-node l r)
   (let ((numitems 0)
@@ -109,25 +110,28 @@
         ))))
 
 
-    (define (search-rec str tree) ;; root param in b-treenode ;; FIXME right vecs
-      (let ((len (vector-length ((tree 'get-left))))
+    (define (search-rec str tree side-string) ;; root param in b-treenode
+      (let* ((side-tree ((tree side-string)))
+             (len (vector-length lefttree)))
         (do ((i 0 (+ i 1)))
-            ((cond ((>= i len 1);;last node
-                    (do ((j 0 (+ j 1)))
-                        ((= j len) 0)
-                      (search-rec str (vector-ref j ((tree 'get-left))))))
-                   ((and (string<? str
-                                   (((vector-ref ((tree 'get-left)) i)'get-data)))
-                         (string>? str
-                                   (((vector-ref ((tree 'get-left)) (+ i 1))'get-data))))
-                    (display "node not found in tree.") 0)
-                   ((string=? str (((vector-ref ((tree 'get-left)) i)'get-data)))
-                    (display "string found in tree.") str)
-                   (else (display "never reached."))))
-          ))))
+            ((let* ((side-tree-el-first ((vector-ref side-tree i))))
+               (cond ((>= i len 1);;last node
+                      (do ((j 0 (+ j 1)))
+                          ((= j len) 0)
+                        (search-rec str (vector-ref j side-tree))))
+                     ((let ((side-tree-el-second ((vector-ref side-tree (+ i 1)))))
+                        (and (string<? str
+                                       ((side-tree-el-first 'get-data)))
+                             (string>? str
+                                       ((side-tree-el-second 'get-data))))
+                        (display "node not found in tree.") 0))
+                     ((string=? str ((side-tree-el-first 'get-data)))
+                      (display "string found in tree.") str)
+                     (else (display "never reached."))))))))
 
     (define (search str)
-      (search-rec str *tree))
+      (search-rec str *tree 'get-left)
+      (search-rec str *tree 'get-right)))
 
     (define (dump-rec tree) ;; root param in b-treenode
       (if (not (tree 'get-left))
@@ -150,7 +154,7 @@
       (dump-rec *tree))
 
     (define (add-rec str tree) ;; root param in b-treenode ;; refactor call-with-values
-      (let ((lefttree (tree 'get-left));;FIXME
+      (let ((lefttree (tree 'get-left));;FIXME ()
             (righttree (tree 'get-right)))
                ;;len (vector-length ((tree 'get-left)))))
         (call-with-values
