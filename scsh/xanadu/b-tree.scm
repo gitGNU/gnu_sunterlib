@@ -80,12 +80,10 @@
                 (make-vector n-ary (make-b-tree-node #f #f))
                 (make-vector n-ary (make-b-tree-node #f #f)))))
 
-    (define (vector-median v)
-      (let ((len (ceiling (/ (vector-length v) 2))))
-        (let ((retl (make-vector len (make-b-tree-node #f #f)))
-              (retr (if (odd? len)
-                        (make-vector (+ len 1) (make-b-tree-node #f #f))
-                        (make-vector len (make-b-tree-node #f #f)))))
+    (define (vector-median j v)
+      (let ((len (vector-length v)))
+        (let ((retl (make-vector (- j 1) (make-b-tree-node #f #f)))
+              (retr (make-vector (- len (+ j 1)) (make-b-tree-node #f #f))))
           (do ((i 0 (+ i 1)))
               ((= i len)(list retl retr))
             (vector-set! retl i (vector-ref v i))
@@ -165,12 +163,13 @@
                             (else (add-rec str side-tree-node)))));;NOTE add-rec not the other add-rec
                   )
                  ((let* ((data (((vector-ref side-tree i) 'get-data)))
-                         (left-and-right (vector-median side-tree));;FIXME right also descend
+                         (left-and-right (vector-median i side-tree));;FIXME right also descend
                          (new-node (make-b-tree-node
                                     (car left-and-right)
                                     (cadr left-and-right))));;FIXME lenght mustbe n-ary
 
-                    (or data (and (string? data)(string=? data "")))
+                    (or (not data)
+                        (and data (string? data)(string=? data "")))
                     ((new-node 'set-data!) str)
                     ;;((side-tree 'set-left-with-index!) i new-node)
                     (vector-set! side-tree i new-node)
@@ -184,7 +183,7 @@
                         (and (string? data)
                              (string<? str data)
                              (string>? str data)))
-                  (let ((left-and-right (vector-median side-tree)))
+                  (let ((left-and-right (vector-median i side-tree)))
                     (let ((new-node (make-b-tree-node (car left-and-right) (cadr left-and-right))))
                       ((new-node 'set-data!) str)
                       (vector-set! side-tree i new-node)
