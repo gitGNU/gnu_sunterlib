@@ -26,6 +26,9 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+;;FIXME
+;; use lets for vectorrefs etc.
+
 (define (make-b-tree-node l r)
   (let ((numitems 0)
         (numnodes 0)
