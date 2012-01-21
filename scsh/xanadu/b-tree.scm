@@ -96,12 +96,12 @@
       (let* ((side-tree (tree side-string))
              (len (vector-length side-tree)))
         (do ((i 0 (+ i 1)))
-            ((let* ((side-tree-el-first (vector-ref side-tree i)))
+            ((let ((side-tree-el-first (vector-ref side-tree i)))
                (cond ((>= i len);;last node
                       (do ((j 0 (+ j 1)))
                           ((= j len) 0)
                         (search-rec str (vector-ref side-tree j))))
-                     ((let ((side-tree-el-second ((vector-ref side-tree (+ i 1)))))
+                     ((let ((side-tree-el-second (vector-ref side-tree (+ i 1))))
                         (and (string<? str
                                        ((side-tree-el-first 'get-data)))
                              (string>? str
