@@ -1,6 +1,6 @@
 ;;; b-tree.scm - a B-tree for Xanadu
 ;;;
-;;; Copyright (c) 2011-2012 Johan Ceuppens
+;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
 ;;; All rights reserved.
 ;;;
@@ -76,24 +76,38 @@
 	(vector-set! retr (- len (- i 1)) (vector-ref v (- len (- i 1))))
         ))))
 
-    (define (goto-left-node str i tree)
-      (cond ((= (vector-length tree) i) (display "null node") (vector-set! tree i str))
-            (else #f)))
 
-    (define (grow-up upper-node)
-             #t)
-
-    (define (add-rec str tree upper-node)
+    (define (search-rec str tree) ;; root param in b-treenode
       (let ((len (vector-length tree)))
         (do ((i 0 (+ i 1)))
             ((cond ((>= i (- len 1));;last node
-                    (grow-up upper-node))
+                    (do ((j 0 (+ j 1)))
+                        ((= j len) (display "node not found.") 0)
+                      (add-rec str (vector-ref j tree))))
+                   ((and (string<? str (vector-ref tree i))
+                         (string>? str (vector-ref tree (+ i 1))))
+                    (display "node not found in tree.") 0)
+                   ((string=? str (vector-ref tree i))
+                    (display "string found in tree.") str)
+                   (else (display "never reached."))))
+          )))
+
+    (define (search str)
+      (search-rec *tree))
+
+    (define (add-rec str tree) ;; root param in b-treenode
+      (let ((len (vector-length tree)))
+        (do ((i 0 (+ i 1)))
+            ((cond ((>= i (- len 1));;last node
+                    (do ((j 0 (+ j 1)))
+                        ((= j len) (display "node not added.") 0)
+                         (add-rec str (vector-ref j tree)))
+                        )))
                    ((and (string<? str (vector-ref tree i))
                          (string>? str (vector-ref tree (+ i 1))))
                     (let ((lr (vector-median tree)))
                       (let ((new-node (make-b-tree-node (car lr) (cadr lr))))
                         (vector-set! tree i new-node)
-                      ;;(grow-down (vector-ref tree i)
                       )))
                    ((string=? str (vector-ref tree i))
                     (set! i (vector-length tree)))
@@ -102,9 +116,10 @@
 
 
     (define (add str)
-      (add-rec *tree *tree))
+      (add-rec *tree))
 
     (define (dispatch msg)
       (cond ((eq? msg 'add) add)
+            ((eq? msg 'search) search)
             (else (display "b-tree : message not understood."))))
 	dispatch))
