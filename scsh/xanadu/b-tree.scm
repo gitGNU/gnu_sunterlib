@@ -26,10 +26,12 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define (make-b-tree-node)
+(define (make-b-tree-node left right)
   (let ((numitems 0)
         (numnodes 0)
-        (root 'foo))
+        (root 'foo)
+        (left left)
+        (right right))
 
     (define (get-root)
       root)
@@ -48,6 +50,10 @@
                get-numitems)
               ((eq? msg 'get-numnodes)
                get-numnodes)
+              ((eq? msg 'get-left)
+               get-left)
+              ((eq? msg 'get-right)
+               get-right)
               (else (display "b-tree-node : message not understood")))))
      dispatch)) 
 
