@@ -26,6 +26,31 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+(define (make-b-tree-node)
+  (let ((numitems 0)
+        (numnodes 0)
+        (root 'foo))
+
+    (define (get-root)
+      root)
+
+    (define (get-numitems)
+      numitems)
+
+    (define (get-numnodes)
+      numnodes)
+
+    (define (dispatch msg)
+      (lambda (msg)
+        (cond ((eq? msg 'get-root)
+               get-root)
+              ((eq? msg 'get-numitems)
+               get-numitems)
+              ((eq? msg 'get-numnodes)
+               get-numnodes)
+              (else (display "b-tree-node : message not understood")))))
+     dispatch)) 
+
 (define (make-b-tree)
   (let ((*tree (make-vector 0)))
 
@@ -44,17 +69,20 @@
             (else #f)))
 
     (define (grow-up upper-node)
-      (cond ((eq? node *tree)
-             (
+             )
 
     (define (add-rec str tree upper-node)
       (let ((len (vector-length tree)))
         (do ((i 0 (+ i 1)))
             ((cond ((>= i (- len 1));;last node
                     (grow-up upper-node))
-                   ((and (string<=? str (vector-ref tree i))
-                         (string>=? str (vector-ref tree (+ i 1))))
-                    (add-rec str (vector-ref tree i)))
+                   ((and (string<? str (vector-ref tree i))
+                         (string>? str (vector-ref tree (+ i 1))))
+                    (let ((new-node (make-b-tree-node l r))
+                          (lr (vector-median tree)))
+                      (vector-set! tree i new-node (car lr)(cadr lr))) 
+                      ;;(grow-down (vector-ref tree i)
+                      )
                    ((string>=? str (vector-ref tree i))
                     (grow-down))
                    ((string=? str (vector-ref tree i))
