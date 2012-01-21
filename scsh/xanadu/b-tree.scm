@@ -156,6 +156,14 @@
       (do ((i 0 (+ i 1)))
           ((cond ((not side-tree)
                   #f)
+                 ((= i (vector-length side-tree))
+                  (do ((i 0 (+ i 1)))
+                      ((= i (vector-length side-tree))0)
+                    (let ((side-tree-node (vector-ref i side-tree)))
+                      (cond ((not (not side-tree-node))
+                             #f)
+                            (else (add-rec str side-tree-node)))));;NOTE add-rec not the other add-rec
+                  )
                  ((let* ((data (((vector-ref side-tree i) 'get-data)))
                          (left-and-right (vector-median side-tree));;FIXME right also descend
                          (new-node (make-b-tree-node
@@ -181,17 +189,12 @@
                       ((new-node 'set-data!) str)
                       (vector-set! side-tree i new-node)
                       ))))
-                 ;;((= i len)
-                 ;; (display "node not added .") 0)
-
-                 (else (display "b-tree add - never reached.")))))
-      (do ((i 0 (+ i 1)))
-          ((= i (vector-length side-tree))0)
-        (let ((side-tree-node (vector-ref i side-tree)))
-          (cond ((not (not side-tree-node))
-                 #f)
-                (else (add-rec str side-tree-node)))));;NOTE add-rec not the other add-rec
-      )
+                 ((let ((data (((vector-ref side-tree i) 'get-data))))
+                    (string=? data str) ;;NOTE duplicates possible
+                    (display "b-tree - node already exists.")
+                    0))
+                 (else (display "b-tree - add - never reached.")))))
+            )
 
 
 
