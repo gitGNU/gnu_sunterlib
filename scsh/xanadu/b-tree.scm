@@ -31,10 +31,7 @@
 ;; copy vector nodes into n-ary vectors (from median splitted vecs)
 
 (define (make-b-tree-node l r)
-  (let ((numitems 0)
-        (numnodes 0)
-        (root 'foo)
-        (data #f)
+  (let ((data #f)
         (left l)
         (right r))
 
@@ -60,24 +57,9 @@
     (define (get-right)
       right)
 
-    (define (get-root)
-      root)
-
-    (define (get-numitems)
-      numitems)
-
-    (define (get-numnodes)
-      numnodes)
-
     (define (dispatch msg)
       (lambda (msg)
-        (cond ((eq? msg 'get-root)
-               get-root)
-              ((eq? msg 'get-numitems)
-               get-numitems)
-              ((eq? msg 'get-numnodes)
-               get-numnodes)
-              ((eq? msg 'get-left)
+        (cond ((eq? msg 'get-left)
                get-left)
               ((eq? msg 'set-left-with-index!)
                set-left-with-index!)
