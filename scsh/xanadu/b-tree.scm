@@ -92,6 +92,7 @@
             (vector-set! retr (- len (+ i 1)) (vector-ref v (- len (+ i 1))))
         ))))
 
+    ;;FIXME
     (define (search-rec str tree side-string) ;; root param in b-treenode
       (let* ((side-tree (tree side-string))
              (len (vector-length side-tree)))
@@ -100,7 +101,9 @@
                (cond ((>= i len);;last node
                       (do ((j 0 (+ j 1)))
                           ((= j len) 0)
-                        (search-rec str (vector-ref side-tree j))))
+                        (search-rec str (vector-ref side-tree j) 'get-left)
+                        (search-rec str (vector-ref side-tree j) 'get-right)
+                        ))
                      ((let ((side-tree-el-second (vector-ref side-tree (+ i 1))))
                         (and (string<? str
                                        ((side-tree-el-first 'get-data)))
@@ -115,7 +118,8 @@
       (search-rec str *tree 'get-left)
       (search-rec str *tree 'get-right))
 
-    (define (dump-rec tree) ;; root param in b-treenode
+    ;;FIXME
+    (define (dump-rec tree)
       (if (not (tree 'get-left))
           0
           (let ((len (vector-length (tree 'get-left))))
