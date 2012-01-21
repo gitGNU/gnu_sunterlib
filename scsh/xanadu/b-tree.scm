@@ -186,10 +186,10 @@
             (else (display "b-tree : message not understood.")(newline))))
     dispatch))
 
-
-(define bt (make-b-tree 2))
-((bt 'add)"abc")
-((bt 'add)"def")
-((bt 'add)"hij")
-((bt 'search)"abc")
+;; test program
+;;(define bt (make-b-tree 2))
+;;((bt 'add)"abc")
+;;((bt 'add)"def")
+;;((bt 'add)"hij")
+;;((bt 'search)"abc")
 ;;((bt 'dump))
