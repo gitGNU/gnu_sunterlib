@@ -29,7 +29,7 @@
 (load "util.scm")
 (load "trecords.scm")
 (load "tmailbox-load.scm")
-
+;; You can use e.g. daemontools to restart it everytime
 (define (run-daemon-child-mail rec)
   (let ((*hostname (hostname rec))
         (*port (port rec))

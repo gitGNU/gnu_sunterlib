@@ -1,0 +1,7 @@
+- This is a http daemon
+Basically run scsh, ',open records sockets'
+telnet localhost 8080
+for asking the server.
+
+mailer daemon command history:
+GET
