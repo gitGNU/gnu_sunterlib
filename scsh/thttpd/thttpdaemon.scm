@@ -93,6 +93,7 @@
                                 (begin
                                   ;;(display "200 OK" out)
                                   (display aspect-content out)
+                                  ;; FIXME #\return (make-char X)
                                   (display (string #\return #\newline) out) ;; CRLF
                                   (display "\"Hello World\"" out)
                                   ))))
