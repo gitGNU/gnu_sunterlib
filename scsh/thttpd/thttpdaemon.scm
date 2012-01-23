@@ -29,7 +29,7 @@
 (define (eoln) (string #\newline))
 (define (servermsg) (string "::thttpd-msg::"))
 (define (errormsg) (string "::thttpd-error::"))
-(define aspect-content (string-append "Content-Type: text/plain;charset=utf-8" (string #\newline)))
+(define aspect-content (string-append "Content-Type: text/plain;charset=utf-8" (string #\return#\newline)))
 (define :thttpd-daemon-record
   (make-record-type 'thttpd-daemon-record
 		    '(hostname port sock)))
@@ -66,9 +66,10 @@
              (if (symbol? a)
                  (cond ((eq? a 'GET)
                         (write "Hello World")
-                        (write aspect-content out)
-                        (write (string #\newline) out)
-                        (write "Hello World" out)
+                        ;;(display "200 OK" out)
+                        (display aspect-content out)
+                        (display (string #\return #\newline) out)
+                        (display "\"Hello World\"" out)
                         ;;(close-input-port in)
                         ;;(close-socket *socket)
                         ;;(close-output-port out)
