@@ -59,7 +59,7 @@
     (call-with-current-continuation get))
   gen)
 
-(define (get-response l)
+(define (get-response l) ;; make l public and generate without args
   (get-response-f l))
 
 (define (run-daemon-child-http rec)

@@ -1,6 +1,6 @@
 (define-interface scratch-interface
   (export
-   run-daemon-child-http))
+   char-continue))
 
 (define-structure thttpd
   scratch-interface

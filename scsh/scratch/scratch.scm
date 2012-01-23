@@ -26,20 +26,19 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define (get-response-f lst)
-  (define (get return)
+(define (char-continue lst)
+  (define (get-char return)
     (for-each
      (lambda (element)
        (set! return (call-with-current-continutation
                      (lambda (r)
-                       (set! get r)
+                       (set! get-char r)
                        (return element)))))
      lst)
     (return 'end-generate))
 
   (define (gen)
-    (call-with-current-continuation get))
+    (call-with-current-continuation get-char))
   gen)
-
-(define (get-response l)
-  (get-response-f l))
+;; test
+;;  (char-continue l) generates the chars with each call
