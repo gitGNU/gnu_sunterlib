@@ -26,9 +26,9 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define (eoln) (string #\newline))
-(define (servermsg) (string "::thttpd-msg::"))
-(define (errormsg) (string "::thttpd-error::"))
+(define eoln (string #\newline))
+(define servermsg (string "::thttpd-msg::"))
+(define errormsg (string "::thttpd-error::"))
 (define aspect-content (string-append "Content-Type: text/plain;charset=utf-8" (string #\return#\newline)))
 (define :thttpd-daemon-record
   (make-record-type 'thttpd-daemon-record
@@ -50,31 +50,48 @@
 
     (set! *socket (open-socket *port))
 
+    (define (get-response lst)
+      (define (get return)
+        (for-each
+         (lambda (element)
+           (set! return (call-with-current-continutation
+                         (lambda (r)
+                           (set! get r)
+                           (return element)))))
+         lst)
+        (return 'end-generate))
+
+      (define (gen)
+        (call-with-current-continuation get))
+      gen)
+
     (for-each display '("Opening listening socket on host : "
                         *hostname
                         " port : "
                         *port
-                        (eoln)))
+                        eoln))
     ((lambda ()
        (call-with-values
            (lambda ()
              (socket-accept *socket))
          (lambda (in out)
-           (let ((a (read in)))
+           (let ((a (read in));;race cond. client requests
+                 (b (read in))
+                 (c (read in)))
              ;;(let ((in (make-string-input-port in)))
-             (for-each display '((servermsg) (symbol->string a)))
+             (for-each display '(servermsg (symbol->string a)))
              (if (symbol? a)
+                 (get-response '(a b c))
                  (cond ((eq? a 'GET)
                         (write "Hello World")
                         ;;(display "200 OK" out)
                         (display aspect-content out)
-                        (display (string #\return #\newline) out)
+                        (display (string #\return #\newline) out) ;; CRLF
                         (display "\"Hello World\"" out)
                         ;;(close-input-port in)
                         ;;(close-socket *socket)
                         ;;(close-output-port out)
                         )
                        (else ;; + keep-alive
-                        (write (errormsg) out))
+                        (write errormsg out))
                        )))))))))
-
