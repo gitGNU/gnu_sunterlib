@@ -26,10 +26,13 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+;;,open ascii records sockets continuations
+
 (define eoln (string #\newline))
-(define servermsg (string "::thttpd-msg::"))
-(define errormsg (string "::thttpd-error::"))
-(define aspect-content (string-append "Content-Type: text/plain;charset=utf-8" (string #\return#\newline)))
+(define cr (string (ascii->char 13)))
+(define servermsg "::thttpd-msg::")
+(define errormsg "::thttpd-error::")
+(define aspect-content (string-append "Content-Type: text/plain;charset=utf-8" cr eoln))
 (define :thttpd-daemon-record
   (make-record-type 'thttpd-daemon-record
 		    '(hostname port sock)))
@@ -41,6 +44,23 @@
 (define thttpd-port (record-accessor :thttpd-daemon-record 'port))
 (define thttpd-sock (record-accessor :thttpd-daemon-record 'sock))
 
+(define (get-response-f lst)
+  (define (get return)
+    (for-each
+     (lambda (element)
+       (set! return (call-with-current-continutation
+                     (lambda (r)
+                       (set! get r)
+                       (return element)))))
+     lst)
+    (return 'end-generate))
+
+  (define (gen)
+    (call-with-current-continuation get))
+  gen)
+
+(define (get-response l)
+  (get-response-f l))
 
 (define (run-daemon-child-http rec)
   (let ((*hostname (thttpd-hostname rec))
@@ -49,24 +69,6 @@
         )
 
     (set! *socket (open-socket *port))
-
-    (define (get-response-f lst)
-      (define (get return)
-        (for-each
-         (lambda (element)
-           (set! return (call-with-current-continutation
-                         (lambda (r)
-                           (set! get r)
-                           (return element)))))
-         lst)
-        (return 'end-generate))
-
-      (define (gen)
-        (call-with-current-continuation get))
-      gen)
-
-    (define (get-response l)
-      (get-response-f l))
 
     (for-each display '("Opening listening socket on host : "
                         *hostname
@@ -94,7 +96,7 @@
                                   ;;(display "200 OK" out)
                                   (display aspect-content out)
                                   ;; FIXME #\return (make-char X)
-                                  (display (string #\return #\newline) out) ;; CRLF
+                                  (display (string-append cr eoln) out) ;; CRLF
                                   (display "\"Hello World\"" out)
                                   ))))
                                   ;;(close-input-port in)
