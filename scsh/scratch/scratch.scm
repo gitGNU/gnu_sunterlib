@@ -1,4 +1,4 @@
-;;; thttpdaemon.scm - a scheme web daemon
+;;; scratch.scm - a scheme utility library
 ;;;
 ;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;
@@ -26,20 +26,20 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    (define (get-response-f lst)
-      (define (get return)
-        (for-each
-         (lambda (element)
-           (set! return (call-with-current-continutation
-                         (lambda (r)
-                           (set! get r)
-                           (return element)))))
-         lst)
-        (return 'end-generate))
+(define (get-response-f lst)
+  (define (get return)
+    (for-each
+     (lambda (element)
+       (set! return (call-with-current-continutation
+                     (lambda (r)
+                       (set! get r)
+                       (return element)))))
+     lst)
+    (return 'end-generate))
 
-      (define (gen)
-        (call-with-current-continuation get))
-      gen)
+  (define (gen)
+    (call-with-current-continuation get))
+  gen)
 
-    (define (get-response l)
-      (get-response-f l))
+(define (get-response l)
+  (get-response-f l))
