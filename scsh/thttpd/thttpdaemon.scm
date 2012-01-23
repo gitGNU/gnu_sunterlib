@@ -91,7 +91,6 @@
                           (let ((response-word-2nd (get-response abcl)))
                             (if (symbol? response-word-2nd)
                                 (begin
-                                  (write "Hello World")
                                   ;;(display "200 OK" out)
                                   (display aspect-content out)
                                   (display (string #\return #\newline) out) ;; CRLF
