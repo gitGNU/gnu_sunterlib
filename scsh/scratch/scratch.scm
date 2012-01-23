@@ -26,7 +26,13 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define (char-continue lst)
+
+;; inner syntax
+;; test
+;;  (list-generate-element a b c) generates an element with each call
+
+
+(define (list-generate-element lst)
   (define (get-char return)
     (for-each
      (lambda (element)
@@ -40,5 +46,11 @@
   (define (gen)
     (call-with-current-continuation get-char))
   gen)
+
+;; outer syntax
 ;; test
-;;  (char-continue l) generates the chars with each call
+;; (list-gen a b c) gives an element of '(a b c) each call
+(define-syntax list-gen
+  (syntax-rules ()
+    ((_ a ...)
+     (list-generate-element (make-list a ...)))))
