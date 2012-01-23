@@ -50,7 +50,7 @@
 
     (set! *socket (open-socket *port))
 
-    (define (get-response lst)
+    (define (get-response-f lst)
       (define (get return)
         (for-each
          (lambda (element)
@@ -65,6 +65,9 @@
         (call-with-current-continuation get))
       gen)
 
+    (define (get-response l)
+      (get-response-f l))
+
     (for-each display '("Opening listening socket on host : "
                         *hostname
                         " port : "
@@ -75,23 +78,28 @@
            (lambda ()
              (socket-accept *socket))
          (lambda (in out)
-           (let ((a (read in));;race cond. client requests
-                 (b (read in))
-                 (c (read in)))
+           (let* ((a (read in));;race cond. client requests
+                  (b (read in))
+                  (c (read in))
+                  (abcl '(a b c)))
              ;;(let ((in (make-string-input-port in)))
              (for-each display '(servermsg (symbol->string a)))
              (if (symbol? a)
-                 (get-response '(a b c))
-                 (cond ((eq? a 'GET)
-                        (write "Hello World")
-                        ;;(display "200 OK" out)
-                        (display aspect-content out)
-                        (display (string #\return #\newline) out) ;; CRLF
-                        (display "\"Hello World\"" out)
-                        ;;(close-input-port in)
-                        ;;(close-socket *socket)
-                        ;;(close-output-port out)
-                        )
-                       (else ;; + keep-alive
-                        (write errormsg out))
-                       )))))))))
+                 (let ((response-word (get-response abcl)))
+                   (cond ((eq? a 'GET)
+                          ;; fall through with continuations
+                          (let ((response-word-2nd (get-response abcl)))
+                            (if (symbol? response-word-2nd)
+                                (begin
+                                  (write "Hello World")
+                                  ;;(display "200 OK" out)
+                                  (display aspect-content out)
+                                  (display (string #\return #\newline) out) ;; CRLF
+                                  (display "\"Hello World\"" out)
+                                  ))))
+                                  ;;(close-input-port in)
+                                  ;;(close-socket *socket)
+                                  ;;(close-output-port out)
+                         (else ;; + keep-alive
+                          (write errormsg out))
+                         ))))))))))
