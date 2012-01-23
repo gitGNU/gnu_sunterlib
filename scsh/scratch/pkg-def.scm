@@ -8,4 +8,5 @@
   (install-file "README" 'doc)
   (install-file "NEWS" 'doc)
   (install-string (COPYING) "COPYING" 'doc)
+  (install-string "load.scm" 'scheme)
   (install-file "scratch.scm" 'scheme))

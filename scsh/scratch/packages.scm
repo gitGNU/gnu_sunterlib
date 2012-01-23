@@ -5,4 +5,4 @@
 (define-structure thttpd
   scratch-interface
   (open scheme)
-  (files scratch))
+  (files load scratch))
