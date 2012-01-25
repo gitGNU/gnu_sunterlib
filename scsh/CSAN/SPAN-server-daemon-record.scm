@@ -1,6 +1,6 @@
-;;; load.scm - a scheme SPAN
+;;; CSAN-server-daemon-record.scm - records for CSAN server side
 ;;;
-;;; Copyright (c) 2012 Johan Ceuppens
+;;; Copyright (c) 2011-2012 Johan Ceuppens
 ;;;
 ;;; All rights reserved.
 ;;;
@@ -26,16 +26,17 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(load "SPAN-util.scm")
-(load "SPAN.scm")
-(load "SPAN-client.scm")
+(define :CSAN-daemon-record
+  (make-record-type 'CSAN-daemon-record
+		    '(hostname port sock motd ack bye)))
+(define make-CSAN-daemon-record
+  (record-constructor :CSAN-daemon-record
+		      '(hostname port sock motd ack bye)))
 
-;; initialization
-;;
-;; Commands:
-;; h : display help
-;; get <filename> : fetch file
-(define SPAN-dir (string-append (getenv "HOME") "/.span"))
-(questionaire SPAN-dir) ;; this changes the SPAN-dir
-;; NOTE : after init of questionaire, you can spawn a shell:
-;; (SPAN-shell-spawn SPAN-dir (string-append SPAN-dir "/mirror"))
+(define hostname (record-accessor :CSAN-daemon-record 'hostname))
+(define port (record-accessor :CSAN-daemon-record 'port))
+(define sock (record-accessor :CSAN-daemon-record 'sock))
+(define motd (record-accessor :CSAN-daemon-record 'motd))
+(define ack (record-accessor :CSAN-daemon-record 'ack))
+(define bye (record-accessor :CSAN-daemon-record 'bye))
+

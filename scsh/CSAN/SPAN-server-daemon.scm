@@ -28,7 +28,7 @@
 
 ;; NOTE : files stored on this server are retrieved from its runtime directory
 
-(load "SPAN-server-daemon-record.scm")
+(load "CSAN-server-daemon-record.scm")
 
 (define (errormsg) (display " message not understood. "))
 (define (eoln) (string #\newline))
@@ -43,7 +43,7 @@
         ((eof-object? c)contents)
       (set! contents (string-append contents (string c))))))
 
-(define (run-daemon-child-SPAN rec)
+(define (run-daemon-child-CSAN rec)
   (let ((*hostname (hostname rec))
         (*port (port rec))
         (*socket (socket rec))
@@ -56,7 +56,7 @@
 
     (set! *socket (open-socket *port))
 
-    (for-each display '("Opening SPAN server side : listening on host : "
+    (for-each display '("Opening CSAN server side : listening on host : "
                         *hostname
                         " port : "
                         *port
@@ -97,9 +97,9 @@
 	    "localhost" ;; virtual host
 	    6969
             #f
-	    "SPAN server side ready."
+	    "CSAN server side ready."
 	    "Scheming..."
-            "SPAN server signing off."
+            "CSAN server signing off."
             ))
 
-(run-daemon-child-SPAN rc)
+(run-daemon-child-CSAN rc)

@@ -1,4 +1,4 @@
-;;; load.scm - a scheme SPAN
+;;; load.scm - a scheme CSAN
 ;;;
 ;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
@@ -26,28 +26,16 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define (html-dump htmlfile)
-  (let ((in (open-input-file htmlfile))
-        (contents ""))
+(load "CSAN-util.scm")
+(load "CSAN.scm")
+(load "CSAN-client.scm")
 
-    (define (f c tagged)
-      (if (= tagged 0) (string c) ""))
-
-    (define (read-html-file contents)
-      (let ((tagged 0))
-        (do ((c (read-char in) (read-char in)))
-            ((eof-object? c)contents)
-        (cond ((and (= tagged 0)(eq? c #\<))
-               (set! tagged (+ tagged 1)))
-              ((and (> tagged 0)(eq? c #\<))
-               (set! tagged (+ tagged 1)))
-              ((and (= tagged 0)(eq? c #\>))
-               (set! tagged (- tagged 1)))
-              ((and (> tagged 0)(eq? c #\>))
-               (set! tagged (- tagged 1)))
-              ((< tagged 0)
-               (display "html-dump : bad html.")(newline)
-               (set! tagged 0))
-              )
-        (set! contents (string-append contents (f c tagged))))))
-        (read-html-file contents)))
+;; initialization
+;;
+;; Commands:
+;; h : display help
+;; get <filename> : fetch file
+(define CSAN-dir (string-append (getenv "HOME") "/.span"))
+(questionaire CSAN-dir) ;; this changes the CSAN-dir
+;; NOTE : after init of questionaire, you can spawn a shell:
+;; (CSAN-shell-spawn CSAN-dir (string-append CSAN-dir "/mirror"))

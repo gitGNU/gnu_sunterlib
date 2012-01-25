@@ -1,4 +1,4 @@
-;;; SPAN-util.scm - Scheme Perl Archive Network utilities
+;;; CSAN-util.scm - Compehensive Scheme Archive Network utilities
 ;;;
 ;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
@@ -37,15 +37,15 @@
         (if (or (eq? s "http://")(eq? s "ftp://"))
             (set! s "")))))
 
-(define SPAN-generators (make-table))
-(table-set! SPAN-generators "helpfile" (lambda ()
+(define CSAN-generators (make-table))
+(table-set! CSAN-generators "helpfile" (lambda ()
                                          (display "Type in your helpfile : commands are 'get <filename-on-server>' and 'h'")
                                          (let ((*out (open-outputfile (string-append "/help"))))
                                            (do ((s (read)(read)))
                                                ((eof-object? s)0)
                                              (write s)(write " ")))))
 
-(define (SPAN-shell-spawn SPAN-dir mirror)
+(define (CSAN-shell-spawn CSAN-dir mirror)
   (newline)
   (display "span> ")
   (do ((s (read)(read)))
@@ -57,17 +57,17 @@
                   0)
                  ((string=? "h" (symbol->string s))
                   (display "Generating helpfile...")(newline)
-                  (let ((*helpfilename (string-append SPAN-dir "/help")))
+                  (let ((*helpfilename (string-append CSAN-dir "/help")))
                     (let ((*in (if (file-exists? *helpfilename)
                                    (open-input-file *helpfilename)
                                    (begin
                                      (display "no helpfile...")
-                                     ((SPAN-generate "helpfile"))))))
+                                     ((CSAN-generate "helpfile"))))))
                       (for-each write (read *in))))
                   0)
                  ((string<=? "get" (symbol->string s))
                   (display "enter package to fetch : ")
-                  (SPAN-ask-server (string-append "get " (symbol->string (read)))
+                  (CSAN-ask-server (string-append "get " (symbol->string (read)))
                                    (url-bite-off mirror) 6969))
                  ))
           ))

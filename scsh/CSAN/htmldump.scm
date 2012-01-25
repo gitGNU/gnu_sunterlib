@@ -1,6 +1,6 @@
-;;; SPAN-server-daemon-record.scm - records for SPAN server side
+;;; load.scm - a scheme CSAN
 ;;;
-;;; Copyright (c) 2011-2012 Johan Ceuppens
+;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
 ;;; All rights reserved.
 ;;;
@@ -26,17 +26,28 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define :SPAN-daemon-record
-  (make-record-type 'SPAN-daemon-record
-		    '(hostname port sock motd ack bye)))
-(define make-SPAN-daemon-record
-  (record-constructor :SPAN-daemon-record
-		      '(hostname port sock motd ack bye)))
+(define (html-dump htmlfile)
+  (let ((in (open-input-file htmlfile))
+        (contents ""))
 
-(define hostname (record-accessor :SPAN-daemon-record 'hostname))
-(define port (record-accessor :SPAN-daemon-record 'port))
-(define sock (record-accessor :SPAN-daemon-record 'sock))
-(define motd (record-accessor :SPAN-daemon-record 'motd))
-(define ack (record-accessor :SPAN-daemon-record 'ack))
-(define bye (record-accessor :SPAN-daemon-record 'bye))
+    (define (f c tagged)
+      (if (= tagged 0) (string c) ""))
 
+    (define (read-html-file contents)
+      (let ((tagged 0))
+        (do ((c (read-char in) (read-char in)))
+            ((eof-object? c)contents)
+        (cond ((and (= tagged 0)(eq? c #\<))
+               (set! tagged (+ tagged 1)))
+              ((and (> tagged 0)(eq? c #\<))
+               (set! tagged (+ tagged 1)))
+              ((and (= tagged 0)(eq? c #\>))
+               (set! tagged (- tagged 1)))
+              ((and (> tagged 0)(eq? c #\>))
+               (set! tagged (- tagged 1)))
+              ((< tagged 0)
+               (display "html-dump : bad html.")(newline)
+               (set! tagged 0))
+              )
+        (set! contents (string-append contents (f c tagged))))))
+        (read-html-file contents)))

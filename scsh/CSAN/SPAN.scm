@@ -1,4 +1,4 @@
-;;; SPAN.scm - Scheme Perl Archive Network
+;;; CSAN.scm - Scheme Perl Archive Network
 ;;;
 ;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
@@ -28,7 +28,7 @@
 
 ;; FXIME refactor
 
-(define (SPAN-question~ droptext question answer defaultchoice procedure)
+(define (CSAN-question~ droptext question answer defaultchoice procedure)
   (let ((s ""))
     (display droptext)
     (newline)
@@ -47,62 +47,62 @@
            (set! answer (symbol->string s)))
           ((and (number? s)(string? (number->string s)))
            (set! answer (number->string s)))
-          (else (SPAN-question~ droptext question answer defaultchoice)))
+          (else (CSAN-question~ droptext question answer defaultchoice)))
     procedure))
 
-(define SPAN-shell-droptext-1
+(define CSAN-shell-droptext-1
   "1. The following questions are intended to help you with the
-configuration. The SPAN module needs a directory of its own to cache
-important index files and maybe keep a temporary mirror of SPAN files.
+configuration. The CSAN module needs a directory of its own to cache
+important index files and maybe keep a temporary mirror of CSAN files.
 This may be a site-wide or a personal directory.")
 
-(define SPAN-shell-droptext-2
-  "2. Unless you are accessing the CPAN on your filesystem via a file: URL,
-CPAN.pm needs to keep the source files it downloads somewhere. Please
+(define CSAN-shell-droptext-2
+  "2. Unless you are accessing the CSAN on your filesystem via a file: URL,
+CSAN.pm needs to keep the source files it downloads somewhere. Please
 supply a directory where the downloaded files are to be kept.")
 
-(define SPAN-shell-droptext-3
+(define CSAN-shell-droptext-3
   "3. ")
 
-(define SPAN-shell-droptext-4
-  "4. Normally CPAN.pm keeps config variables in memory and changes need to
+(define CSAN-shell-droptext-4
+  "4. Normally CSAN.pm keeps config variables in memory and changes need to
 be saved in a separate 'o conf commit' command to make them permanent
 between sessions. If you set the 'auto_commit' option to true, changes
 to a config variable are always automatically committed to disk.")
 
-(define SPAN-shell-droptext-5
-"5. CPAN.pm can limit the size of the disk area for keeping the build
+(define CSAN-shell-droptext-5
+"5. CSAN.pm can limit the size of the disk area for keeping the build
 directories with all the intermediate files.")
 
-(define SPAN-shell-droptext-6
-  "6. The CPAN indexes are usually rebuilt once or twice per hour, but the
-typical CPAN mirror mirrors only once or twice per day. Depending on
+(define CSAN-shell-droptext-6
+  "6. The CSAN indexes are usually rebuilt once or twice per hour, but the
+typical CSAN mirror mirrors only once or twice per day. Depending on
 the quality of your mirror and your desire to be on the bleeding edge,
 you may want to set the following value to more or less than one day
-(which is the default). It determines after how many days CPAN.pm
+(which is the default). It determines after how many days CSAN.pm
 downloads new indexes.")
 
-(define SPAN-shell-droptext-7
-  "7. By default, each time the CPAN module is started, cache scanning is
+(define CSAN-shell-droptext-7
+  "7. By default, each time the CSAN module is started, cache scanning is
 performed to keep the cache size in sync. To prevent this, answer
 'never'.")
 
-(define SPAN-shell-droptext-8
-  "8. To considerably speed up the initial CPAN shell startup, it is
+(define CSAN-shell-droptext-8
+  "8. To considerably speed up the initial CSAN shell startup, it is
 possible to use Storable to create a cache of metadata. If Storable is
 not available, the normal index mechanism will be used.
 
 Note: this mechanism is not used when use_sqlite is on and SQLLite is
 running.")
 
-(define SPAN-shell-droptext-9
-  "9. The CPAN module can detect when a module which you are trying to build
+(define CSAN-shell-droptext-9
+  "9. The CSAN module can detect when a module which you are trying to build
 depends on prerequisites. If this happens, it can build the
 prerequisites for you automatically ('follow'), ask you for
 confirmation ('ask'), or just ignore them ('ignore'). Please set your
 policy to one of the three values.")
 
-;; (define SPAN-shell-droptext-10 ;;FIXME
+;; (define CSAN-shell-droptext-10 ;;FIXME
 ;;   "Every Makefile.PL is run by perl in a separate process. Likewise we
 ;; run 'make' and 'make install' in separate processes. If you have
 ;; any parameters (e.g. PREFIX, UNINST or the like) you want to
@@ -118,7 +118,7 @@ policy to one of the three values.")
 ;; Parameters for the 'perl Makefile.PL' command? [] ")
 
 
-;; (define SPAN-shell-droptext-11 ;;FIXME
+;; (define CSAN-shell-droptext-11 ;;FIXME
 ;; "Typical frequently used settings:
 
 ;;     PREFIX=~/perl    # non-root users (please see manual for more hints)
@@ -134,7 +134,7 @@ policy to one of the three values.")
 ;; Your choice: [] ")
 
 
-;; (define SPAN-shell-droptext-12 ;;FIXME
+;; (define CSAN-shell-droptext-12 ;;FIXME
 ;; "Parameters for the 'make install' command?
 ;; Typical frequently used setting:
 
@@ -143,7 +143,7 @@ policy to one of the three values.")
 ;;  <make_install_arg>
 ;; Your choice: []"
 
-;; (define SPAN-shell-droptext-13 ;;FIXME
+;; (define CSAN-shell-droptext-13 ;;FIXME
 ;; "A Build.PL is run by perl in a separate process. Likewise we run
 ;; './Build' and './Build install' in separate processes. If you have any
 ;; parameters you want to pass to the calls, please specify them here.
@@ -155,7 +155,7 @@ policy to one of the three values.")
 ;;  <mbuildpl_arg>
 ;; Parameters for the 'perl Build.PL' command? [] ")
 
-;; (define SPAN-shell-droptext-14 ;;FIXME
+;; (define CSAN-shell-droptext-14 ;;FIXME
 ;; "Parameters for the './Build' command? Setting might be:
 
 ;;     --extra_linker_flags -L/usr/foo/lib  # non-standard library location
@@ -163,7 +163,7 @@ policy to one of the three values.")
 ;;  <mbuild_arg>
 ;; Your choice: [] ")
 
-;; (define SPAN-shell-droptext-15 ;;FIXME
+;; (define CSAN-shell-droptext-15 ;;FIXME
 ;; "Do you want to use a different command for './Build install'? Sudo
 ;; users will probably prefer:
 
@@ -175,7 +175,7 @@ policy to one of the three values.")
 
 ;;  <mbuild_install_build_command>")
 
-;; (define SPAN-shell-droptext-16 ;;FIXME
+;; (define CSAN-shell-droptext-16 ;;FIXME
 ;; "Parameters for the './Build install' command? Typical frequently used
 ;; setting:
 
@@ -184,52 +184,52 @@ policy to one of the three values.")
 ;;  <mbuild_install_arg>
 ;; Your choice: [] ")
 
-;; (define SPAN-shell-droptext-17 ;;FIXME
+;; (define CSAN-shell-droptext-17 ;;FIXME
 ;; "If you're accessing the net via proxies, you can specify them in the
-;; CPAN configuration or via environment variables. The variable in
-;; the $CPAN::Config takes precedence.
+;; CSAN configuration or via environment variables. The variable in
+;; the $CSAN::Config takes precedence.
 
 ;;  <ftp_proxy>
 ;; Your ftp_proxy? []")
 
-;; (define SPAN-shell-droptext-18 ;;FIXME
+;; (define CSAN-shell-droptext-18 ;;FIXME
 ;; " <http_proxy>
 ;; Your http_proxy? []")
 
-;; (define SPAN-shell-droptext-19 ;;FIXME
+;; (define CSAN-shell-droptext-19 ;;FIXME
 ;; "<no_proxy>
 ;; Your no_proxy? []")
 
-(define SPAN-shell-droptext-20
-"20. CPAN needs access to at least one CPAN mirror.
+(define CSAN-shell-droptext-20
+"20. CSAN needs access to at least one CSAN mirror.
 
 As you did not allow me to connect to the internet you need to supply
-a valid CPAN URL now.
+a valid CSAN URL now.
 ")
 
-(define SPAN-shell-droptext-21
+(define CSAN-shell-droptext-21
   "21. Enter another URL or RETURN to quit: []")
 
-(define SPAN-shell-droptext-22
+(define CSAN-shell-droptext-22
   "22. Please remember to call 'o conf commit' to make the config permanent!
 
 
-cpan shell -- CPAN exploration and modules installation (v1.9402)
+cpan shell -- CSAN exploration and modules installation (v1.9402)
 Enter 'h' for help.")
 
 (define questions (make-table))
-(table-set! questions 1 SPAN-shell-droptext-1)
-(table-set! questions 2 SPAN-shell-droptext-2)
-(table-set! questions 3 SPAN-shell-droptext-3)
-(table-set! questions 4 SPAN-shell-droptext-4)
-(table-set! questions 5 SPAN-shell-droptext-5)
-(table-set! questions 6 SPAN-shell-droptext-6)
-(table-set! questions 7 SPAN-shell-droptext-7)
-(table-set! questions 8 SPAN-shell-droptext-8)
-(table-set! questions 9 SPAN-shell-droptext-9)
-(table-set! questions 20 SPAN-shell-droptext-20)
-(table-set! questions 21 SPAN-shell-droptext-21)
-(table-set! questions 22 SPAN-shell-droptext-22)
+(table-set! questions 1 CSAN-shell-droptext-1)
+(table-set! questions 2 CSAN-shell-droptext-2)
+(table-set! questions 3 CSAN-shell-droptext-3)
+(table-set! questions 4 CSAN-shell-droptext-4)
+(table-set! questions 5 CSAN-shell-droptext-5)
+(table-set! questions 6 CSAN-shell-droptext-6)
+(table-set! questions 7 CSAN-shell-droptext-7)
+(table-set! questions 8 CSAN-shell-droptext-8)
+(table-set! questions 9 CSAN-shell-droptext-9)
+(table-set! questions 20 CSAN-shell-droptext-20)
+(table-set! questions 21 CSAN-shell-droptext-21)
+(table-set! questions 22 CSAN-shell-droptext-22)
 
 (define question?
   (lambda (n)
@@ -237,113 +237,113 @@ Enter 'h' for help.")
                (table-ref n)))))
 
 (define questionaire
-  (lambda (SPAN-dir)
+  (lambda (CSAN-dir)
     ;; (fork-and-forget
     (define answer "")
-    (define SPAN-build-and-cache-dir SPAN-dir)
-    (define SPAN-download-target-dir SPAN-dir)
-    (define SPAN-mirror-url (if (file-exists? (string-append SPAN-dir "/mirror"))
+    (define CSAN-build-and-cache-dir CSAN-dir)
+    (define CSAN-download-target-dir CSAN-dir)
+    (define CSAN-mirror-url (if (file-exists? (string-append CSAN-dir "/mirror"))
 
-                                (read (string-append SPAN-dir "/mirror"))
+                                (read (string-append CSAN-dir "/mirror"))
                                 "localhost"))
     ;; question 1
     ;;((lambda ()
        (cond
-        ((and (file-exists? SPAN-build-and-cache-dir)
-              (file-exists? (string-append SPAN-dir "/mirror")))
-         (let ((SPAN-mirror-url (make-string-input-port
-                                 (open-input-file (string-append SPAN-build-and-cache-dir "/mirror")))))
-        (SPAN-shell-spawn SPAN-dir SPAN-mirror-url)))
+        ((and (file-exists? CSAN-build-and-cache-dir)
+              (file-exists? (string-append CSAN-dir "/mirror")))
+         (let ((CSAN-mirror-url (make-string-input-port
+                                 (open-input-file (string-append CSAN-build-and-cache-dir "/mirror")))))
+        (CSAN-shell-spawn CSAN-dir CSAN-mirror-url)))
      (else
-;;;;;;;;prototype (define (SPAN-question~ droptext question answer defaultchoice)
-      ((SPAN-question~ (question? 1)
-                       "SPAN build and cache directory"
+;;;;;;;;prototype (define (CSAN-question~ droptext question answer defaultchoice)
+      ((CSAN-question~ (question? 1)
+                       "CSAN build and cache directory"
                        ""
-                       SPAN-build-and-cache-dir
+                       CSAN-build-and-cache-dir
                        (lambda (answer)
                          (let ((dir (create-directory answer)))
                            (run (touch (string-append dir "/help")))
                            (let ((out (open-output-file (string-append dir "/help"))))
                              (write "Commands : 'h' and 'get <filename-on-server>"))
                            (if (file-directory? dir)
-                               (set! SPAN-dir answer)
-                               (set! SPAN-build-and-cache-dir answer)
+                               (set! CSAN-dir answer)
+                               (set! CSAN-build-and-cache-dir answer)
                                #f)))) answer)
 
-      (define SPAN-download-target-dir (string-append SPAN-build-and-cache-dir "/" "sources"))
-      ((SPAN-question~ (question? 2)
+      (define CSAN-download-target-dir (string-append CSAN-build-and-cache-dir "/" "sources"))
+      ((CSAN-question~ (question? 2)
                        "Download target directory"
                        ""
-                       SPAN-download-target-dir
+                       CSAN-download-target-dir
                        (lambda (answer)
                          (let ((dir (create-directory answer)))
                            (if (file-directory? answer)
-                               (set! SPAN-download-target-dir answer)
+                               (set! CSAN-download-target-dir answer)
                                #f)))) answer)
 
-      (define SPAN-build-dir (string-append SPAN-build-and-cache-dir "/" "build"))
-      ((SPAN-question~ (question? 3)
+      (define CSAN-build-dir (string-append CSAN-build-and-cache-dir "/" "build"))
+      ((CSAN-question~ (question? 3)
                        "Directory where the build process takes place?"
                        ""
-                       SPAN-download-target-dir
+                       CSAN-download-target-dir
                        (lambda (answer)
                          (let ((dir (create-directory answer)))
                            (if (file-directory? answer)
-                               (set! SPAN-build-dir answer)
+                               (set! CSAN-build-dir answer)
                                #f)))) answer)
 
-      (define SPAN-config "no")
-      ((SPAN-question~ (question? 4)
+      (define CSAN-config "no")
+      ((CSAN-question~ (question? 4)
                        "Always commit changes to config variables to disk?"
                        ""
-                       SPAN-config
+                       CSAN-config
                        (lambda (answer)
-                         (set! SPAN-config answer)
+                         (set! CSAN-config answer)
                          #f)) answer)
 
-      (define SPAN-build-Mb 100)
-      ((SPAN-question~ (question? 5)
+      (define CSAN-build-Mb 100)
+      ((CSAN-question~ (question? 5)
                        "Cache size for build directory (in MB)?"
                        ""
-                       SPAN-build-Mb
+                       CSAN-build-Mb
                        (lambda (answer)
-                         (set! SPAN-build-Mb answer)
+                         (set! CSAN-build-Mb answer)
                          #f)) answer)
 
-      (define SPAN-expire 1)
-      ((SPAN-question~ (question? 6)
+      (define CSAN-expire 1)
+      ((CSAN-question~ (question? 6)
                        "Let the index expire after how many days?"
                        ""
-                       SPAN-expire
+                       CSAN-expire
                        (lambda (answer)
-                         (set! SPAN-expire answer)
+                         (set! CSAN-expire answer)
                          #f)) answer)
 
-      (define SPAN-scan-cache "atstart")
-      ((SPAN-question~ (question? 7)
+      (define CSAN-scan-cache "atstart")
+      ((CSAN-question~ (question? 7)
                        "Perform cache scanning (atstart or never)?"
                        ""
-                       SPAN-scan-cache
+                       CSAN-scan-cache
                        (lambda (answer)
-                         (set! SPAN-scan-cache answer)
+                         (set! CSAN-scan-cache answer)
                          #f)) answer)
 
-      (define SPAN-cache-metadata "yes")
-      ((SPAN-question~ (question? 8)
+      (define CSAN-cache-metadata "yes")
+      ((CSAN-question~ (question? 8)
                        "Cache metadata (yes/no)?"
                        ""
-                       SPAN-cache-metadata
+                       CSAN-cache-metadata
                        (lambda (answer)
-                         (set! SPAN-cache-metadata answer)
+                         (set! CSAN-cache-metadata answer)
                          #f)) answer)
 
-      (define SPAN-policy-building "ask")
-      ((SPAN-question~ (question? 9)
+      (define CSAN-policy-building "ask")
+      ((CSAN-question~ (question? 9)
                        "Policy on building prerequisites (follow, ask or ignore)? [ask]"
                        ""
-                       SPAN-policy-building
+                       CSAN-policy-building
                        (lambda (answer)
-                         (set! SPAN-policy-building answer)
+                         (set! CSAN-policy-building answer)
                          #f)) answer)
 
       ;; question 10 is under dev
@@ -354,27 +354,27 @@ Enter 'h' for help.")
       ;; ... until 20
 
 
-      ((SPAN-question~ (question? 20)
-                       "Please enter the URL of your CPAN mirror "
+      ((CSAN-question~ (question? 20)
+                       "Please enter the URL of your CSAN mirror "
                        ""
-                       SPAN-mirror-url
+                       CSAN-mirror-url
                        (lambda (answer)
-                         (set! SPAN-mirror-url answer)
-                         (run (touch (string-append SPAN-dir "/mirror")))
-                         (let ((out (open-output-file (string-append SPAN-dir "/mirror"))))
+                         (set! CSAN-mirror-url answer)
+                         (run (touch (string-append CSAN-dir "/mirror")))
+                         (let ((out (open-output-file (string-append CSAN-dir "/mirror"))))
                            (write answer out))
                          #f)) answer)
 
-      (define SPAN-mirror-url-2 "")
-      ((SPAN-question~ (question? 21)
+      (define CSAN-mirror-url-2 "")
+      ((CSAN-question~ (question? 21)
                        "Enter another URL or RETURN to quit: [] "
                        ""
-                       SPAN-mirror-url-2
+                       CSAN-mirror-url-2
                        (lambda (answer)
-                         (set! SPAN-mirror-url-2 answer)
+                         (set! CSAN-mirror-url-2 answer)
                          #f)) answer)
 
       (display (question? 22))
-      (SPAN-shell-spawn SPAN-dir SPAN-mirror-url))
+      (CSAN-shell-spawn CSAN-dir CSAN-mirror-url))
      )))
 
