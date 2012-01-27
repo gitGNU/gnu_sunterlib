@@ -3,7 +3,7 @@
    CSAN-question~))
 
 (define-structure CSAN
-  schemedoc-interface
+  CSAN-interface
   (open scheme)
   (files CSAN-client CSAN-server CSAN load CSAN-util))
 
