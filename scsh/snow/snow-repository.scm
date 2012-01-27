@@ -57,18 +57,18 @@
         (error "parse-for-url : malformed url string"))))
 
 (define (snow-repository filename db)
-  (let ((index 0)
-        (index2 0)
-        (index3 0)
-        (index4 0)
-        (urlstr "")
+  (let ((urlstr "")
         (db db)
-        (contents (read-in-file-contents filename)))
+        (contents (read-in-file-contents filename))
+        (index4 0)
+        (index3 0)
+        (index2 0)
+        (index 0))
     (set! index2 (parse-for contents "repository" index))
     (set! index3 (parse-for contents "package" index))
     (set! index4 (parse-for contents "url" index))
     (set! urlstr (parse-for-url contents index4))
-
+    
     (set! db (append db (cons "url" urlstr)))
     db))
 
