@@ -27,7 +27,11 @@
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (load "snow-repository.scm")
-
+(display "set the CSAN-dir : in bash : export CSAN_DIR=$HOME/.csan")
+(newline)
+(display "and do : in bash : mkdir $HOME/.csan")
+(newline)
+(CSAN-dir (getenv "CSAN_DIR"))
 (let* ((url (snow-repository "./test.scm" '()))
        (snow-mirror-url (cadr url)))
   (display (question? 22))

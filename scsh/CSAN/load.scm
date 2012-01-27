@@ -35,7 +35,7 @@
 ;; Commands:
 ;; h : display help
 ;; get <filename> : fetch file
-(define CSAN-dir (string-append (getenv "HOME") "/.span"))
+(define CSAN-dir (string-append (getenv "HOME") "/.csan"))
 (questionaire CSAN-dir) ;; this changes the CSAN-dir
 ;; NOTE : after init of questionaire, you can spawn a shell:
 ;; (CSAN-shell-spawn CSAN-dir (string-append CSAN-dir "/mirror"))
