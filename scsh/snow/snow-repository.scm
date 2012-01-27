@@ -36,6 +36,7 @@
                 (set! word ""))
                ((eq? (string-ref s i) #\newline)
                 #t));;(string-set! s i ""
+         
          (set! word (string-append word (string (string-ref s i))))))))
 
 (define (read-in-file-contents filename)
@@ -52,7 +53,9 @@
              #\")
         (do ((i index (+ i 1)))
             ((eq? (string-ref s i) #\")
-             (string-append s (string #\")))
+             (string-append s (string #\"))
+             i)
+          
           (set! word (string-append word (string (string-ref s i)))))
         (error "parse-for-url : malformed url string"))))
 
@@ -68,7 +71,7 @@
     (set! index3 (parse-for contents "package" index))
     (set! index4 (parse-for contents "url" index))
     (set! urlstr (parse-for-url contents index4))
-    
+
     (set! db (append db (cons "url" urlstr)))
     db))
 
