@@ -1,4 +1,4 @@
-;;; Snow-repository.scm - Snow implementation
+;;; snow-repository.scm - Snow implementation
 ;;;
 ;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
@@ -26,16 +26,24 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(define (parse-for s index)
+(define (parse-for s needle index)
   (let ((word "("))
     (do ((i index (+ i 1)))
-        ((cond ((string=? s word)
+        ((cond ((string=? needle word)
                 ;;(set! index i))
                 i)
+               ((eq? (string-ref s i) #\space)
+                (set! word ""))
                ((eq? (string-ref s i) #\newline)
                 #t));;(string-set! s i ""
          (set! word (string-append word (string (string-ref s i))))))))
 
+(define (read-in-file-contents filename)
+  (let ((contents ""))
+  (do ((s (read-char)(read-char)))
+      ((eof-object? s)
+       contents)
+    (set! contents (append contents (string s))))))
 
 (define (parse-for-url s index)
   (let ((word "")
@@ -48,14 +56,21 @@
           (set! word (string-append word (string (string-ref s i)))))
         (error "parse-for-url : malformed url string"))))
 
-(define (snow-repository db)
+(define (snow-repository filename db)
   (let ((index 0)
-        (db db))
-    (cond ((let ((index2 (parse-for "repository" index)))
-             (cond ((let ((index3 (parse-for "package" index2))))
-                    (cond ((let ((index4 (parse-for "url" index3))))
-                           ((cond (let ((url parse-for-url index4))))
-                            (set! db (append db (cons "url" url)
-                                             ))))))))))))
+        (index2 0)
+        (index3 0)
+        (index4 0)
+        (urlstr "")
+        (db db)
+        (contents (read-in-file-contents filename)))
+    (set! index2 (parse-for contents "repository" index))
+    (set! index3 (parse-for contents "package" index))
+    (set! index4 (parse-for contents "url" index))
+    (set! urlstr (parse-for-url contents index4))
+
+    (set! db (append db (cons "url" urlstr)))
+    db))
+
 
 
