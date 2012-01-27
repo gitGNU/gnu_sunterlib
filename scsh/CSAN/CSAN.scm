@@ -214,8 +214,9 @@ a valid CSAN URL now.
   "22. Please remember to call 'o conf commit' to make the config permanent!
 
 
-cpan shell -- CSAN exploration and modules installation (v1.9402)
-Enter 'h' for help.")
+cpan shell -- CSAN exploration and modules installation (v0.1)
+Enter 'h' for help.
+Commands : get filename.tar.gz")
 
 (define questions (make-table))
 (table-set! questions 1 CSAN-shell-droptext-1)

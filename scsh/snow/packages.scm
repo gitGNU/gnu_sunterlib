@@ -2,8 +2,8 @@
   (export
    parse-for snow-repository))
 
-(define-structure snow 
+(define-structure snow
   snow-interface
-  (open scheme)
-  (files snow))
+  (open scheme CSAN)
+  (files snow-repository))
 

@@ -1,4 +1,4 @@
-;;; load.scm - a scheme CSAN
+;;; load.scm - a scheme CSAN - Snow utility
 ;;;
 ;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
@@ -27,4 +27,9 @@
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (load "snow-repository.scm")
-(display (snow-repository "./test.scm" '()))
+
+(let* ((url (snow-repository "./test.scm" '()))
+       (snow-mirror-url url))
+  (display (question? 22))
+  (CSAN-shell-spawn CSAN-dir snow-mirror-url))
+

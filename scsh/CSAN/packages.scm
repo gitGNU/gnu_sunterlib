@@ -1,6 +1,8 @@
 (define-interface CSAN-interface
   (export
-   CSAN-question~))
+   CSAN-question~
+   CSAN-shell-spawn
+   CSAN-dir))
 
 (define-structure CSAN
   CSAN-interface
