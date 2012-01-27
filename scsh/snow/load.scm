@@ -29,7 +29,7 @@
 (load "snow-repository.scm")
 
 (let* ((url (snow-repository "./test.scm" '()))
-       (snow-mirror-url url))
+       (snow-mirror-url (cadr url)))
   (display (question? 22))
   (CSAN-shell-spawn CSAN-dir snow-mirror-url))
 
