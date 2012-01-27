@@ -1,1 +1,3 @@
-A client-server system for getting scsh packages over the net. Also actors and agent scheme files.
+A client-server system for getting scsh packages over the net. 
+Also, actors and agent scheme files can be fetched and run in scsh.
+The command in the CSAN shell is 'h' for help and 'get package.tar.gz'.
