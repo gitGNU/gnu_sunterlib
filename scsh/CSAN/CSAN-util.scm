@@ -28,17 +28,26 @@
 
 (define (url-bite-off url)
   (let ((s "")
-        (do ((i 0 (+ i 1)))
-            ((or (>= i (string-length url))
-                 (eq? (string-ref url i) #\/)
-                 (eq? (string-ref url i) #\\)) ;; needs scheme URL parsing (e.g. with regexps or other perl things
-             s)
-          (set! s (string-append s (string (string-ref url i))))
-          (cond ((or (eq? s "http://")(eq? s "ftp://")
-                     (eq? s " http://")(eq? s " ftp://"))
-                 (set! s ""))
-                )))
-    ))
+        (rets "")
+        (j 0))
+    (do ((i 0 (+ i 1)))
+        ((or (string=? s "http://")(string=? s "ftp://")
+             (string=? s " http://")(string=? s " ftp://"))
+         (set! j i))
+      (set! s (string-append s (string (string-ref url i))))
+      )
+
+
+    (do ((i j (+ i 1)))
+        ((or (>= i (string-length url))
+             (eq? (string-ref url i) #\/)
+             (eq? (string-ref url i) #\\)) ;; needs scheme URL parsing (e.g. with regexps or other perl things
+         rets)
+      (set! rets (string-append rets (string (string-ref url i))))
+      )))
+
+;;test
+;;(display (url-bite-off "http://soft/vub/"))
 
 (define CSAN-generators (make-table))
 (table-set! CSAN-generators "helpfile" (lambda ()
