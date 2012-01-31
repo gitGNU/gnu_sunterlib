@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2012 Johan Ceuppens 
+;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
 ;;; All rights reserved.
 ;;;
@@ -26,12 +26,13 @@
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (load "file-util.scm")
-(load "hash-util.scm")
 
 (display "Do you want to use hash tables (y/n)?")
 (let ((c (read-char)))
   (if (eq? c #\y)
       (load "string-util-alt.scm")
-      (load "string-util.scm")))
+      (begin
+        (load "hash-util.scm")
+        (load "string-util.scm"))))
 
 (load "html-util.scm")

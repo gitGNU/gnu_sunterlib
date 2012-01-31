@@ -1,6 +1,6 @@
 ;;; client.scm - connect-to-server utility
 ;;;
-;;; Copyright (c) 2012 Johan Ceuppens 
+;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
 ;;; All rights reserved.
 ;;;
@@ -26,8 +26,8 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-;;(load "util.scm")
-;;(load "html.scm")
+(load "util.scm")
+(load "html.scm")
 ;;,open posix posix-files
 
 (define server-data
@@ -85,7 +85,7 @@
       )
 	))
     ))
-    
+
 
 ;    (let ((contents (file->contents (string-append dir-filename "/" filename))))
 ;      (display contents)
