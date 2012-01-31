@@ -58,13 +58,13 @@
                            (let ((s3 ""))
                              (do ((k j (+ k 1)))
                                  ((cond ((eq? (string-ref tags-of-file-contents-str k)
-                                              #\")
-                                         (display i)
+                                              #\");;FIXME
+
                                          (set! j k)(set! i k)(set! s2 ""))
                                         ((eq? (string-ref tags-of-file-contents-str k)
                                               #\/)
                                          (set! ret (append ret (list s3)))
-                                         (set! s3 "")
+
                                          (set! j k)
                                          (set! i k))
                                         ((>= k (string-length tags-of-file-contents-str));;FIXME prev
@@ -74,8 +74,7 @@
                                          s3
                                          (string (string-ref tags-of-file-contents-str k))))
                              )
-                             ;;(set! j k)
-                             ;;(set! i k)
+
                              ))
                           ((not (string<=? s2 http-prefix))
                            (set! s "")
