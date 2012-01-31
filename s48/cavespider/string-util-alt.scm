@@ -29,70 +29,72 @@
 (load "hash-util.scm")
 (load "html-util.scm")
 
-(define (url->hostname url-list hostname-list)
-  (let ((file-contents (file-contents->url )))
-    ))
+;;(define (url->hostname url-list hostname-list)
+;;  (let ((file-contents (file-contents->url )))
+;;    ))
 
 
 (define (tags filename)
   (html-tags filename))
 
 (define (file-contents->url tags-of-file-contents-str)
+  ;;(display tags-of-file-contents-str)
   (let ((s "")
         (ret '())
         (http-prefix "http://"))
 
     (do ((i 0 (+ i 1)))
         ((>= i (string-length tags-of-file-contents-str))
-         #t)
-      (cond ((eq? #\h (string-ref tags-of-file-contents-str i))
-             (set! s "")
-             (do ((j i (+ j 1)))
-                 ((cond ((string<=? s "http://")
-                         (let ((s2 ""))
-                         ;;  (display s)
-                           (do ((k j (+ k 1)))
-                               ((cond ((>= k (string-length tags-of-file-contents-str))
-                                       (set! s "")(set! j k)(set! i k))
-                                      ((eq? (string-ref tags-of-file-contents-str k)
-                                            #\/)
-                                       (set! ret (append ret (list s2)))
-                                       (set! s2 "")
-                                       (set! j k)(set! i k)
-                                       )))
+         ret)
+      (cond ((not (eq? #\h (string-ref tags-of-file-contents-str i)))
+             (set! s ""))
+            ((eq? #\h (string-ref tags-of-file-contents-str i))
 
-                             (set! s2 (string-append
-                                       s2
-                                       (string (string-ref tags-of-file-contents-str k))))
-                             (display "s2=")(display s)
-                             (set! j k)
-                             (set! i k);;FIXME
+             (let ((s2 ""))
 
-                      ;;(set! j (+ j 1))
-                             ;;(set! i (+ i 1))
+               (do ((j i (+ j 1)))
+                   ((cond ((string=? s2 http-prefix)
 
-                             ))))
-                  ((>= j (+ (string-length tags-of-file-contents-str) 8))
-                   (display s)(set! i j))
-                  ;;(eq? (string-ref http-prefix j)
-                  ;;     (string-ref tags-of-file-contents-str i)))
+                           (let ((s3 ""))
+                             (do ((k j (+ k 1)))
+                                 ((cond ((eq? (string-ref tags-of-file-contents-str k)
+                                              #\")
+                                         (display i)
+                                         (set! j k)(set! i k)(set! s2 ""))
+                                        ((eq? (string-ref tags-of-file-contents-str k)
+                                              #\/)
+                                         (set! ret (append ret (list s3)))
+                                         (set! s3 "")
+                                         (set! j k)
+                                         (set! i k))
+                                        ((>= k (string-length tags-of-file-contents-str));;FIXME prev
+                                         (set! s2 "")(set! i k)(set! j k))
+                                        ))
+                               (set! s3 (string-append
+                                         s3
+                                         (string (string-ref tags-of-file-contents-str k))))
+                             )
+                             ;;(set! j k)
+                             ;;(set! i k)
+                             ))
+                          ((not (string<=? s2 http-prefix))
+                           (set! s "")
 
-                  )
-               (set! s (string-append s (string (string-ref tags-of-file-contents-str j))))
-               (display s)
+                           (set! i j))
+                          ))
 
-               (set! i j)
-               )))
+                 (set! s2 (string-append
+                           s2
+                           (string (string-ref tags-of-file-contents-str j))))
+                 (display "s2=")(display s)
+
+               (set! i j)))))
       (set! s (string-append s (string (string-ref tags-of-file-contents-str i))))
-                        ;;(display "s=")(display (string-ref tags-of-file-contents-str i))
-      ;;(set! i (+ i 1)))
-
-
-
+      ;;(display "s=")(display (string-ref tags-of-file-contents-str i))
       )
     ret))
 
 
 (display
- (file-contents->url (tags "index.html"))
+ (file-contents->url (html-dump "index.html"))
  )
