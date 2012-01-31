@@ -1,7 +1,7 @@
 
 ;;; load.scm - a scheme web spidering script
 ;;;
-;;; Copyright (c) 2012 Johan Ceuppens 
+;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
 ;;; All rights reserved.
 ;;;
@@ -37,5 +37,5 @@
 (display "give port : ")
 (define port (number->string (read)))
 (newline)
-(display (ask-server "GET / HTTP/1.0\r\n\r\n" "index.html" hostname port))
+(display (ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline) "index.html" hostname port)))
 
