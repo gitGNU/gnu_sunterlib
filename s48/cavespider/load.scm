@@ -37,22 +37,27 @@
 (display "give port : ")
 (define port (number->string (read)))
 (newline)
-(define dir-filename (ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline)) "index.html" hostname port))
+;;(define dir-filename (ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline)) "index.html" hostname port))
 
 (display "give string to search for (no spaces): ")
 (define keyword (symbol->string (read)))
 (newline)
 
-(let ((file-contents (file->string (string-append dir-filename "/" "index.html")))
-      (htable (make-hash-table HASHTABLESIZE))
-      (url-list (file-contents->url file-contents 0)))
+(define table (make-hash-table HASHTABLESIZE))
 
-  (let ((hostname-list '())
-        (keywordl '()))
+(spider-f)
 
-    (set! hostname-list (url->hostname url-list hostname-list));;FIXME url-list
-    (display hostname-list)
-    (set! keywordl (file-contents->keyword file-contents keyword))
-    (display keywordl)
-    (hash-set! htable keyword file-contents)
-    ))
+(define (spider-f)
+  (spider-rec (list hostname) 0))
+
+(define (spider-rec hostname-list index)
+  (let ((url-list (file-contents->url file-contents 0)))
+    (let ((dir-filename (ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline)) "index.html" hostname port)))
+      (let ((file-contents (file->string (string-append dir-filename "/" "index.html")))
+            (hostname-list (append hostname-list (url->hostname url-list '())))
+            (keyword-list (file-contents->keyword file-contents keyword)))
+
+        (hash-set! table (string-append keyword (number->string index)) file-contents);;NOTE keys are variable due to append above
+      (spider-rec (cdr hostname-list) (+ index 1))
+      ))))
+
