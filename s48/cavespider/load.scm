@@ -28,10 +28,10 @@
 
 (load "client.scm")
 
-(define (spider-f)
-  (spider-rec "" (list hostname) 0))
+(define (spider-f html-dir)
+  (spider-rec "" (list hostname) html-dir 0))
 
-(define (spider-rec dir-file-name hostname-list index)
+(define (spider-rec dir-file-name hostname-list html-dir index)
   (cond ((or (null? hostname-list)
              (string=? (car hostname-list) ""))
          (newline)("spidering ended.")(newline))
@@ -43,12 +43,15 @@
                      (keyword-list (file-contents->keyword file-contents keyword)))
 
                  (hash-set! table (string-append keyword (number->string index)) file-contents);;NOTE keys are variable due to append above
-                 (spider-rec dir-file-name-after (cdr hostname-list) (+ index 1))
+                 (spider-rec dir-file-name-after (cdr hostname-list) html-dir (+ index 1))
                  )))))))
 
 
 (display "give hostname name : ")
 (define hostname (symbol->string (read)))
+(newline)
+(display "give directory on host (type none for 'GET /' fetch) : ")
+(define html-dir (symbol->string (read)))
 (newline)
 (display "server name = ")(display hostname)
 (newline)
@@ -62,5 +65,5 @@
 
 (define table (make-hash-table HASHTABLESIZE))
 
-(spider-f)
+(spider-f html-dir)
 
