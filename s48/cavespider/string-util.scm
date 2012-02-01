@@ -74,12 +74,12 @@
 
                 (set! hostname-list (append (list rets) (url->hostname (cdr url-list) hostname-list)))
                 )
-              rets)
-          rets)
+              hostname-list)
+          hostname-list)
         (begin
           ;;(display s)
-          rets))
-    rets))
+          hostname-list))
+    hostname-list))
 
 ;;test
 

@@ -29,20 +29,22 @@
 (load "client.scm")
 
 (define (spider-f)
-  (spider-rec (list hostname) 0))
+  (spider-rec "" (list hostname) 0))
 
-(define (spider-rec hostname-list index)
-  (let ((file-contents (file->string (string-append dir-filename "/" "index.html"))))
-    (let ((url-list (file-contents->url file-contents 0)))
-      (let ((dir-filename (ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline)) "index.html" hostname port)))
-        (let ((hostname-list (append hostname-list (url->hostname url-list '())))
-              (keyword-list (file-contents->keyword file-contents keyword)))
+(define (spider-rec dir-file-name hostname-list index)
+  (cond ((or (null? hostname-list)
+             (string=? (car hostname-list) ""))
+         (newline)("spidering ended.")(newline))
+        (else
+         (let ((dir-file-name-after (ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline)) "index.html" (car hostname-list) port)))
+           (let ((file-contents (file->string (string-append dir-file-name-after "/" "index.html"))))
+             (let ((url-list (file-contents->url file-contents 0)))
+               (let ((hostname-list (append hostname-list (url->hostname url-list '())))
+                     (keyword-list (file-contents->keyword file-contents keyword)))
 
-          (hash-set! table (string-append keyword (number->string index)) file-contents);;NOTE keys are variable due to append above
-          (spider-rec (cdr hostname-list) (+ index 1))
-          )))))
-
-
+                 (hash-set! table (string-append keyword (number->string index)) file-contents);;NOTE keys are variable due to append above
+                 (spider-rec dir-file-name-after (cdr hostname-list) (+ index 1))
+                 )))))))
 
 
 (display "give hostname name : ")
@@ -53,7 +55,6 @@
 (display "give port : ")
 (define port (number->string (read)))
 (newline)
-;;(define dir-filename (ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline)) "index.html" hostname port))
 
 (display "give string to search for (no spaces): ")
 (define keyword (symbol->string (read)))
