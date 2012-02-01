@@ -26,6 +26,7 @@
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (load "file-util.scm")
+(load "search-util.scm")
 
 (display "Do you want to use hash tables (y/n)?")
 (let ((c (read-char)))

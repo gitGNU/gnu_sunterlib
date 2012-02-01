@@ -25,7 +25,7 @@
 ;;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
+;; FIXME double in string-util-alt.scm
 (define (url->hostname url-list hostname-list)
   (let ((s "")
         (rets "")

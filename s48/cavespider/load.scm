@@ -37,14 +37,20 @@
 (display "give port : ")
 (define port (number->string (read)))
 (newline)
-(display (ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline) "index.html" hostname port)))
+(define dir-filename (display (ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline) "index.html" hostname port))))
 
-(let ((file-contents (file->string "index.html")))
+(display "give string to search for (no spaces): ")
+(define keyword (symbol->string (read))
+(newline)
+
+(let ((file-contents (file->string (string-append dir-filename "/" "index.html"))));;FIXME dir
 ;;  (do ((url-list (file-contents->url file-contents 0)
 ;;                 (file-contents->url file-contents 0)))
-  (let ((url-list (file-contents->url file-contents 0))
-        (url->hostname url-list hostname-list);;FIXME url-list
-        (display hostname-list)
-
-        )
+  (let ((hostname-list '())
+        (keywordl '())
+        (url-list (file-contents->url file-contents 0)))
+    (set! hostname-list (url->hostname url-list hostname-list));;FIXME url-list
+    (display hostname-list)
+    (file-contents->keyword file-contents keyword)
+    (display keywordl)
     ))
