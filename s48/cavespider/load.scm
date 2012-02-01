@@ -1,4 +1,3 @@
-
 ;;; load.scm - a scheme web spidering script
 ;;;
 ;;; Copyright (c) 2012 Johan Ceuppens
@@ -29,6 +28,23 @@
 
 (load "client.scm")
 
+(define (spider-f)
+  (spider-rec (list hostname) 0))
+
+(define (spider-rec hostname-list index)
+  (let ((url-list (file-contents->url file-contents 0)))
+    (let ((dir-filename (ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline)) "index.html" hostname port)))
+      (let ((file-contents (file->string (string-append dir-filename "/" "index.html")))
+            (hostname-list (append hostname-list (url->hostname url-list '())))
+            (keyword-list (file-contents->keyword file-contents keyword)))
+
+        (hash-set! table (string-append keyword (number->string index)) file-contents);;NOTE keys are variable due to append above
+      (spider-rec (cdr hostname-list) (+ index 1))
+      ))))
+
+
+
+
 (display "give hostname name : ")
 (define hostname (symbol->string (read)))
 (newline)
@@ -46,18 +62,4 @@
 (define table (make-hash-table HASHTABLESIZE))
 
 (spider-f)
-
-(define (spider-f)
-  (spider-rec (list hostname) 0))
-
-(define (spider-rec hostname-list index)
-  (let ((url-list (file-contents->url file-contents 0)))
-    (let ((dir-filename (ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline)) "index.html" hostname port)))
-      (let ((file-contents (file->string (string-append dir-filename "/" "index.html")))
-            (hostname-list (append hostname-list (url->hostname url-list '())))
-            (keyword-list (file-contents->keyword file-contents keyword)))
-
-        (hash-set! table (string-append keyword (number->string index)) file-contents);;NOTE keys are variable due to append above
-      (spider-rec (cdr hostname-list) (+ index 1))
-      ))))
 
