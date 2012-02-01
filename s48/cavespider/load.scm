@@ -39,3 +39,12 @@
 (newline)
 (display (ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline) "index.html" hostname port)))
 
+(let ((file-contents (file->string "index.html")))
+;;  (do ((url-list (file-contents->url file-contents 0)
+;;                 (file-contents->url file-contents 0)))
+  (let ((url-list (file-contents->url file-contents 0))
+        (url->hostname url-list hostname-list);;FIXME url-list
+        (display hostname-list)
+
+        )
+    ))

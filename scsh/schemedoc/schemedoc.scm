@@ -101,7 +101,6 @@
              (set! headline line)
              (set! line ""))
             ;;((eq? (car l) #\newline)
-
             )
       (set! line (string-append line (string (car l))))
       (set! itemtext (string-append itemtext (string (car l))))

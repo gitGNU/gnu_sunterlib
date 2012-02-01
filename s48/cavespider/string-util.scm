@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2012 Johan Ceuppens 
+;;; Copyright (c) 2012 Johan Ceuppens
 ;;;
 ;;; All rights reserved.
 ;;;
