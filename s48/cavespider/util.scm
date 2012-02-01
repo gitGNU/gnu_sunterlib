@@ -28,12 +28,13 @@
 (load "file-util.scm")
 (load "search-util.scm")
 
-(display "Do you want to use hash tables (y/n)?")
-(let ((c (read-char)))
-  (if (eq? c #\y)
-      (load "string-util-alt.scm")
-      (begin
-        (load "hash-util.scm")
-        (load "string-util.scm"))))
+;(display "Do you want to use hash tables (y/n)?")
+;(let ((c (read-char)))
+;  (if (eq? c #\y)
+;      (load "string-util-alt.scm")
+;      (begin
+;        (load "hash-util.scm")
+        (load "string-util.scm")
+;)))
 
 (load "html-util.scm")

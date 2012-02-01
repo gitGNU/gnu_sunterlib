@@ -27,7 +27,7 @@
 ;;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (load "util.scm")
-(load "html.scm")
+
 ;;,open posix posix-files
 
 (define server-data
@@ -66,7 +66,7 @@
 
 (define (ask-server request filename hostname port)
   (let* ((dir-filename (do ((i 0 (+ i 1)))
-                           ((make-directory (string-append "./" hostname (number->string i)) (file-mode read write exec))
+                           ((make-directory (string-append "./" hostname (number->string i)))
                             (string-append "./" hostname (number->string i))) ;; return val
                          ))
          (out-file-port (open-output-file (string-append dir-filename "/" filename)))
@@ -91,5 +91,5 @@
 ;      (display contents)
 ;      (file-contents->url contents)
 ;      )))
-
-(ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline) "index.html" "www.gnu.org" 80))
+;;test
+;;(ask-server (string-append "GET / HTTP/1.0" (string #\return #\newline #\return #\newline) "index.html" "www.gnu.org") 80)
