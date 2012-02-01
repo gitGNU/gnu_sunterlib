@@ -43,14 +43,16 @@
 (define keyword (symbol->string (read)))
 (newline)
 
-(let ((file-contents (file->string (string-append dir-filename "/" "index.html"))));;FIXME dir
-;;  (do ((url-list (file-contents->url file-contents 0)
-;;                 (file-contents->url file-contents 0)))
+(let ((file-contents (file->string (string-append dir-filename "/" "index.html")))
+      (htable (make-hash-table HASHTABLESIZE))
+      (url-list (file-contents->url file-contents 0)))
+
   (let ((hostname-list '())
-        (keywordl '())
-        (url-list (file-contents->url file-contents 0)))
+        (keywordl '()))
+
     (set! hostname-list (url->hostname url-list hostname-list));;FIXME url-list
     (display hostname-list)
-    (file-contents->keyword file-contents keyword)
+    (set! keywordl (file-contents->keyword file-contents keyword))
     (display keywordl)
+    (hash-set! htable keyword file-contents)
     ))

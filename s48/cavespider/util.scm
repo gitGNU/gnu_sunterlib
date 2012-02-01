@@ -33,7 +33,7 @@
 ;  (if (eq? c #\y)
 ;      (load "string-util-alt.scm")
 ;      (begin
-;        (load "hash-util.scm")
+        (load "hash-util.scm")
         (load "string-util.scm")
 ;)))
 
