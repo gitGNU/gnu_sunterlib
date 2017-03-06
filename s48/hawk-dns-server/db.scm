@@ -28,13 +28,7 @@
 	  ))
 
 	(define (lookup key)
-	  (let ((*result #f))
-	  (do ((i 0 	(+ i 1)))
-	    ((eq? i (length *db))
-	    	*result)	
-	    (if (eq? key (car (list-ref *db i)))
-	      (set! *result (cadr (list-ref *db i))))
-	    )))
+	    (cadr (list-ref *db (key->hash key))))
 
 	(define (key->hash key)
 	  (let ((*hash 0))
