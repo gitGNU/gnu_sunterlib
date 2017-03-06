@@ -1,6 +1,7 @@
 (define-interface cavespider-interface
   (export
-   ask-server))
+   make-server
+   make-server-dns))
 
 (define-structure cavespider 
   cavespider-interface
