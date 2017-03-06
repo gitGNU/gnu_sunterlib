@@ -42,8 +42,10 @@
 	  (set! *prime (getprime-rec *prime)))
 
 	(define (getprime-rec prime)
-	  (if (= 0 (+ (and (/ prime 2) (/ prime 3) (/ prime 5) (/ prime 7) (/ prime 10))))
-	    (getpreime-rec (+ prime 1))))
+	  (if (= 0 (+ (remainder prime 2) (remainder prime 3) (remainder prime 5) (remainder prime 7) (remainder prime 10)))
+	    prime
+	    (getpreime-rec (+ prime 1))
+	    ))
 	    
 	(define (integer->ascii 
 
