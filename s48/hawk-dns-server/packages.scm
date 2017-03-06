@@ -1,9 +1,9 @@
-(define-interface cavespider-interface
+(define-interface hawk-dns-server-interface
   (export
    make-server
    make-server-dns))
 
-(define-structure cavespider 
-  cavespider-interface
+(define-structure 
+  hawk-dns-server-interface
   (open scheme)
-  (files load file-util hash-util html-util string-util util client))
+  (files load util server db server-dns))
