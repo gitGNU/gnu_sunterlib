@@ -28,7 +28,7 @@
 	  ))
 
 	(define (lookup key)
-	    (cadr (list-ref *db (key->hash key)))
+	    (cadr (list-ref *db (key->hash key))))
 
 	(define (key->hash key)
 	  (let ((*hash 0))
