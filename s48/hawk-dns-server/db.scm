@@ -42,7 +42,7 @@
 	  (set! *prime (getprime-rec *prime)))
 
 	(define (getprime-rec prime)
-	  (if (= 0 (+ (remainder prime 2) (remainder prime 3) (remainder prime 5) (remainder prime 7) (remainder prime 10)))
+	  (if (not (> (+ (remainder prime 2) (remainder prime 3) (remainder prime 5) (remainder prime 7) (remainder prime 10)) 0))
 	    prime
 	    (getpreime-rec (+ prime 1))
 	    ))
